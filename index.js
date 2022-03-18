@@ -3,6 +3,7 @@ const cors = require('cors');
 const sessionRoutes = require('./routes/sessionRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 const requireAuth = require('./middlewares/requireAuth');
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(bodyParser.json());
 app.use(sessionRoutes);
 app.use(authRoutes);
 app.use(userRoutes);
+app.use(categoryRoutes);
 
 
 
