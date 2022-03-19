@@ -9,10 +9,10 @@ async function get_day_session(startRange, endRange, userEmail) {
 }
 
 async function set_user_session(chosenCategory, chosenCatId, customActivity, sessionStartTime, sessionEndTime,
-    endEarlyFlag, prodRating, user_email) {
+    endEarlyFlag, prodRating, user_id) {
     console.log("TRYING TO SET SESSION");
     query_text = 'INSERT INTO activity(activity_id,user_id,cat_id,time_start,time_end,prod_rating,activity_name,end_early) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *'
-    query_values = [uuid(), user_email, chosenCatId, sessionStartTime, sessionEndTime, prodRating, customActivity, endEarlyFlag]
+    query_values = [uuid(), user_id, chosenCatId, sessionStartTime, sessionEndTime, prodRating, customActivity, endEarlyFlag]
     try {
         const res = await db.query(query_text, query_values)
         return 1

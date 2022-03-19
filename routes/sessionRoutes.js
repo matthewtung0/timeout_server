@@ -21,9 +21,9 @@ router.get('/daySessions', async (req, res) => {
     const endRange = req.query.endTime
     console.log("getting session for day ", startRange)
     try {
-        let userEmail = req.email
+        let user_id = req.user_id
 
-        let result = await session.get_day_session(startRange, endRange, userEmail)
+        let result = await session.get_day_session(startRange, endRange, user_id)
         res.send(result)
 
     } catch (err) {
@@ -37,9 +37,9 @@ router.get('/monthSessions', async (req, res) => {
     const endRange = req.query.endTime
     console.log("getting session for month ", startRange)
     try {
-        let userEmail = req.email
+        let user_id = req.user_id
 
-        let result = await session.get_day_session(startRange, endRange, userEmail)
+        let result = await session.get_day_session(startRange, endRange, user_id)
         res.send(result)
 
     } catch (err) {
@@ -52,10 +52,10 @@ router.post('/save_session', async (req, res) => {
     const { chosenCategory, chosenCatId, customActivity, sessionStartTime,
         sessionEndTime, endEarlyFlag, prodRating } = req.body
     try {
-        let user_email = req.email
+        let user_id = req.user_id
 
         let result = await session.set_user_session(chosenCategory, chosenCatId, customActivity,
-            sessionStartTime, sessionEndTime, endEarlyFlag, prodRating, user_email)
+            sessionStartTime, sessionEndTime, endEarlyFlag, prodRating, user_id)
         console.log(result)
         if (!result) {
             return res.status(422).send({ error: "Error saving session!" });

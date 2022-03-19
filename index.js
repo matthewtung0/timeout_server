@@ -10,8 +10,8 @@ const app = express();
 const bodyParser = require('body-parser');
 app.use(cors());
 app.use(bodyParser.json());
-app.use(sessionRoutes);
 app.use(authRoutes);
+app.use(sessionRoutes);
 app.use(userRoutes);
 app.use(categoryRoutes);
 

@@ -6,12 +6,9 @@ const router = new Router();
 router.use(requireAuth);
 
 router.get('/self_user', async (req, res) => {
-    console.log("GET /self_user")
-    const { id } = req.params
-    console.log(req.email);
-
+    const user_id = req.user_id
     try {
-        user_info = await user.get_user_info(req.email)
+        user_info = await user.getInfoFromId(user_id)
         res.send(user_info);
     } catch (err) {
         return res.status(422).send(err.message);

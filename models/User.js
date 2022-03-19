@@ -9,21 +9,49 @@ async function hash_pw(password) {
     return password;
 };
 
-async function set_user_info(email, password) {
+async function set_user_info(email, password, username, firstName, lastName, user_id) {
     console.log("TRYING TO SET USER INFO");
-    query_text = 'INSERT INTO user_credential(user_id, password, email) VALUES($1,$2,$3) RETURNING *'
-    query_values = [uuid(), password, email]
+
+    const client = await db.connect()
+
     try {
-        const res = await db.query(query_text, query_values)
-        return 1
-    } catch (err) {
-        console.log('error code is ', err)
-        if (err.code == 23505) { //duplicate code (unique col value already exists)
-            return 23505
+        await client.query('BEGIN')
+        //let user_id = uuid()
+        let dt_now = new Date()
+        // TRY SETTING USER INFO UNTIL VALID FRIEND CODE FOUND
+        insert_result = 0
+        while (insert_result != 1) {
+            try {
+                let friend_code = generateFriendCode()
+                console.log("TRying with fc", friend_code);
+                user_query_text = 'INSERT INTO user_timeout(user_id, first_name,last_name,username, time_created,last_signin,friend_code) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *'
+                user_query_values = [user_id, firstName, lastName, username, dt_now, dt_now, friend_code]
+                const res = await db.query(user_query_text, user_query_values)
+                // it is a success
+                insert_result = 1
+            } catch (err) {
+                console.log("problem signing up user_timeout table with code. trying again: ", err.code)
+                insert_result = 0
+            }
         }
-        // ADD ANOTEHR ERROR CODE PROBABLY
-        return 0
+
+        // TRY SETTING USER CREDENTIALS
+        creds_query_text = 'INSERT INTO user_credential(user_id, password, email) VALUES($1,$2,$3) RETURNING *'
+        creds_query_values = [user_id, password, email]
+        await db.query(creds_query_text, creds_query_values)
+        await client.query('COMMIT')
+
+        console.log("client committed")
+    } catch (e) {
+        await client.query('ROLLBACK')
+        console.log("Error setting user info transaction!", e.stack)
+    } finally {
+        console.log("client releasing");
+        client.release()
+        console.log("Returning user_id:");
     }
+
+
 }
 
 async function get_user_info(given_email) {
@@ -33,6 +61,23 @@ async function get_user_info(given_email) {
     user_info = rows[0]
 
     return user_info
+}
+
+async function getInfoFromId(userId) {
+    query_text = 'SELECT * FROM user_timeout WHERE user_id = $1'
+    query_values = [userId]
+    const { rows } = await db.query(query_text, query_values);
+    user_info = rows[0]
+
+    return user_info
+}
+
+
+function generateFriendCode() {
+    // random number from
+    let max = 999999999999
+    let min = 100000000000
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 async function comparePassword(given_password, correct_pw) {
@@ -79,5 +124,5 @@ async function validateAndResetPassword(token, password) {
 }
 
 module.exports = {
-    set_user_info, hash_pw, get_user_info, comparePassword, validateAndResetPassword
+    set_user_info, hash_pw, get_user_info, comparePassword, validateAndResetPassword, getInfoFromId
 }

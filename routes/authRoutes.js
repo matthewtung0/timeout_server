@@ -2,6 +2,7 @@ const user = require('../models/User');
 const Router = require('express-promise-router');
 const router = new Router();
 const jwt = require('jsonwebtoken');
+const uuid = require('uuid-random');
 const nodemailer = require('nodemailer');
 const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
@@ -81,18 +82,15 @@ router.post('/forgot_password', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
     console.log("CALLED SIGNUP SERVER")
-    const { email, password } = req.body;
+    const { email, password, username, firstName, lastName } = req.body;
 
     try {
         //const user = new User( {email, password} );
         hashed_pw = await user.hash_pw(password)
-        try_signing_up = await user.set_user_info(email, hashed_pw);
-        if (try_signing_up != 1) {
-            return res.status(422).send(err.message);
-        }
-
-        // assign user uuid here?
-        const token = jwt.sign({ email: email }, 'MY_SECRET_KEY');
+        let user_id = uuid()
+        await user.set_user_info(email, hashed_pw, username, firstName, lastName, user_id);
+        console.log("user_id set for token is", user_id)
+        const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY');
         res.status(200).send({ token });
     } catch (err) {
         return res.status(422).send(err.message);
@@ -118,7 +116,7 @@ router.post('/signin', async (req, res) => {
     }
     try {
         await user.comparePassword(password, correct_pw);
-        const token = jwt.sign({ email: email }, 'MY_SECRET_KEY')
+        const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY')
         res.send({ token })
     } catch (err) {
         return res.status(422).send({ error: 'invalid password or email' });

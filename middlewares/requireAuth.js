@@ -4,16 +4,19 @@ module.exports = (req, res, next) => {
     const { authorization } = req.headers;
 
     if (!authorization) {
+        console.log("not authorized...");
         return res.status(401).send({ error: "You must be logged in." });
     }
 
     const token = authorization.replace('Bearer ', '');
 
     try {
-        const { email } = jwt.verify(token, 'MY_SECRET_KEY');
-        req.email = email;
+        const { user_id } = jwt.verify(token, 'MY_SECRET_KEY');
+        console.log("requireAuth user_id from token is:", user_id)
+        req.user_id = user_id;
 
     } catch (err) {
+        console.log("You must be logged in...");
         return res.status(401).send({ error: 'You must be logged in.' });
     }
     next();
