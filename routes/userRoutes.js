@@ -15,4 +15,14 @@ router.get('/self_user', async (req, res) => {
     }
 })
 
+router.get('/friends', async (req, res) => {
+    const user_id = req.user_id
+    try {
+        friends = await user.getFriendsList(user_id)
+        res.send(friends)
+    } catch (err) {
+        return res.status(422).send(err.message)
+    }
+})
+
 module.exports = router;

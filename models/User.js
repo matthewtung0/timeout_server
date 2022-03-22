@@ -50,8 +50,6 @@ async function set_user_info(email, password, username, firstName, lastName, use
         client.release()
         console.log("Returning user_id:");
     }
-
-
 }
 
 async function get_user_info(given_email) {
