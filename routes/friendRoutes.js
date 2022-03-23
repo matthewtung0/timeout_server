@@ -9,23 +9,36 @@ router.post('/requestFriend', async (req, res) => {
     const user_id = req.user_id
     const { codeToRequest } = req.body
     try {
-        user_info = await friendship.requestFriend(user_id, codeToRequest)
-        res.status(200).send()
+        let requestResult = await friendship.requestFriend(user_id, codeToRequest)
+        if (requestResult == -1) { // no user associated with this friend code
+            console.log("INVALID FRIEND CODE")
+            return res.status(200).send({ error: 'Invalid friend code' })
+        } else if (requestResult == -2) { // invalid request (already friends, blocked, etc.)
+            console.log("INVALID FRIEND REQUEST")
+            return res.status(200).send({ error: 'Invalid request' })
+        } else {
+            return res.status(200).send({ msg: 'All good' })
+        }
+
     } catch (err) {
         console.log("Problem requesting friend for code:", codeToRequest)
         console.log(err.stack)
-        res.status(403).send({ error: "Error sending friend request!" })
+        return res.status(403).send({ error: "Error sending friend request!" })
     }
 })
 
-router.get('/friends', async (req, res) => {
+router.get('/friendsList', async (req, res) => {
+    console.log("got to this route?");
     const user_id = req.user_id
-    /*try {
-        friends = await user.getFriendsList(user_id)
-        res.send(friends)
+    try {
+        console.log("trying to fetch friends");
+        let results = await friendship.getFriends(user_id)
+        res.status(200).send(results)
     } catch (err) {
-        return res.status(422).send(err.message)
-    }*/
+        console.log("Problem retrieving friends for user:", user_id)
+        console.log(err.stack)
+        return res.status(403).send({ error: "Probably retrieving friends!" });
+    }
 })
 
 
@@ -70,7 +83,20 @@ router.post('/acceptFriendRequest', async (req, res) => {
     }
 })
 
-router.post('/rejectFriendRequest', async (req, res) => { })
+router.post('/rejectFriendRequest', async (req, res) => {
+    console.log("try reject friend request");
+    const user_id = req.user_id
+    const { idToReject } = req.body
+    try {
+        user_info = await friendship.rejectFriendRequest(user_id, idToReject)
+        console.log("success rejecting friend");
+        res.status(200).send()
+    } catch (err) {
+        console.log("Problem rejecting friend:", idToAccept)
+        console.log(err.stack)
+        res.status(403).send({ error: "Error rejecting friend request!" })
+    }
+})
 
 router.post('/')
 

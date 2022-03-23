@@ -1,5 +1,5 @@
+const { rows } = require('pg/lib/defaults')
 const db = require('../db')
-const uuid = require('uuid-random');
 
 async function setUpViews(userId) {
     //get uncleaned list of users who've interacted with self user
@@ -32,13 +32,31 @@ async function setUpViews(userId) {
     await db.query(latestEventQuery)
 }
 
-async function getFriendsList(userId) {
+async function getFriends(userId) {
     // set up views
-    const res = setUpViews(userId)
+    await setUpViews(userId)
 
     // finally, get all users whose latest interaction is "friended (status id = 0)"
-    currentFriendsQuery = "SELECT * FROM latestEvents where status_id = '0';"
-    latestFriendsValues = []
+    currentFriendsQuery = "SELECT a.*, b.username as username_a, c.username as username_b\
+     FROM latestEvents a, user_timeout b, user_timeout c where\
+     status_id = '0' AND a.friend_a = b.user_id AND a.friend_b = c.user_id;"
+    currentFriendsValues = []
+
+    const res = await db.query(currentFriendsQuery, currentFriendsValues)
+
+
+    // identify if friend is friend_a or friend_b:
+    for (var i = 0; i < res.rows.length; i++) {
+        if (res.rows[i]['friend_a'] == userId) {
+            res.rows[i]['friend'] = res.rows[i]['friend_b']
+            res.rows[i]['username'] = res.rows[i]['username_b']
+        } else {
+            res.rows[i]['friend'] = res.rows[i]['friend_a']
+            res.rows[i]['username'] = res.rows[i]['username_a']
+        }
+    }
+
+    return res.rows
 }
 
 async function getRequestsIncoming(userId) {
@@ -48,7 +66,6 @@ async function getRequestsIncoming(userId) {
     incomingRequestsValues = [userId]
 
     const res = await db.query(incomingRequestsQuery, incomingRequestsValues)
-    console.log("returning rows:", res.rows);
     return res.rows
 }
 
@@ -70,6 +87,13 @@ async function acceptFriendRequest(userId, idToAccept) {
     await db.query(acceptRequestQuery, acceptRequestValues)
 }
 
+async function rejectFriendRequest(userId, idToReject) {
+    acceptRequestQuery = "INSERT INTO friend_event(friend_a, friend_b, time_created, status_id)\
+    VALUES($1,$2,$3,$4) RETURNING *; "
+    acceptRequestValues = [userId, idToReject, new Date(), 1]
+    await db.query(acceptRequestQuery, acceptRequestValues)
+}
+
 async function requestFriend(userId, codeToRequest) {
     // friend_a is self
     // friend_b is codeToRequest user
@@ -86,11 +110,14 @@ async function requestFriend(userId, codeToRequest) {
     let requesteeUserId = ''
 
     if (res.rows.length == 0) { // no user associated with this friend code
-
-    } else {
-        requesteeUserId = res.rows[0]['user_id']
+        return -1
     }
-    console.log("requestee user ID is", requesteeUserId);
+
+    requesteeUserId = res.rows[0]['user_id']
+
+    if (!checkValidRequest(userId, requesteeUserId)) {
+        return -2
+    }
 
     addRequestFriendQuery = "INSERT INTO friend_event(friend_a, friend_b, time_created, status_id)\
      VALUES($1,$2,$3,$4) RETURNING *"
@@ -99,6 +126,23 @@ async function requestFriend(userId, codeToRequest) {
 
     await db.query(addRequestFriendQuery, addRequestFriendValues)
 
+    return 1
+}
+
+async function checkValidRequest(requestorId, requesteeId) {
+    await setUpViews(requestorId)
+
+    checkValidQuery = `select * from latestEvents \
+    where (friend_a = '${requesteeId}' and status_id != 1) \
+    OR (friend_b = '${requesteeId}' and status_id != 1)`
+
+    // if result returns anything that means we cant send a friend request because they are already requested,
+    // already friends, or blocked.
+    var result = await db.query(checkValidQuery)
+    if (result.rows.length > 0) {
+        return false;
+    }
+    return true;
 
 }
 
@@ -137,5 +181,7 @@ SELECT * FROM latest_interactions where status_id = '2';
 */
 
 module.exports = {
-    getFriendsList, requestFriend, getRequestsIncoming, getRequestsOutgoing, acceptFriendRequest
+    requestFriend, getRequestsIncoming,
+    getRequestsOutgoing, acceptFriendRequest, rejectFriendRequest,
+    getFriends,
 }
