@@ -4,16 +4,20 @@ const db = require('../db')
 const Router = require('express-promise-router');
 const requireAuth = require('../middlewares/requireAuth');
 
-const text = 'SELECT * FROM activity'
-const values = ['user']
-
 const router = new Router();
 router.use(requireAuth)
 
 router.get('/sessions', async (req, res) => {
-    const { id } = req.params
-    const { rows } = await db.query(text);
-    res.send(rows[0])
+    const user_id = req.user_id
+    try {
+        const rows = await session.getAllSessions();
+        console.log("Sending over", rows);
+        res.status(200).send(rows)
+    } catch (err) {
+        console.log("Problem retrieving session feed:")
+        console.log(err.stack)
+        return res.status(403).send({ error: "Probably retrieving session feed!" });
+    }
 })
 
 router.get('/daySessions', async (req, res) => {

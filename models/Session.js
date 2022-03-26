@@ -26,6 +26,15 @@ async function set_user_session(chosenCategory, chosenCatId, customActivity, ses
     }
 }
 
+async function getAllSessions() {
+    query_text = 'SELECT a.*, b.username, c.category_name FROM activity a, user_timeout b, category c \
+    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    ORDER BY time_start desc;'
+    query_values = []
+    const { rows } = await db.query(query_text, query_values);
+    return rows
+}
+
 module.exports = {
-    set_user_session, get_day_session
+    set_user_session, get_day_session, getAllSessions,
 }
