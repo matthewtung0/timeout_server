@@ -15,6 +15,18 @@ router.get('/self_user', async (req, res) => {
     }
 })
 
+router.patch('/self_user', async (req, res) => {
+    const user_id = req.user_id
+    const { firstName, lastName, username } = req.body;
+    try {
+        user_info = await user.updateInfo(firstName, lastName, username, user_id);
+        return res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message);
+    }
+})
+
 router.get('/friends', async (req, res) => {
     const user_id = req.user_id
     try {
@@ -23,6 +35,34 @@ router.get('/friends', async (req, res) => {
     } catch (err) {
         return res.status(422).send(err.message)
     }
+})
+
+router.patch('/changePasswordApp', async (req, res) => {
+    const user_id = req.user_id
+    const { oldPassword, newPassword } = req.body;
+
+    user_info = await user.getCredentialsFromId(user_id)
+    correct_pw = user_info['password']
+    console.log("correct pw is ", correct_pw);
+    console.log("Given pw is", oldPassword);
+    try {
+        await user.comparePassword(oldPassword, correct_pw)
+    } catch (err) {
+        console.log("wrong cur password given");
+        return res.status(422).send({ error: 'Current entered password is incorrect!' });
+    }
+
+    // good to go to change password
+    hashed_pw = await user.hash_pw(newPassword)
+    try {
+        await user.updatePassword(user_id, hashed_pw)
+        return res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send({ error: 'Problem changing password. Please try again' })
+    }
+
+
 })
 
 module.exports = router;

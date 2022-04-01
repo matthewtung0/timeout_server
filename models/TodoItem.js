@@ -12,6 +12,17 @@ async function addTodoItem(userId, toDoItemName, timeSubmitted, categoryId) {
     }
 }
 
+async function deleteTodoItem(toDoId) {
+    query_text = 'DELETE FROM todo_item WHERE item_id = $1;'
+    query_values = [toDoId]
+    try {
+        await db.query(query_text, query_values)
+        return
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
 
 async function getTodoItems(userId) {
     query_text = 'SELECT t.*, c.category_name FROM todo_item t, category c WHERE t.user_id = $1 AND t.category_id = c.category_id'
@@ -25,5 +36,5 @@ async function getTodoItems(userId) {
 }
 
 module.exports = {
-    addTodoItem, getTodoItems
+    addTodoItem, getTodoItems, deleteTodoItem
 }

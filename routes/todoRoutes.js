@@ -5,7 +5,7 @@ const requireAuth = require('../middlewares/requireAuth');
 const router = new Router();
 router.use(requireAuth);
 
-router.get('/todoItems', async (req, res) => {
+router.get('/todoItem', async (req, res) => {
     console.log("trying to get todo items");
     const user_id = req.user_id
     try {
@@ -19,7 +19,7 @@ router.get('/todoItems', async (req, res) => {
     }
 })
 
-router.post('/addItem', async (req, res) => {
+router.post('/todoItem', async (req, res) => {
     const user_id = req.user_id
     const { toDoItemName, timeSubmitted, categoryId } = req.body
     try {
@@ -30,6 +30,19 @@ router.post('/addItem', async (req, res) => {
         console.log(err.stack)
         res.status(403).send({ error: "Error adding todoItem!" })
     }
+})
+
+router.delete('/todoItem', async (req, res) => {
+    const user_id = req.user_id;
+    const { toDoId } = req.body;
+    try {
+        await todoItem.deleteTodoItem(user_id, toDoId)
+        res.status(200).send()
+    } catch (err) {
+        console.log("Problem deleting todo item: ", err);
+        res.status(403).send({ error: "Error deleting item!" })
+    }
+
 })
 
 module.exports = router;

@@ -52,8 +52,15 @@ async function set_user_info(email, password, username, firstName, lastName, use
     }
 }
 
+async function updatePassword(user_id, newPassword) {
+    query_text = 'UPDATE user_credential SET password = $1 WHERE user_id = $2;'
+    query_values = [newPassword, user_id]
+    await db.query(query_text, query_values);
+    return
+}
+
 async function get_user_info(given_email) {
-    query_text = 'SELECT * FROM user_credential WHERE email = $1'
+    query_text = 'SELECT * FROM user_credential WHERE email = $1;'
     query_values = [given_email]
     const { rows } = await db.query(query_text, query_values);
     user_info = rows[0]
@@ -62,12 +69,29 @@ async function get_user_info(given_email) {
 }
 
 async function getInfoFromId(userId) {
-    query_text = 'SELECT * FROM user_timeout WHERE user_id = $1'
+    query_text = 'SELECT * FROM user_timeout WHERE user_id = $1;'
     query_values = [userId]
     const { rows } = await db.query(query_text, query_values);
     user_info = rows[0]
 
     return user_info
+}
+
+async function getCredentialsFromId(userId) {
+    query_text = 'SELECT * FROM user_credential WHERE user_id = $1;'
+    query_values = [userId]
+    const { rows } = await db.query(query_text, query_values);
+    user_info = rows[0]
+
+    return user_info
+}
+
+async function updateInfo(firstName, lastName, username, user_id) {
+    query_text = 'UPDATE user_timeout SET first_name = $1, last_name = $2, username = $3\
+    WHERE user_id = $4;'
+    query_values = [firstName, lastName, username, user_id]
+    const res = await db.query(query_text, query_values);
+    return
 }
 
 
@@ -96,7 +120,7 @@ async function comparePassword(given_password, correct_pw) {
 
 async function validateAndResetPassword(token, password) {
 
-    query_text = 'SELECT email FROM password_reset WHERE reset_key = $1'
+    query_text = 'SELECT email FROM password_reset WHERE reset_key = $1;'
     query_values = [token]
     try {
         const { rows } = await db.query(query_text, query_values)
@@ -122,5 +146,7 @@ async function validateAndResetPassword(token, password) {
 }
 
 module.exports = {
-    set_user_info, hash_pw, get_user_info, comparePassword, validateAndResetPassword, getInfoFromId
+    set_user_info, hash_pw, get_user_info, updateInfo,
+    comparePassword, validateAndResetPassword, getInfoFromId,
+    updatePassword, getCredentialsFromId
 }

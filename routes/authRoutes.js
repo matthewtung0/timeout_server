@@ -23,6 +23,7 @@ router.post('/change_password', async (req, res) => {
     }
 });
 
+
 router.post('/forgot_password', async (req, res) => {
     const client_id = CONSTANTS.CLIENT_ID
     const client_secret = CONSTANTS.CLIENT_SECRET
