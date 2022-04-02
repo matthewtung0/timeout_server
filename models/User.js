@@ -145,8 +145,21 @@ async function validateAndResetPassword(token, password) {
 
 }
 
+async function deleteAll(userId) {
+    query_values = [userId]
+    query_text1 = 'DELETE FROM activity WHERE user_id = $1;'
+    // delete from activity (user's sessions)
+    // delete from category (user's custom categories)
+    // delete from friend_event (remove user from friends, friend reqs etc)
+    // delete from interaction (remove likes, liked)
+    // delete from password reset (if user had outstanding pw reset req)
+    // delete from todo_item (user's todo items)
+    // delete from user_credential (user's sign in info, frees up email)
+    // delete from user_timeout (user info)
+}
+
 module.exports = {
     set_user_info, hash_pw, get_user_info, updateInfo,
     comparePassword, validateAndResetPassword, getInfoFromId,
-    updatePassword, getCredentialsFromId
+    updatePassword, getCredentialsFromId, deleteAll
 }
