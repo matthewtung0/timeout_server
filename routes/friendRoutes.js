@@ -28,7 +28,6 @@ router.post('/requestFriend', async (req, res) => {
 })
 
 router.get('/friendsList', async (req, res) => {
-    console.log("got to this route?");
     const user_id = req.user_id
     try {
         console.log("trying to fetch friends");

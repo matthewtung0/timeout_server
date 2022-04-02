@@ -7,7 +7,7 @@ const requireAuth = require('../middlewares/requireAuth');
 const router = new Router();
 router.use(requireAuth)
 
-router.get('/sessions', async (req, res) => {
+router.get('/session', async (req, res) => {
     const user_id = req.user_id
     try {
         const rows = await session.getAllSessions();

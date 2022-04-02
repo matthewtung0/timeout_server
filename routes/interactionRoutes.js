@@ -1,0 +1,37 @@
+const interaction = require('../models/Interaction');
+const Router = require('express-promise-router');
+const requireAuth = require('../middlewares/requireAuth');
+
+const router = new Router();
+router.use(requireAuth)
+
+// add a reaction to a post if not reacted, or remove if otherwise
+// also handles increment/decrementing the reaction_count in activity table
+router.post('/interaction', async (req, res) => {
+    const user_id = req.user_id
+    const { reaction_id, activity_id } = req.body;
+    try {
+        let wasUnliked = await interaction.toggleInteraction(reaction_id, activity_id, user_id);
+        console.log('toggle interaction successful', wasUnliked);
+        //sends signal if this toggle resulted in an Unlike or not
+        res.status(200).send({ wasUnliked })
+    } catch (err) {
+        console.log("Problem adding interaction:", err)
+        return res.status(403).send({ error: "Probably adding interaction!" });
+    }
+})
+
+// get activites in which user liked
+router.get('/interaction', async (req, res) => {
+    const user_id = req.user_id
+    try {
+        const rows = await interaction.getInteractionsFromUserId(user_id);
+        res.status(200).send(rows)
+    } catch (err) {
+        console.log("Problem fetching users interactions: ", err)
+        return res.status(403).send({ error: "Problem fetching interactions" });
+    }
+
+})
+
+module.exports = router;
