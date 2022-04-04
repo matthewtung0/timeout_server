@@ -21,9 +21,9 @@ router.get('/todoItem', async (req, res) => {
 
 router.post('/todoItem', async (req, res) => {
     const user_id = req.user_id
-    const { toDoItemName, timeSubmitted, categoryId } = req.body
+    const { toDoItemName, timeSubmitted, categoryId, notes } = req.body
     try {
-        await todoItem.addTodoItem(user_id, toDoItemName, timeSubmitted, categoryId)
+        await todoItem.addTodoItem(user_id, toDoItemName, timeSubmitted, categoryId, notes)
         res.status(200).send()
     } catch (err) {
         console.log("Problem adding todoItem for user", user_id)
