@@ -11,7 +11,6 @@ router.get('/session', async (req, res) => {
     const user_id = req.user_id
     try {
         const rows = await session.getAllSessions();
-        console.log("Sending over", rows);
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem retrieving session feed:")

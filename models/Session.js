@@ -2,7 +2,7 @@ const db = require('../db')
 const uuid = require('uuid-random');
 
 async function get_day_session(startRange, endRange, userEmail) {
-    query_text = 'SELECT a.*, c.category_name FROM activity a, category c\
+    query_text = 'SELECT a.*, c.category_name, c.color_id FROM activity a, category c\
     WHERE a.cat_id = c.category_id AND \
     a.user_id = $1 AND a.time_start >= $2 AND a.time_start <= $3'
     query_values = [userEmail, startRange, endRange]
@@ -29,7 +29,7 @@ async function set_user_session(chosenCategory, chosenCatId, customActivity, ses
 }
 
 async function getAllSessions() {
-    query_text = 'SELECT a.*, b.username, c.category_name FROM activity a, user_timeout b, category c \
+    query_text = 'SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c \
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
     ORDER BY time_start desc;'
     query_values = []

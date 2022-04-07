@@ -4,8 +4,21 @@ const uuid = require('uuid-random');
 async function addTodoItem(userId, toDoItemName, timeSubmitted, categoryId, notes) {
     query_text = 'INSERT INTO todo_item\
     (item_id, user_id, category_id, item_desc,time_created,is_completed,is_active,is_public, notes)\
-     VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *'
+     VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *'
     query_values = [uuid(), userId, categoryId, toDoItemName, timeSubmitted, false, true, true, notes]
+    try {
+        await db.query(query_text, query_values)
+        return 1
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
+async function editTodoItem(userId, toDoItemName, categoryId, notes, oldToDoName) {
+    query_text = 'UPDATE todo_item\
+    SET item_desc = $1, category_id = $2,notes = $3\
+    WHERE user_id = $4 AND item_desc = $5;'
+    query_values = [toDoItemName, categoryId, notes, userId, oldToDoName]
     try {
         await db.query(query_text, query_values)
         return 1
@@ -39,5 +52,5 @@ async function getTodoItems(userId) {
 }
 
 module.exports = {
-    addTodoItem, getTodoItems, deleteTodoItem
+    addTodoItem, getTodoItems, deleteTodoItem, editTodoItem
 }
