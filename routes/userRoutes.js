@@ -61,6 +61,17 @@ router.get('/friends', async (req, res) => {
     }
 })
 
+router.patch('/self_user/points', async (req, res) => {
+    const user_id = req.user_id
+    const { pointsToAdd } = req.body
+    try {
+        newPoints = await user.addPoints(user_id, pointsToAdd)
+        res.send(newPoints)
+    } catch (err) {
+        return res.status(422).send(err.message)
+    }
+})
+
 router.patch('/changePasswordApp', async (req, res) => {
     const user_id = req.user_id
     const { oldPassword, newPassword } = req.body;

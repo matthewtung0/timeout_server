@@ -145,6 +145,13 @@ async function validateAndResetPassword(token, password) {
 
 }
 
+async function addPoints(userId, pointsToAdd) {
+    query_text = 'UPDATE user_timeout SET points = points + $1 where user_id = $2 RETURNING points;'
+    query_values = [pointsToAdd, userId]
+    const { rows } = await db.query(query_text, query_values);
+    return rows;
+}
+
 async function deleteAll(userId) {
     query_values = [userId]
     query_text1 = 'DELETE FROM activity WHERE user_id = $1;'
@@ -161,5 +168,5 @@ async function deleteAll(userId) {
 module.exports = {
     set_user_info, hash_pw, get_user_info, updateInfo,
     comparePassword, validateAndResetPassword, getInfoFromId,
-    updatePassword, getCredentialsFromId, deleteAll
+    updatePassword, getCredentialsFromId, deleteAll, addPoints,
 }
