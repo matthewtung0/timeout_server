@@ -72,9 +72,15 @@ async function getInfoFromId(userId) {
     query_text = 'SELECT * FROM user_timeout WHERE user_id = $1;'
     query_values = [userId]
     const { rows } = await db.query(query_text, query_values);
+    console.log("rows is", rows)
+    query_text2 = 'SELECT count(time_start) as num_tasks, \
+    sum(time_end - time_start) as total_time from activity where user_id = $1;'
+
+    const { rows: statsRow } = await db.query(query_text2, query_values);
+    console.log("rows2 is", statsRow)
     user_info = rows[0]
 
-    return user_info
+    return { user_info, user_stats: statsRow[0] }
 }
 
 async function getCredentialsFromId(userId) {

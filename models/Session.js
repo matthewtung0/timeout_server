@@ -28,6 +28,17 @@ async function set_user_session(chosenCategory, chosenCatId, customActivity, ses
     }
 }
 
+async function getSessionBatch(startIndex, batchSize) {
+    query_text = 'SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c\
+    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    ORDER BY time_start desc \
+    OFFSET $1 ROWS \
+    FETCH NEXT $2 ROWS ONLY;'
+    query_values = [startIndex, batchSize]
+    const { rows } = await db.query(query_text, query_values)
+    return rows
+}
+
 async function getAllSessions() {
     query_text = 'SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c \
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
@@ -37,6 +48,16 @@ async function getAllSessions() {
     return rows
 }
 
+async function getTotalSessionCount(userId) {
+    query_text = 'SELECT count(time_start) as num_tasks, \
+    sum(time_end - time_start) as total_time from activity where user_id = $1;'
+    query_values = [userId]
+    const { rows } = await db.query(query_text, query_values);
+    return rows
+}
+
+
+
 module.exports = {
-    set_user_session, get_day_session, getAllSessions,
+    set_user_session, get_day_session, getAllSessions, getSessionBatch
 }

@@ -9,6 +9,7 @@ router.get('/self_user', async (req, res) => {
     const user_id = req.user_id
     try {
         user_info = await user.getInfoFromId(user_id)
+        console.log("SENDING THIS USER INFO", user_info)
         res.send(user_info);
     } catch (err) {
         return res.status(422).send(err.message);

@@ -9,8 +9,16 @@ router.use(requireAuth)
 
 router.get('/session', async (req, res) => {
     const user_id = req.user_id
+    const startIndex = req.query.startIndex
+    console.log("start index is", startIndex);
     try {
-        const rows = await session.getAllSessions();
+        var rows = undefined
+        if (startIndex) {
+            rows = await session.getSessionBatch(startIndex, 10);
+        } else {
+            rows = await session.getSessionBatch(0, 10);
+        }
+
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem retrieving session feed:")

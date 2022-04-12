@@ -10,7 +10,7 @@ router.get('/category', async (req, res) => {
     const user_id = req.user_id
     try {
         let results = await category.getUserCategories(user_id)
-        console.log("Categories to send to client:", results);
+        //console.log("Categories to send to client:", results);
         res.status(200).send(results)
     } catch (err) {
         console.log("Problem retrieving categories for user", user_id)
