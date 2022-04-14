@@ -10,14 +10,20 @@ router.use(requireAuth)
 router.get('/session', async (req, res) => {
     const user_id = req.user_id
     const startIndex = req.query.startIndex
+    const selfOnly = req.query.selfOnly
+    var start = 0
+    if (startIndex) {
+        start = startIndex;
+    } else {
+        start = 0;
+    }
+
     console.log("start index is", startIndex);
     try {
         var rows = undefined
-        if (startIndex) {
-            rows = await session.getSessionBatch(startIndex, 10);
-        } else {
-            rows = await session.getSessionBatch(0, 10);
-        }
+        selfOnly ?
+            rows = await session.getSelfSessionsBatch(start, 10, user_id) :
+            rows = await session.getSessionBatch(start, 10);
 
         res.status(200).send(rows)
     } catch (err) {

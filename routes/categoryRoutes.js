@@ -32,6 +32,23 @@ router.post('/category', async (req, res) => {
     }
 })
 
+router.patch('/category', async (req, res) => {
+    const user_id = req.user_id
+    const { categoryId, archived, colorId } = req.body
+    try {
+        if (archived) {
+            await category.setArchive(user_id, categoryId, archived)
+        } else if (colorId) {
+            await category.setColor(user_id, categoryId, colorId)
+        }
+
+        res.status(200).send()
+    } catch (err) {
+        console.log(err.stack)
+        res.status(403).send({ error: "Error adding category!" })
+    }
+})
+
 router.delete('/category', async (req, res) => {
     const user_id = req.user_id
     const { categoryId } = req.body
