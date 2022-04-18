@@ -1,6 +1,7 @@
 const db = require('../db')
 const uuid = require('uuid-random');
 const bcrypt = require('bcrypt')
+const format = require('pg-format')
 
 async function hash_pw(password) {
     const salt = await bcrypt.genSalt(10);
@@ -9,7 +10,7 @@ async function hash_pw(password) {
     return password;
 };
 
-async function set_user_info(email, password, username, firstName, lastName, user_id) {
+async function set_user_info(email, password, username, firstName, lastName, user_id, chosenCategories) {
     console.log("TRYING TO SET USER INFO");
 
     const client = await db.connect()
@@ -24,8 +25,10 @@ async function set_user_info(email, password, username, firstName, lastName, use
             try {
                 let friend_code = generateFriendCode()
                 console.log("TRying with fc", friend_code);
-                user_query_text = 'INSERT INTO user_timeout(user_id, first_name,last_name,username, time_created,last_signin,friend_code) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *'
-                user_query_values = [user_id, firstName, lastName, username, dt_now, dt_now, friend_code]
+                user_query_text = 'INSERT INTO user_timeout(\
+                    user_id, first_name,last_name,username, time_created,last_signin,friend_code,points) \
+                    VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *'
+                user_query_values = [user_id, firstName, lastName, username, dt_now, dt_now, friend_code, 0]
                 const res = await db.query(user_query_text, user_query_values)
                 // it is a success
                 insert_result = 1
@@ -39,6 +42,14 @@ async function set_user_info(email, password, username, firstName, lastName, use
         creds_query_text = 'INSERT INTO user_credential(user_id, password, email) VALUES($1,$2,$3) RETURNING *'
         creds_query_values = [user_id, password, email]
         await db.query(creds_query_text, creds_query_values)
+
+        db.query(format('INSERT INTO category\
+        (category_id, user_id, category_name, time_created, color_id, public, archived) VALUES %L', chosenCategories),
+            [], (err, result) => {
+                console.log(err)
+                console.log(result)
+            })
+
         await client.query('COMMIT')
 
         console.log("client committed")
@@ -79,8 +90,10 @@ async function getInfoFromId(userId) {
     const { rows: statsRow } = await db.query(query_text2, query_values);
     console.log("rows2 is", statsRow)
     user_info = rows[0]
+    user_stats = statsRow[0]
+    if (!user_stats['total_time']) { user_stats['total_time'] = 0 }
 
-    return { user_info, user_stats: statsRow[0] }
+    return { user_info, user_stats }
 }
 
 async function getCredentialsFromId(userId) {

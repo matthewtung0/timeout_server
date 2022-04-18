@@ -1,11 +1,11 @@
 const db = require('../db')
 const uuid = require('uuid-random');
 
-async function addCategory(userId, categoryName, chosenColor, timeSubmitted) {
+async function addCategory(userId, categoryName, chosenColor, isPublic, timeSubmitted) {
     query_text = 'INSERT INTO category(category_id, user_id, category_name, \
         color_id, time_created, public, archived) \
     VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *'
-    query_values = [uuid(), userId, categoryName, chosenColor, timeSubmitted, true, false]
+    query_values = [uuid(), userId, categoryName, chosenColor, timeSubmitted, isPublic, false]
     try {
         await db.query(query_text, query_values)
         return 1
@@ -27,8 +27,8 @@ async function deleteCategory(userId, categoryId) {
 
 async function getUserCategories(userId) {
     query_text = 'SELECT * FROM category WHERE \
-    user_id = $1 OR user_id = $2 OR user_id = $3 OR user_id = $4 OR user_id = $5'
-    query_values = [userId, '1', '2', '3', '4']
+    user_id = $1 OR user_id = $2'
+    query_values = [userId, '3'] //3 is unsorted
     try {
         const { rows } = await db.query(query_text, query_values)
         return rows

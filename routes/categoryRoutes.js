@@ -21,9 +21,9 @@ router.get('/category', async (req, res) => {
 
 router.post('/category', async (req, res) => {
     const user_id = req.user_id
-    const { categoryName, timeSubmitted, chosenColor } = req.body
+    const { categoryName, timeSubmitted, chosenColor, isPublic } = req.body
     try {
-        await category.addCategory(user_id, categoryName, chosenColor, timeSubmitted)
+        await category.addCategory(user_id, categoryName, chosenColor, isPublic, timeSubmitted)
         res.status(200).send()
     } catch (err) {
         console.log("Problem adding category for user", user_id)

@@ -83,13 +83,26 @@ router.post('/forgot_password', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
     console.log("CALLED SIGNUP SERVER")
-    const { email, password, username, firstName, lastName } = req.body;
+    const { email, password, username, firstName, lastName, categoryArr } = req.body;
+
+    //INSERT INTO category(category_id, user_id, category_name, time_created, color_id, public, archived)
 
     try {
         //const user = new User( {email, password} );
         hashed_pw = await user.hash_pw(password)
         let user_id = uuid()
-        await user.set_user_info(email, hashed_pw, username, firstName, lastName, user_id);
+
+        //format categoryArr into user's chosen categories
+        let chosenCategories = []
+        for (let i = 0; i < categoryArr.length; i++) {
+            if (categoryArr[i][2]) { // if user chose this
+                chosenCategories.push([uuid(), user_id, categoryArr[i][1], new Date(),
+                categoryArr[i][3], true, false])
+            }
+        }
+        console.log("these chosen categorie:", chosenCategories);
+
+        await user.set_user_info(email, hashed_pw, username, firstName, lastName, user_id, chosenCategories);
         console.log("user_id set for token is", user_id)
         const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY');
         res.status(200).send({ token });
@@ -111,6 +124,8 @@ router.post('/signin', async (req, res) => {
     correct_pw = user_info['password']
     user_id = user_info['user_id']
 
+    console.log("user id gotten", user_info)
+
 
     if (!user) {
         return res.status(422).send({ error: 'invalid password or email' });
@@ -118,6 +133,7 @@ router.post('/signin', async (req, res) => {
     try {
         await user.comparePassword(password, correct_pw);
         const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY')
+        console.log("Sending this token", token)
         res.send({ token })
     } catch (err) {
         return res.status(422).send({ error: 'invalid password or email' });

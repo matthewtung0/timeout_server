@@ -1,5 +1,6 @@
 const db = require('../db')
 const uuid = require('uuid-random');
+const format = require('pg-format')
 
 async function get_day_session(startRange, endRange, userEmail) {
     query_text = 'SELECT a.*, c.category_name, c.color_id FROM activity a, category c\
@@ -13,8 +14,9 @@ async function get_day_session(startRange, endRange, userEmail) {
 async function set_user_session(chosenCategory, chosenCatId, customActivity, sessionStartTime, sessionEndTime,
     endEarlyFlag, prodRating, user_id) {
     console.log("TRYING TO SET SESSION");
-    query_text = 'INSERT INTO activity(activity_id,user_id,cat_id,time_start,time_end,prod_rating,activity_name,end_early) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *'
-    query_values = [uuid(), user_id, chosenCatId, sessionStartTime, sessionEndTime, prodRating, customActivity, endEarlyFlag]
+    query_text = 'INSERT INTO activity(activity_id,user_id,cat_id,time_start,time_end,prod_rating,activity_name,end_early, reaction_count) \
+    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *'
+    query_values = [uuid(), user_id, chosenCatId, sessionStartTime, sessionEndTime, prodRating, customActivity, endEarlyFlag, 0]
     try {
         const res = await db.query(query_text, query_values)
         return 1
@@ -28,18 +30,23 @@ async function set_user_session(chosenCategory, chosenCatId, customActivity, ses
     }
 }
 
-async function getSessionBatch(startIndex, batchSize) {
-    query_text = 'SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c\
+async function getSessionBatch(startIndex, batchSize, friends) {
+    /*query_text1 = format('SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c\
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    and a.user_id = any($1::int[])',[friends])*/
+    query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
+    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    and a.user_id = any($3) \
     ORDER BY time_start desc \
     OFFSET $1 ROWS \
     FETCH NEXT $2 ROWS ONLY;'
-    query_values = [startIndex, batchSize]
+    query_values = [startIndex, batchSize, [friends]]
     const { rows } = await db.query(query_text, query_values)
     return rows
 }
 
 async function getSelfSessionsBatch(startIndex, batchSize, userId) {
+    console.log("what??")
     query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id AND a.user_id = $3 \
     ORDER BY time_start desc \

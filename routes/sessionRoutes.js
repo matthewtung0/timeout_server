@@ -8,9 +8,18 @@ const router = new Router();
 router.use(requireAuth)
 
 router.get('/session', async (req, res) => {
+    console.log("GET SESSION");
     const user_id = req.user_id
     const startIndex = req.query.startIndex
-    const selfOnly = req.query.selfOnly
+
+    //list of friend id's
+    let friends = req.query.friends
+
+    if (friends) {
+        friends.push(user_id)
+    } else { friends = [user_id] }
+    console.log(friends)
+
     var start = 0
     if (startIndex) {
         start = startIndex;
@@ -21,9 +30,9 @@ router.get('/session', async (req, res) => {
     console.log("start index is", startIndex);
     try {
         var rows = undefined
-        selfOnly ?
-            rows = await session.getSelfSessionsBatch(start, 10, user_id) :
-            rows = await session.getSessionBatch(start, 10);
+        //rows = await session.getSelfSessionsBatch(start, 10, user_id)
+        rows = await session.getSessionBatch(start, 10, friends);
+        console.log("all good", rows)
 
         res.status(200).send(rows)
     } catch (err) {
