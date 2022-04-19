@@ -32,8 +32,6 @@ router.get('/session', async (req, res) => {
         var rows = undefined
         //rows = await session.getSelfSessionsBatch(start, 10, user_id)
         rows = await session.getSessionBatch(start, 10, friends);
-        console.log("all good", rows)
-
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem retrieving session feed:")

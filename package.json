@@ -16,6 +16,7 @@
     "express": "^4.17.3",
     "express-promise-router": "^4.1.1",
     "googleapis": "^96.0.0",
+    "images": "^3.2.4",
     "jsonwebtoken": "^8.5.1",
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.15",

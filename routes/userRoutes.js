@@ -1,6 +1,9 @@
 const user = require('../models/User');
+const Avatar = require('../models/Avatar')
 const Router = require('express-promise-router');
 const requireAuth = require('../middlewares/requireAuth');
+const fs = require('fs')
+const images = require('images');
 
 const router = new Router();
 router.use(requireAuth);
@@ -11,6 +14,41 @@ router.get('/self_user', async (req, res) => {
         user_info = await user.getInfoFromId(user_id)
         console.log("SENDING THIS USER INFO", user_info)
         res.send(user_info);
+    } catch (err) {
+        return res.status(422).send(err.message);
+    }
+})
+
+router.get('/avatar', async (req, res) => {
+    const user_id = req.user_id
+    try {
+        //console.time('stichDefaut')
+        //await Avatar.stitchDefault()
+        //console.timeEnd('stichDefaut')
+        var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
+        const file = d + 'imagesTesting1.png'
+        var type = 'image/png'
+        /*var s = fs.createReadStream(file)
+        s.on('open', function () {
+            res.set('Content-Type', 'image/png')
+            s.pipe(res)
+        })*/
+
+
+
+        //var img = Buffer.from(file, 'base64')
+        var img = fs.readFileSync(file, { encoding: 'base64' })
+        console.log(img)
+        //console.log(img.length)
+        res.writeHead(200, {
+            'Content-Type': 'image/png',
+            //'Content-Length': img.length
+        })
+        res.end(img)
+
+        //user_info = await Avatar.getInfoFromId(user_id)
+        //console.log("SENDING THIS USER INFO", user_info)
+        //res.send(user_info);
     } catch (err) {
         return res.status(422).send(err.message);
     }

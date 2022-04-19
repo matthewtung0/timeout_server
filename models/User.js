@@ -80,6 +80,7 @@ async function get_user_info(given_email) {
 }
 
 async function getInfoFromId(userId) {
+
     query_text = 'SELECT * FROM user_timeout WHERE user_id = $1;'
     query_values = [userId]
     const { rows } = await db.query(query_text, query_values);
@@ -187,5 +188,5 @@ async function deleteAll(userId) {
 module.exports = {
     set_user_info, hash_pw, get_user_info, updateInfo,
     comparePassword, validateAndResetPassword, getInfoFromId,
-    updatePassword, getCredentialsFromId, deleteAll, addPoints,
+    updatePassword, getCredentialsFromId, deleteAll, addPoints
 }
