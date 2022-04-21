@@ -132,7 +132,12 @@ router.post('/signin', async (req, res) => {
     }
     try {
         await user.comparePassword(password, correct_pw);
+
+
         const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY')
+
+        await user.updateLastSignin(user_id)
+
         console.log("Sending this token", token)
         res.send({ token })
     } catch (err) {

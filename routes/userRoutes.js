@@ -111,6 +111,17 @@ router.patch('/self_user/points', async (req, res) => {
     }
 })
 
+router.patch('/self_user/lastsignin', async (req, res) => {
+    const user_id = req.user_id
+    try {
+        await user.updateLastSignin(user_id)
+        return res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message)
+    }
+})
+
 router.patch('/changePasswordApp', async (req, res) => {
     const user_id = req.user_id
     const { oldPassword, newPassword } = req.body;
