@@ -79,22 +79,53 @@ async function get_user_info(given_email) {
     return user_info
 }
 
+function reformatBasicInfo(r) {
+    let { user_id, first_name, last_name, username, friend_code, points, bio } = r
+    return { user_id, first_name, last_name, username, friend_code, points, bio }
+}
+
+function reformatAvatarInfo(r) {
+    let avatarItems = {
+        face: { mouth: r.mouth, eyes: r.eyes, makeup: r.makeup, eyebrows: r.eyebrows, base: r.base, },
+        accessories: { glasses: r.glasses, piercings: r.piercings, accessories: r.accessories, hairAccessories: r.hairaccessories },
+        clothing: { outerwear: r.outerwear, top: r.top, under: r.under },
+        hair: { front: r.hairfront, back: r.hairback, side: r.hairside, general: r.hair },
+        background: r.background,
+        overlay: r.overlay
+    }
+    let avatarColors = {
+        face: { mouth: r.mouthc, eyes: r.eyesc, eyebrows: r.eyebrowsc, base: r.basec },
+        accessories: { piercings: r.piercingsc, hairAccessories: r.hairaccessoriesc },
+        clothing: { outerwear: r.outerwearc, top: r.outerwearc, under: r.outerwearc },
+        hair: { front: r.hairc, back: r.hairc, side: r.hairc, general: r.hairc, }
+    }
+    let hasItems = {
+        hasOuterwear: r.hasouterwear, hasTop: r.hastop, hasGlasses: r.hasglasses, hasPiercings: r.haspiercings,
+        hasHairFront: r.hashairfront, hasHairBack: r.hashairback, hasHairSide: r.hashairside,
+        hasMakeup: r.hasmakeup, hasHairAccessories: r.hashairaccessories, hasAccessories: r.hasaccessories
+    }
+    return { avatarItems, avatarColors, hasItems }
+
+}
+
 async function getInfoFromId(userId) {
 
-    query_text = 'SELECT * FROM user_timeout WHERE user_id = $1;'
+    query_text = 'SELECT *\
+     FROM user_timeout WHERE user_id = $1;'
     query_values = [userId]
     const { rows } = await db.query(query_text, query_values);
-    console.log("rows is", rows)
+    //console.log("rows is", rows)
     query_text2 = 'SELECT count(time_start) as num_tasks, \
     sum(time_end - time_start) as total_time from activity where user_id = $1;'
 
     const { rows: statsRow } = await db.query(query_text2, query_values);
     console.log("rows2 is", statsRow)
-    user_info = rows[0]
+    user_info = reformatBasicInfo(rows[0])
     user_stats = statsRow[0]
+    user_avatar = reformatAvatarInfo(rows[0])
     if (!user_stats['total_time']) { user_stats['total_time'] = 0 }
 
-    return { user_info, user_stats }
+    return { user_info, user_stats, user_avatar }
 }
 
 async function getCredentialsFromId(userId) {

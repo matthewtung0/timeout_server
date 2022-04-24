@@ -12,7 +12,7 @@ router.get('/self_user', async (req, res) => {
     const user_id = req.user_id
     try {
         user_info = await user.getInfoFromId(user_id)
-        console.log("SENDING THIS USER INFO", user_info)
+        //console.log("SENDING THIS USER INFO", user_info)
         res.send(user_info);
     } catch (err) {
         return res.status(422).send(err.message);
@@ -26,15 +26,13 @@ router.get('/avatar', async (req, res) => {
         //await Avatar.stitchDefault()
         //console.timeEnd('stichDefaut')
         var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
-        const file = d + 'imagesTesting1.png'
+        const file = d + user_id + '_avatar.png'
         var type = 'image/png'
         /*var s = fs.createReadStream(file)
         s.on('open', function () {
             res.set('Content-Type', 'image/png')
             s.pipe(res)
         })*/
-
-
 
         //var img = Buffer.from(file, 'base64')
         var img = fs.readFileSync(file, { encoding: 'base64' })
@@ -120,6 +118,43 @@ router.patch('/self_user/lastsignin', async (req, res) => {
         console.log(err)
         return res.status(422).send(err.message)
     }
+})
+
+router.post('/self_user/avatar', async (req, res) => {
+    const user_id = req.user_id
+    console.log("setting avatar")
+
+    const { items, colors, hasItems } = req.body
+    console.log(items)
+    console.log(colors)
+    console.log(hasItems)
+    try {
+        await Avatar.saveUserAvatar(user_id, items, colors, hasItems)
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message)
+    }
+    // generate the image and save it
+    try {
+        await Avatar.generateAvatarFromData({ avatarItems: items, avatarColors: colors, hasItems }, user_id)
+        console.log("generating done")
+
+        // send back the updated avatar
+
+        var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
+        const file = d + user_id + '_avatar.png'
+        var img = fs.readFileSync(file, { encoding: 'base64' })
+
+        res.writeHead(200, {
+            'Content-Type': 'image/png',
+        })
+        res.end(img)
+        //return res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message)
+    }
+
 })
 
 router.patch('/changePasswordApp', async (req, res) => {
