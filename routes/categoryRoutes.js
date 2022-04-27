@@ -6,15 +6,22 @@ const router = new Router();
 router.use(requireAuth);
 
 router.get('/category', async (req, res) => {
-    console.log("trying to get categories");
+    let username = req.query.username
+    let id = req.query.id
+    let getPrivate = req.query.getPrivate
     const user_id = req.user_id
+
+    // no id passed means getting self
+    if (typeof (id) == 'undefined') id = user_id
     try {
-        let results = await category.getUserCategories(user_id)
-        //console.log("Categories to send to client:", results);
+        if (typeof (id) != 'undefined') {
+            results = await category.getUserCategories(id, getPrivate)
+        } else {
+            results = await category.getCategoryByUsername(username, getPrivate)
+        }
         res.status(200).send(results)
     } catch (err) {
-        console.log("Problem retrieving categories for user", user_id)
-        console.log(err.stack)
+        console.log("Problem retrieving categories for user", err)
         return res.status(403).send({ error: "Probably retrieving user categories!" });
     }
 })

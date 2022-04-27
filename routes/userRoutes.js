@@ -14,19 +14,44 @@ router.get('/self_user', async (req, res) => {
         user_info = await user.getInfoFromId(user_id)
         //console.log("SENDING THIS USER INFO", user_info)
         res.send(user_info);
+    } catch (err) { return res.status(422).send(err.message); }
+})
+
+router.get('/user/stats', async (req, res) => {
+    let username = req.query.username
+    let id = req.query.id
+    try {
+        console.log("Trying with username" + username + " and id " + id)
+        if (typeof (id) != 'undefined') {
+            user_stats = await user.getStatsFromId(id)
+        } else {
+            user_stats = await user.getStatsFromUsername(username)
+        }
+
+        res.send(user_stats)
     } catch (err) {
-        return res.status(422).send(err.message);
+        console.log(err)
+        return res.status(422).send(err.message)
     }
 })
 
 router.get('/avatar', async (req, res) => {
     const user_id = req.user_id
+    var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
+    //list of friend id's
+    let friend_id = req.query.friend
+    console.log("Friends is ", friend_id)
+    let file = ''
     try {
-        //console.time('stichDefaut')
-        //await Avatar.stitchDefault()
-        //console.timeEnd('stichDefaut')
-        var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
-        const file = d + user_id + '_avatar.png'
+        if (typeof (friend_id) !== 'undefined') {
+            console.log("yes friends id")
+            file = d + friend_id + '_avatar.png'
+        } else {
+            console.log("no friends id")
+            file = d + user_id + '_avatar.png'
+        }
+        console.log("writing file", file)
+
         var type = 'image/png'
         /*var s = fs.createReadStream(file)
         s.on('open', function () {
@@ -36,7 +61,7 @@ router.get('/avatar', async (req, res) => {
 
         //var img = Buffer.from(file, 'base64')
         var img = fs.readFileSync(file, { encoding: 'base64' })
-        console.log(img)
+        //console.log(img)
         //console.log(img.length)
         res.writeHead(200, {
             'Content-Type': 'image/png',
@@ -48,6 +73,19 @@ router.get('/avatar', async (req, res) => {
         //console.log("SENDING THIS USER INFO", user_info)
         //res.send(user_info);
     } catch (err) {
+        // send generic one as fallback
+        try {
+            var img = fs.readFileSync(d + 'imagesTesting1.png', { encoding: 'base64' })
+            res.writeHead(200, {
+                'Content-Type': 'image/png',
+                //'Content-Length': img.length
+            })
+            res.end(img)
+        } catch (err) {
+            return 0
+            return res.status(422).send(err.message);
+        }
+        return 0
         return res.status(422).send(err.message);
     }
 })

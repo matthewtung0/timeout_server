@@ -7,8 +7,35 @@ const requireAuth = require('../middlewares/requireAuth');
 const router = new Router();
 router.use(requireAuth)
 
+// for profile use only
 router.get('/session', async (req, res) => {
-    console.log("GET SESSION");
+    let username = req.query.username
+    let id = req.query.id
+    let getPrivate = req.query.getPrivate
+    const user_id = req.user_id
+    const startIndex = req.query.startIndex
+
+    var start = 0
+    if (typeof (startIndex) != 'undefined') { start = startIndex } else { start = 0; }
+
+    console.log("start index is", startIndex);
+    try {
+        var rows = undefined
+
+        if (typeof (id) != 'undefined') {
+            rows = await session.getSessionBatch(start, 10, id);
+        } else {
+            rows = await session.getSessionBatchByUsername(start, 10, username);
+        }
+        res.status(200).send(rows)
+    } catch (err) {
+        console.log("Problem retrieving session feed:", err)
+        return res.status(403).send({ error: "Probably retrieving session feed!" });
+    }
+})
+
+
+router.get('/sessionFeed', async (req, res) => {
     const user_id = req.user_id
     const startIndex = req.query.startIndex
 
@@ -18,7 +45,6 @@ router.get('/session', async (req, res) => {
     if (friends) {
         friends.push(user_id)
     } else { friends = [user_id] }
-    console.log(friends)
 
     var start = 0
     if (startIndex) {
@@ -27,18 +53,21 @@ router.get('/session', async (req, res) => {
         start = 0;
     }
 
-    console.log("start index is", startIndex);
     try {
         var rows = undefined
         //rows = await session.getSelfSessionsBatch(start, 10, user_id)
         rows = await session.getSessionBatch(start, 10, friends);
         res.status(200).send(rows)
     } catch (err) {
-        console.log("Problem retrieving session feed:")
-        console.log(err.stack)
+        console.log("Problem retrieving session feed:", err)
         return res.status(403).send({ error: "Probably retrieving session feed!" });
     }
 })
+
+
+
+
+
 
 router.get('/daySessions', async (req, res) => {
     const startRange = req.query.startTime

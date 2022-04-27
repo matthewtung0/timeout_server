@@ -96,7 +96,7 @@ function reformatAvatarInfo(r) {
     let avatarColors = {
         face: { mouth: r.mouthc, eyes: r.eyesc, eyebrows: r.eyebrowsc, base: r.basec },
         accessories: { piercings: r.piercingsc, hairAccessories: r.hairaccessoriesc },
-        clothing: { outerwear: r.outerwearc, top: r.outerwearc, under: r.outerwearc },
+        clothing: { outerwear: r.outerwearc, top: r.topc, under: r.underc },
         hair: { front: r.hairc, back: r.hairc, side: r.hairc, general: r.hairc, }
     }
     let hasItems = {
@@ -106,6 +106,28 @@ function reformatAvatarInfo(r) {
     }
     return { avatarItems, avatarColors, hasItems }
 
+}
+
+async function getStatsFromId(userId) {
+    query_values = [userId]
+    query_text = 'SELECT count(a.time_start) as num_tasks, \
+    u.username, u.time_created, u.last_signin, u.bio, \
+    sum(a.time_end - a.time_start) as total_time from activity a, user_timeout u \
+    WHERE a.user_id = u.user_id AND u.user_id = $1 \
+    GROUP BY u.username, u.time_created, u.last_signin, u.bio;'
+    const { rows: statsRow } = await db.query(query_text, query_values);
+    return statsRow[0]
+}
+
+async function getStatsFromUsername(username) {
+    query_value = [username]
+    query_text = 'SELECT count(a.time_start) as num_tasks, sum(a.time_end - a.time_start) as total_time,\
+    u.username, u.time_created, u.last_signin, u.bio \
+    FROM activity a, user_timeout u \
+    WHERE a.user_id = a.user_id AND u.username = $1 \
+    GROUP BY u.username, u.time_created, u.last_signin, u.bio;'
+    const { rows: statsRow } = await db.query(query_text, query_values);
+    return statsRow[0]
 }
 
 async function getInfoFromId(userId) {
@@ -193,7 +215,6 @@ async function validateAndResetPassword(token, password) {
     } catch (err) {
         console.log(err)
     }
-
 }
 
 async function addPoints(userId, pointsToAdd) {
@@ -226,5 +247,6 @@ async function deleteAll(userId) {
 module.exports = {
     set_user_info, hash_pw, get_user_info, updateInfo,
     comparePassword, validateAndResetPassword, getInfoFromId,
-    updatePassword, getCredentialsFromId, deleteAll, addPoints, updateLastSignin
+    updatePassword, getCredentialsFromId, deleteAll, addPoints, updateLastSignin,
+    getStatsFromId, getStatsFromUsername
 }

@@ -45,8 +45,19 @@ async function getSessionBatch(startIndex, batchSize, friends) {
     return rows
 }
 
+async function getSessionBatchByUsername(startIndex, batchSize, usernames) {
+    query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
+    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    and b.username = any($3) \
+    ORDER BY time_start desc \
+    OFFSET $1 ROWS \
+    FETCH NEXT $2 ROWS ONLY;'
+    query_values = [startIndex, batchSize, [usernames]]
+    const { rows } = await db.query(query_text, query_values)
+    return rows
+}
+
 async function getSelfSessionsBatch(startIndex, batchSize, userId) {
-    console.log("what??")
     query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id AND a.user_id = $3 \
     ORDER BY time_start desc \
@@ -77,5 +88,7 @@ async function getTotalSessionCount(userId) {
 
 
 module.exports = {
-    set_user_session, get_day_session, getAllSessions, getSessionBatch, getSelfSessionsBatch
+    set_user_session, get_day_session, getAllSessions, getSessionBatch, getSelfSessionsBatch,
+    getSessionBatchByUsername,
+
 }

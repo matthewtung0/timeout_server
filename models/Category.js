@@ -25,9 +25,29 @@ async function deleteCategory(userId, categoryId) {
     }
 }
 
-async function getUserCategories(userId) {
+async function getCategoryByUsername(username, getPrivate) {
+    query_text = 'SELECT c.* FROM category c, user_timeout u WHERE \
+    (u.username = $1 AND u.user_id = c.user_id) OR c.user_id = $2'
+    query_addendum = ' AND public = TRUE;'
+
+    if (!getPrivate) query_text = query_text + query_addendum
+
+    query_values = [username, '3'] //3 is unsorted
+    try {
+        const { rows } = await db.query(query_text, query_values)
+        return rows
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
+async function getUserCategories(userId, getPrivate) {
     query_text = 'SELECT * FROM category WHERE \
-    user_id = $1 OR user_id = $2'
+    (user_id = $1 OR user_id = $2)'
+    query_addendum = ' AND public = TRUE;'
+
+    if (!getPrivate) query_text = query_text + query_addendum
+
     query_values = [userId, '3'] //3 is unsorted
     try {
         const { rows } = await db.query(query_text, query_values)
@@ -62,5 +82,5 @@ async function setColor(user_id, categoryId, colorId) {
 }
 
 module.exports = {
-    addCategory, getUserCategories, deleteCategory, setColor, setArchive
+    addCategory, getUserCategories, deleteCategory, setColor, setArchive, getCategoryByUsername
 }

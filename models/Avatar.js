@@ -119,7 +119,10 @@ async function generateAvatarFromData(avatarData, user_id) {
         userAvatar = userAvatar.draw(Images(wardrobe[i], 0, 0))
     }
 
-    userAvatar.save('generatedAvatarsTemp/' + user_id + '_avatar.png')
+
+    userAvatar
+        .size(400)
+        .save('generatedAvatarsTemp/' + user_id + '_avatar.png')
 }
 
 async function saveUserAvatar(user_id, items, colors, hasItems) {
