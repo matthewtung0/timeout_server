@@ -5,6 +5,7 @@ const interactionRoutes = require('./routes/interactionRoutes')
 const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
 const categoryRoutes = require('./routes/categoryRoutes')
+const counterRoutes = require('./routes/counterRoutes')
 const todoRoutes = require('./routes/todoRoutes')
 const friendRoutes = require('./routes/friendRoutes')
 const requireAuth = require('./middlewares/requireAuth')
@@ -19,6 +20,7 @@ app.use(interactionRoutes);
 app.use(userRoutes);
 app.use(friendRoutes);
 app.use(categoryRoutes);
+app.use(counterRoutes);
 app.use(todoRoutes);
 
 

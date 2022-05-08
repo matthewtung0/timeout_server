@@ -24,16 +24,27 @@ async function set_user_info(email, password, username, firstName, lastName, use
         while (insert_result != 1) {
             try {
                 let friend_code = generateFriendCode()
-                console.log("TRying with fc", friend_code);
+                console.log("Trying with fc", friend_code);
                 user_query_text = 'INSERT INTO user_timeout(\
-                    user_id, first_name,last_name,username, time_created,last_signin,friend_code,points) \
-                    VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *'
-                user_query_values = [user_id, firstName, lastName, username, dt_now, dt_now, friend_code, 0]
+                    user_id, first_name,last_name,username, time_created,last_signin,friend_code,points, \
+                    mouth,eyes,makeup,eyebrows,base,glasses,piercings,accessories,outerwear,top,under,hairfront,hairback,hairside,hair,background, \
+                    overlay,mouthc,eyesc,eyebrowsc,basec,piercingsc, outerwearc,topc, underc, hairc, hasouterwear, hastop, hasglasses,haspiercings, \
+                    hashairfront, hashairback, hashairside, hasmakeup, hairaccessories, hairaccessoriesc, hashairaccessories, hasaccessories) \
+                    VALUES($1,$2,$3,$4,$5,$6,$7,$8,\
+                    $9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46) RETURNING *'
+                user_query_values = [user_id, firstName, lastName, username, dt_now, dt_now, friend_code, 0,
+                    0, 0, 0, 0, 0,
+                    1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    false, false, false, false, true, true, true, false,
+                    0, 0,
+                    false, false
+                ]
                 const res = await db.query(user_query_text, user_query_values)
                 // it is a success
                 insert_result = 1
             } catch (err) {
-                console.log("problem signing up user_timeout table with code. trying again: ", err.code)
+                console.log("problem signing up user_timeout table with code. trying again: ", err)
                 insert_result = 0
             }
         }
@@ -61,6 +72,35 @@ async function set_user_info(email, password, username, firstName, lastName, use
         client.release()
         console.log("Returning user_id:");
     }
+}
+
+
+async function purchaseItems(user_id, items, points) {
+    // items format: [{item_cat_lvl_1, item_cat_lvl_2, item_id}, {} , etc.]
+    const client = await db.connect()
+    try {
+        await client.query('BEGIN')
+        db.query(format('INSERT INTO user_owned\
+        (user_id, item_id, time_created, item_cat_lvl_1, item_cat_lvl_2) VALUES %L', items),
+            [], (err, result) => {
+                console.log(err)
+                console.log(result)
+            })
+        // deduct points from user
+        query_text = 'UPDATE user_timeout SET points = points - $1 WHERE user_id = $2 RETURNING points;'
+        query_values = [points, user_id]
+        await db.query(query_text, query_values)
+
+        await client.query('COMMIT')
+        console.log("client committed")
+    } catch (e) {
+        await client.query('ROLLBACK')
+        console.log("Error setting user info transaction!", e.stack)
+    } finally {
+        console.log("client releasing");
+        client.release()
+    }
+
 }
 
 async function updatePassword(user_id, newPassword) {
@@ -105,17 +145,34 @@ function reformatAvatarInfo(r) {
         hasMakeup: r.hasmakeup, hasHairAccessories: r.hashairaccessories, hasAccessories: r.hasaccessories
     }
     return { avatarItems, avatarColors, hasItems }
+}
 
+function reformatAvatarOwnedInfo(rows) {
+    let avatarItemsOwned = {
+        face: { mouth: [], eyes: [], makeup: [], eyebrows: [], base: [], },
+        accessories: { glasses: [], piercings: [], accessories: [], hairAccessories: [], },
+        clothing: { outerwear: [], top: [], under: [], },
+        hair: { front: [], back: [], side: [], general: [], },
+        background: [], overlay: [],
+    }
+    for (var i = 0; i < rows.length; i++) {
+        var lvl1 = rows[i]['item_cat_lvl_1']
+        var lvl2 = rows[i]['item_cat_lvl_2']
+        var item_id = rows[i]['item_id']
+        avatarItemsOwned[lvl1][lvl2].push(item_id)
+    }
+    return avatarItemsOwned
 }
 
 async function getStatsFromId(userId) {
     query_values = [userId]
     query_text = 'SELECT count(a.time_start) as num_tasks, \
     u.username, u.time_created, u.last_signin, u.bio, \
-    sum(a.time_end - a.time_start) as total_time from activity a, user_timeout u \
-    WHERE a.user_id = u.user_id AND u.user_id = $1 \
+    sum(a.time_end - a.time_start) as total_time from user_timeout u LEFT OUTER JOIN activity a  \
+    ON a.user_id = u.user_id WHERE u.user_id = $1 \
     GROUP BY u.username, u.time_created, u.last_signin, u.bio;'
     const { rows: statsRow } = await db.query(query_text, query_values);
+    console.log("statsRow", statsRow)
     return statsRow[0]
 }
 
@@ -123,11 +180,29 @@ async function getStatsFromUsername(username) {
     query_value = [username]
     query_text = 'SELECT count(a.time_start) as num_tasks, sum(a.time_end - a.time_start) as total_time,\
     u.username, u.time_created, u.last_signin, u.bio \
-    FROM activity a, user_timeout u \
-    WHERE a.user_id = a.user_id AND u.username = $1 \
+    FROM user_timeout u LEFT OUTER JOIN activity a \
+    ON a.user_id = u.user_id WHERE u.username = $1 \
     GROUP BY u.username, u.time_created, u.last_signin, u.bio;'
     const { rows: statsRow } = await db.query(query_text, query_values);
     return statsRow[0]
+}
+
+async function getItemsOwnedFromId(userId) {
+    query_values = [userId]
+    query_text = 'SELECT * FROM user_owned WHERE user_id = $1;'
+    const { rows } = await db.query(query_text, query_values)
+    avatarItemsOwned = reformatAvatarOwnedInfo(rows)
+    console.log(avatarItemsOwned)
+    return avatarItemsOwned
+}
+
+async function getItemsOwnedFromUsername(username) {
+    query_value = [username]
+    query_text = 'SELECT a.* FROM user_owned a, user_timeout b \
+    WHERE a.user_id = b.user_id AND b.username = $1;'
+    const { rows } = await db.query(query_text, query_values)
+    avatarItemsOwned = reformatAvatarOwnedInfo(rows)
+    return avatarItemsOwned
 }
 
 async function getInfoFromId(userId) {
@@ -248,5 +323,6 @@ module.exports = {
     set_user_info, hash_pw, get_user_info, updateInfo,
     comparePassword, validateAndResetPassword, getInfoFromId,
     updatePassword, getCredentialsFromId, deleteAll, addPoints, updateLastSignin,
-    getStatsFromId, getStatsFromUsername
+    getStatsFromId, getStatsFromUsername, getItemsOwnedFromId, getItemsOwnedFromUsername,
+    purchaseItems
 }

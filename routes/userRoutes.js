@@ -4,6 +4,7 @@ const Router = require('express-promise-router');
 const requireAuth = require('../middlewares/requireAuth');
 const fs = require('fs')
 const images = require('images');
+const { publicDecrypt } = require('crypto');
 
 const router = new Router();
 router.use(requireAuth);
@@ -28,6 +29,8 @@ router.get('/user/stats', async (req, res) => {
             user_stats = await user.getStatsFromUsername(username)
         }
 
+        console.log("User stats to send to user", user_stats)
+
         res.send(user_stats)
     } catch (err) {
         console.log(err)
@@ -35,7 +38,50 @@ router.get('/user/stats', async (req, res) => {
     }
 })
 
-router.get('/avatar', async (req, res) => {
+router.post('/user/owned', async (req, res) => {
+    const user_id = req.user_id
+    const { itemArr } = req.body;
+    let points = 100001 // hundred thousand and one
+    try {
+        let chosenItems = []
+        for (let i = 0; i < itemArr.length; i++) {
+            chosenItems.push(
+                [user_id, itemArr[i].item_id, new Date(), itemArr[i].item_cat_lvl_1,
+                    itemArr[i].item_cat_lvl_2,])
+        }
+        await user.purchaseItems(user_id, chosenItems, points);
+
+        // after purchase, repull user items owned
+        user_items = await user.getItemsOwnedFromId(user_id)
+        res.status(200).send(user_items);
+    } catch (err) {
+        console.log(err)
+    }
+
+
+})
+
+router.get('/user/owned', async (req, res) => {
+    let username = req.query.username
+    //let id = req.query.id
+    let id = req.user_id
+    try {
+        console.log("Trying with username" + username + " and id " + id)
+        if (typeof (id) != 'undefined') {
+            user_items = await user.getItemsOwnedFromId(id)
+        } else {
+            user_items = await user.getItemsOwnedFromUsername(username)
+        }
+
+        res.send(user_items)
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message)
+    }
+})
+
+router.get('/avatar1', async (req, res) => {
+    console.log("------ GETTING AVATAR ----------")
     const user_id = req.user_id
     var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
     //list of friend id's
@@ -78,6 +124,7 @@ router.get('/avatar', async (req, res) => {
             var img = fs.readFileSync(d + 'imagesTesting1.png', { encoding: 'base64' })
             res.writeHead(200, {
                 'Content-Type': 'image/png',
+                'Cache-Control': 'public, max-age=1'
                 //'Content-Length': img.length
             })
             res.end(img)
