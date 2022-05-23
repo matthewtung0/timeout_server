@@ -39,6 +39,7 @@ router.post('/forgot_password', async (req, res) => {
     try {
         const access_token = await oauth2Client.getAccessToken()
     } catch (err) {
+        console.log(err)
         console.log("Error getting access token.");
     }
     const access_token = await oauth2Client.getAccessToken()
@@ -142,6 +143,26 @@ router.post('/signin', async (req, res) => {
         res.send({ token })
     } catch (err) {
         return res.status(422).send({ error: 'invalid password or email' });
+    }
+})
+
+router.get('/email_exists', async (req, res) => {
+    const email = req.query.email
+    try {
+        const count = await user.doesEmailExist(email);
+        res.status(200).send(count)
+    } catch (err) {
+        return res.status(422).send({ error: 'something went wrong' });
+    }
+})
+
+router.get('/username_exists', async (req, res) => {
+    const username = req.query.username
+    try {
+        const count = await user.doesUsernameExist(username);
+        res.status(200).send(count)
+    } catch (err) {
+        return res.status(422).send({ error: 'something went wrong' });
     }
 })
 

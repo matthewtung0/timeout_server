@@ -121,7 +121,7 @@ async function generateAvatarFromData(avatarData, user_id) {
 
 
     userAvatar
-        .size(400)
+        .size(200)
         .save('generatedAvatarsTemp/' + user_id + '_avatar.png')
 }
 

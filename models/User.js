@@ -306,6 +306,20 @@ async function updateLastSignin(userId) {
     return rows;
 }
 
+async function doesUsernameExist(username) {
+    query_text = 'SELECT count(*) FROM user_timeout where username = $1;'
+    query_values = [username]
+    const { rows } = await db.query(query_text, query_values);
+    return rows[0].count;
+}
+
+async function doesEmailExist(email) {
+    query_text = 'SELECT count(*) FROM user_credential where email = $1;'
+    query_values = [email]
+    const { rows } = await db.query(query_text, query_values);
+    return rows[0].count;
+}
+
 async function deleteAll(userId) {
     query_values = [userId]
     query_text1 = 'DELETE FROM activity WHERE user_id = $1;'
@@ -324,5 +338,5 @@ module.exports = {
     comparePassword, validateAndResetPassword, getInfoFromId,
     updatePassword, getCredentialsFromId, deleteAll, addPoints, updateLastSignin,
     getStatsFromId, getStatsFromUsername, getItemsOwnedFromId, getItemsOwnedFromUsername,
-    purchaseItems
+    purchaseItems, doesUsernameExist, doesEmailExist,
 }
