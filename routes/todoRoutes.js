@@ -46,8 +46,10 @@ router.put('/todoItem', async (req, res) => {
 
 router.delete('/todoItem', async (req, res) => {
     const user_id = req.user_id;
-    const { toDoId } = req.body;
+    //const { toDoId } = req.query;
+    const toDoId = req.query.toDoId
     try {
+        console.log("trying delete item with id", toDoId)
         await todoItem.deleteTodoItem(user_id, toDoId)
         res.status(200).send()
     } catch (err) {
