@@ -7,6 +7,20 @@ const requireAuth = require('../middlewares/requireAuth');
 const router = new Router();
 router.use(requireAuth)
 
+
+router.get('/session/:id', async (req, res) => {
+    let id = req.params.id
+    console.log("Getting /session with id", id)
+    try {
+        rows = await session.getSession(id);
+        console.log("Rows got", rows)
+        res.status(200).send(rows)
+    } catch (err) {
+        console.log("Problem retrieving sessions")
+        return res.status(403).send({ error: "Probably retrieving session" });
+    }
+})
+
 // for profile use only
 router.get('/session', async (req, res) => {
     let username = req.query.username
@@ -19,11 +33,13 @@ router.get('/session', async (req, res) => {
     if (typeof (startIndex) != 'undefined') { start = startIndex } else { start = 0; }
 
     console.log("start index is", startIndex);
+    console.log("user id is", id);
     try {
         var rows = undefined
 
         if (typeof (id) != 'undefined') {
             rows = await session.getSessionBatch(start, 10, id);
+            console.log("Results:", rows);
         } else {
             rows = await session.getSessionBatchByUsername(start, 10, username);
         }

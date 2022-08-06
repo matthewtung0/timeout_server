@@ -3,9 +3,9 @@ const uuid = require('uuid-random');
 
 async function addCategory(userId, categoryName, chosenColor, isPublic, timeSubmitted) {
     query_text = 'INSERT INTO category(category_id, user_id, category_name, \
-        color_id, time_created, public, archived) \
-    VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *'
-    query_values = [uuid(), userId, categoryName, chosenColor, timeSubmitted, isPublic, false]
+        color_id, time_created, public, archived, is_active) \
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *'
+    query_values = [uuid(), userId, categoryName, chosenColor, timeSubmitted, isPublic, false, true]
     try {
         await db.query(query_text, query_values)
         return 1
@@ -15,7 +15,9 @@ async function addCategory(userId, categoryName, chosenColor, isPublic, timeSubm
 }
 
 async function deleteCategory(userId, categoryId) {
-    query_text = 'DELETE FROM category WHERE category_id = $1;'
+    query_text = 'UPDATE category SET is_active = false WHERE \
+    category_id = $1;'
+    //query_text = 'DELETE FROM category WHERE category_id = $1;'
     query_values = [categoryId]
     try {
         await db.query(query_text, query_values)
@@ -27,7 +29,7 @@ async function deleteCategory(userId, categoryId) {
 
 async function getCategoryByUsername(username, getPrivate) {
     query_text = 'SELECT c.* FROM category c, user_timeout u WHERE \
-    (u.username = $1 AND u.user_id = c.user_id) OR c.user_id = $2'
+    (u.username = $1 AND u.user_id = c.user_id) OR c.user_id = $2 AND c.is_active = TRUE'
     query_addendum = ' AND public = TRUE;'
 
     if (!getPrivate) query_text = query_text + query_addendum
@@ -43,7 +45,7 @@ async function getCategoryByUsername(username, getPrivate) {
 
 async function getUserCategories(userId, getPrivate) {
     query_text = 'SELECT * FROM category WHERE \
-    (user_id = $1 OR user_id = $2)'
+    (user_id = $1 OR user_id = $2) AND is_active = TRUE'
     query_addendum = ' AND public = TRUE;'
 
     if (!getPrivate) query_text = query_text + query_addendum
@@ -69,6 +71,18 @@ async function setArchive(user_id, categoryId, archived) {
     }
 }
 
+async function setPublic(user_id, categoryId, isPublic) {
+    query_text = 'UPDATE category SET public = $1 WHERE \
+    category_id = $2;'
+    query_values = [isPublic, categoryId]
+    try {
+        const { rows } = await db.query(query_text, query_values)
+        return rows
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
 async function setColor(user_id, categoryId, colorId) {
     query_text = 'UPDATE category SET color_id = $1 WHERE \
     category_id = $2;'
@@ -82,5 +96,5 @@ async function setColor(user_id, categoryId, colorId) {
 }
 
 module.exports = {
-    addCategory, getUserCategories, deleteCategory, setColor, setArchive, getCategoryByUsername
+    addCategory, getUserCategories, deleteCategory, setColor, setArchive, getCategoryByUsername, setPublic
 }

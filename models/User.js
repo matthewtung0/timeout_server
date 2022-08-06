@@ -5,14 +5,11 @@ const format = require('pg-format')
 
 async function hash_pw(password) {
     const salt = await bcrypt.genSalt(10);
-    console.log("Salt is " + salt)
     password = await bcrypt.hash(password, salt);
     return password;
 };
 
 async function set_user_info(email, password, username, firstName, lastName, user_id, chosenCategories) {
-    console.log("TRYING TO SET USER INFO");
-
     const client = await db.connect()
 
     try {
@@ -24,7 +21,6 @@ async function set_user_info(email, password, username, firstName, lastName, use
         while (insert_result != 1) {
             try {
                 let friend_code = generateFriendCode()
-                console.log("Trying with fc", friend_code);
                 user_query_text = 'INSERT INTO user_timeout(\
                     user_id, first_name,last_name,username, time_created,last_signin,friend_code,points, \
                     mouth,eyes,makeup,eyebrows,base,glasses,piercings,accessories,outerwear,top,under,hairfront,hairback,hairside,hair,background, \
@@ -62,15 +58,11 @@ async function set_user_info(email, password, username, firstName, lastName, use
             })
 
         await client.query('COMMIT')
-
-        console.log("client committed")
     } catch (e) {
         await client.query('ROLLBACK')
         console.log("Error setting user info transaction!", e.stack)
     } finally {
-        console.log("client releasing");
         client.release()
-        console.log("Returning user_id:");
     }
 }
 
@@ -92,12 +84,10 @@ async function purchaseItems(user_id, items, points) {
         await db.query(query_text, query_values)
 
         await client.query('COMMIT')
-        console.log("client committed")
     } catch (e) {
         await client.query('ROLLBACK')
         console.log("Error setting user info transaction!", e.stack)
     } finally {
-        console.log("client releasing");
         client.release()
     }
 
@@ -172,7 +162,6 @@ async function getStatsFromId(userId) {
     ON a.user_id = u.user_id WHERE u.user_id = $1 \
     GROUP BY u.username, u.time_created, u.last_signin, u.bio;'
     const { rows: statsRow } = await db.query(query_text, query_values);
-    console.log("statsRow", statsRow)
     return statsRow[0]
 }
 
@@ -192,7 +181,6 @@ async function getItemsOwnedFromId(userId) {
     query_text = 'SELECT * FROM user_owned WHERE user_id = $1;'
     const { rows } = await db.query(query_text, query_values)
     avatarItemsOwned = reformatAvatarOwnedInfo(rows)
-    console.log(avatarItemsOwned)
     return avatarItemsOwned
 }
 
@@ -211,12 +199,10 @@ async function getInfoFromId(userId) {
      FROM user_timeout WHERE user_id = $1;'
     query_values = [userId]
     const { rows } = await db.query(query_text, query_values);
-    //console.log("rows is", rows)
     query_text2 = 'SELECT count(time_start) as num_tasks, \
     sum(time_end - time_start) as total_time from activity where user_id = $1;'
 
     const { rows: statsRow } = await db.query(query_text2, query_values);
-    console.log("rows2 is", statsRow)
     user_info = reformatBasicInfo(rows[0])
     user_stats = statsRow[0]
     user_avatar = reformatAvatarInfo(rows[0])

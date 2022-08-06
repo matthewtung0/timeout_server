@@ -13,7 +13,6 @@ router.get('/self_user', async (req, res) => {
     const user_id = req.user_id
     try {
         user_info = await user.getInfoFromId(user_id)
-        //console.log("SENDING THIS USER INFO", user_info)
         res.send(user_info);
     } catch (err) { return res.status(422).send(err.message); }
 })
@@ -28,8 +27,6 @@ router.get('/user/stats', async (req, res) => {
         } else {
             user_stats = await user.getStatsFromUsername(username)
         }
-
-        console.log("User stats to send to user", user_stats)
 
         res.send(user_stats)
     } catch (err) {
@@ -66,7 +63,6 @@ router.get('/user/owned', async (req, res) => {
     //let id = req.query.id
     let id = req.user_id
     try {
-        console.log("Trying with username" + username + " and id " + id)
         if (typeof (id) != 'undefined') {
             user_items = await user.getItemsOwnedFromId(id)
         } else {
@@ -80,23 +76,34 @@ router.get('/user/owned', async (req, res) => {
     }
 })
 
+// TESTING MAX AGE 60 SEC CACHE
+router.get('/avatar12345/:userId', async (req, res) => {
+    let userId = req.params.userId
+    console.log("getting avatar for", userId)
+    var avatarPath = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
+    let filename = avatarPath + userId + '_avatar.png'
+    var img = fs.readFileSync(filename, { encoding: 'base64' })
+    res.writeHead(200, {
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=60'
+        //'Cache-Control': 'no-cache'
+    })
+    res.end(img)
+
+})
+
 router.get('/avatar1', async (req, res) => {
-    console.log("------ GETTING AVATAR ----------")
     const user_id = req.user_id
     var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
     //list of friend id's
     let friend_id = req.query.friend
-    console.log("Friends is ", friend_id)
     let file = ''
     try {
         if (typeof (friend_id) !== 'undefined') {
-            console.log("yes friends id")
             file = d + friend_id + '_avatar.png'
         } else {
-            console.log("no friends id")
             file = d + user_id + '_avatar.png'
         }
-        console.log("writing file", file)
 
         var type = 'image/png'
         /*var s = fs.createReadStream(file)
@@ -107,8 +114,7 @@ router.get('/avatar1', async (req, res) => {
 
         //var img = Buffer.from(file, 'base64')
         var img = fs.readFileSync(file, { encoding: 'base64' })
-        //console.log(img)
-        //console.log(img.length)
+
         res.writeHead(200, {
             'Content-Type': 'image/png',
             //'Content-Length': img.length
@@ -157,7 +163,6 @@ router.delete('/self_user', async (req, res) => {
         correct_pw = user_info['password']
         await user.comparePassword(givenPassword, correct_pw)
     } catch (err) {
-        console.log("wrong cur password given");
         return res.status(422).send({ error: 'Current entered password is incorrect!' });
     }
 
@@ -207,12 +212,9 @@ router.patch('/self_user/lastsignin', async (req, res) => {
 
 router.post('/self_user/avatar', async (req, res) => {
     const user_id = req.user_id
-    console.log("setting avatar")
 
     const { items, colors, hasItems } = req.body
-    console.log(items)
-    console.log(colors)
-    console.log(hasItems)
+
     try {
         await Avatar.saveUserAvatar(user_id, items, colors, hasItems)
     } catch (err) {
@@ -222,7 +224,6 @@ router.post('/self_user/avatar', async (req, res) => {
     // generate the image and save it
     try {
         await Avatar.generateAvatarFromData({ avatarItems: items, avatarColors: colors, hasItems }, user_id)
-        console.log("generating done")
 
         // send back the updated avatar
 
@@ -248,8 +249,7 @@ router.patch('/changePasswordApp', async (req, res) => {
 
     user_info = await user.getCredentialsFromId(user_id)
     correct_pw = user_info['password']
-    console.log("correct pw is ", correct_pw);
-    console.log("Given pw is", oldPassword);
+
     try {
         await user.comparePassword(oldPassword, correct_pw)
     } catch (err) {

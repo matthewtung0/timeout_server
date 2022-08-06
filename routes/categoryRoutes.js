@@ -41,12 +41,14 @@ router.post('/category', async (req, res) => {
 
 router.patch('/category', async (req, res) => {
     const user_id = req.user_id
-    const { categoryId, archived, colorId } = req.body
+    const { categoryId, archived, colorId, isPublic } = req.body
     try {
         if (archived) {
             await category.setArchive(user_id, categoryId, archived)
         } else if (colorId) {
             await category.setColor(user_id, categoryId, colorId)
+        } else if (isPublic) {
+            await category.setPublic(user_id, categoryId, isPublic)
         }
 
         res.status(200).send()

@@ -83,7 +83,6 @@ router.post('/forgot_password', async (req, res) => {
 })
 
 router.post('/signup', async (req, res) => {
-    console.log("CALLED SIGNUP SERVER")
     const { email, password, username, firstName, lastName, categoryArr } = req.body;
 
     //INSERT INTO category(category_id, user_id, category_name, time_created, color_id, public, archived)
@@ -101,10 +100,8 @@ router.post('/signup', async (req, res) => {
                 categoryArr[i][3], true, false])
             }
         }
-        console.log("these chosen categorie:", chosenCategories);
 
         await user.set_user_info(email, hashed_pw, username, firstName, lastName, user_id, chosenCategories);
-        console.log("user_id set for token is", user_id)
         const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY');
         res.status(200).send({ token });
     } catch (err) {
@@ -113,7 +110,6 @@ router.post('/signup', async (req, res) => {
 })
 
 router.post('/signin', async (req, res) => {
-    console.log("CALLED SIGNIN SERVER")
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -124,9 +120,6 @@ router.post('/signin', async (req, res) => {
     user_info = await user.get_user_info(email)
     correct_pw = user_info['password']
     user_id = user_info['user_id']
-
-    console.log("user id gotten", user_info)
-
 
     if (!user) {
         return res.status(422).send({ error: 'invalid password or email' });
@@ -139,7 +132,6 @@ router.post('/signin', async (req, res) => {
 
         await user.updateLastSignin(user_id)
 
-        console.log("Sending this token", token)
         res.send({ token })
     } catch (err) {
         return res.status(422).send({ error: 'invalid password or email' });

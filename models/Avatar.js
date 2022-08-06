@@ -4,8 +4,6 @@ Images = require('images')
 
 async function stitchDefault() {
     var d = '/Users/matthewtung/timeout_server/assets/avatar/'
-    console.log("trying image draw")
-    console.log(__dirname)
     const flagUrl = d + '17_BACKGROUND/1_lgbtq-01.png'
     const hairbackUrl = d + '16_hair_back/3_down-fluffy_brown-01.png'
     const base = d + '15_base/1.png'
@@ -35,14 +33,10 @@ async function stitchDefault() {
 }
 
 async function generateAvatarFromData(avatarData, user_id) {
-    console.log("generating avatar from data:")
     var d = '/Users/matthewtung/timeout_server/assets/avatar/'
     // from User.js
     var { avatarItems, avatarColors, hasItems } = avatarData
-    console.log("avatarItems:", avatarItems)
-    console.log("avatarColors:", avatarColors)
-    console.log("hasItems:", hasItems)
-    console.log(hasItems.hasOuterwear == true)
+
     /*let avatarItems = {
         face: { mouth: r.mouth, eyes: r.eyes, makeup: r.makeup, eyebrows: r.eyebrows, base: r.base, },
         accessories: { glasses: r.glasses, piercings: r.piercings, accessories: r.accessories, hairAccessories: r.hairaccessories },
@@ -100,7 +94,6 @@ async function generateAvatarFromData(avatarData, user_id) {
     if (hasItems.hasTop) { wardrobe.push(topSrc) }
     if (hasItems.hasAccessories) { wardrobe.push(accessoriesSrc) }
     if (hasItems.hasOuterwear) {
-        console.log(outerwearSrc)
         wardrobe.push(outerwearSrc)
     }
     wardrobe.push(hairSrc)
@@ -109,8 +102,6 @@ async function generateAvatarFromData(avatarData, user_id) {
     wardrobe.push(earsSrc)
     if (hasItems.hasPiercings) { wardrobe.push(piercingsSrc) }
     if (hasItems.hasGlasses) { wardrobe.push(glassesSrc) }
-
-    console.log(wardrobe)
 
     let userAvatar = Images(wardrobe[0])
 

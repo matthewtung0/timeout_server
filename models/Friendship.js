@@ -79,7 +79,6 @@ async function getRequestsOutgoing(userId) {
     outgoingRequestsValues = [userId]
 
     const res = await db.query(outgoingRequestsQuery, outgoingRequestsValues)
-    console.log("outoing friend requests", res.rows)
     return res.rows
 }
 

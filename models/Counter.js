@@ -71,7 +71,6 @@ async function getCounterRange(startRange, endRange, user_id) {
 
     query_values = [user_id, startRange, endRange]
     const { rows } = await db.query(query_text, query_values);
-    console.log("USER COUNTERS ARE ", rows)
     return rows
 }
 
