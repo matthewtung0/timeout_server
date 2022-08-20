@@ -5,6 +5,20 @@ const requireAuth = require('../middlewares/requireAuth');
 const router = new Router();
 router.use(requireAuth);
 
+router.get('/category/:id', async (req, res) => {
+    let id = req.params.id
+    let getPrivate = req.query.getPrivate
+
+    try {
+        rows = await category.getUserCategories(id, getPrivate);
+        res.status(200).send(rows)
+    } catch (err) {
+        console.log("Problem retrieving categories")
+        return res.status(403).send({ error: "Probably retrieving categories" });
+    }
+})
+
+
 router.get('/category', async (req, res) => {
     let username = req.query.username
     let id = req.query.id

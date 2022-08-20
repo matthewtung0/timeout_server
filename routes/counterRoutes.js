@@ -15,6 +15,7 @@ router.get('/counter', async (req, res) => {
     // no id passed means getting self
     if (typeof (id) == 'undefined') id = user_id
     try {
+        console.log("Getting counters")
         if (typeof (id) != 'undefined') {
             results = await counter.getUserCounters(id)
         } else {
@@ -38,6 +39,19 @@ router.post('/counter', async (req, res) => {
         console.log(err.stack)
         res.status(403).send({ error: "Error adding counter!" })
     }
+})
+
+router.post('/counter/reset', async (req, res) => {
+    const { counterId } = req.body;
+    try {
+        await counter.resetCount(counterId)
+        res.status(200).send()
+    } catch (err) {
+        console.log("Problem resetting counter for user", user_id)
+        console.log(err.stack)
+        res.status(403).send({ error: "Error resetting counter!" })
+    }
+
 })
 
 router.post('/counter/tally', async (req, res) => {
