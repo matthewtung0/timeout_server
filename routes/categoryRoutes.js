@@ -53,28 +53,29 @@ router.post('/category', async (req, res) => {
     }
 })
 
-router.patch('/category', async (req, res) => {
+router.patch('/category/:id', async (req, res) => {
+    const categoryId = req.params.id
     const user_id = req.user_id
-    const { categoryId, archived, colorId, isPublic } = req.body
+    const {archived, colorId, isPublic } = req.body
     try {
-        if (archived) {
+        if (archived !== undefined) {
             await category.setArchive(user_id, categoryId, archived)
-        } else if (colorId) {
+        } else if (colorId !== undefined) {
             await category.setColor(user_id, categoryId, colorId)
-        } else if (isPublic) {
+        } else if (isPublic !== undefined) {
             await category.setPublic(user_id, categoryId, isPublic)
         }
 
         res.status(200).send()
     } catch (err) {
         console.log(err.stack)
-        res.status(403).send({ error: "Error adding category!" })
+        res.status(403).send({ error: "Error patching category!" })
     }
 })
 
-router.delete('/category', async (req, res) => {
+router.delete('/category/:id', async (req, res) => {
     const user_id = req.user_id
-    const { categoryId } = req.body
+    const categoryId = req.params.id
     try {
         await category.deleteCategory(user_id, categoryId)
         res.status(200).send()

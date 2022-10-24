@@ -5,7 +5,8 @@ const format = require('pg-format')
 async function get_day_session(startRange, endRange, userEmail) {
     query_text = 'SELECT a.*, c.category_name, c.color_id FROM activity a, category c\
     WHERE a.cat_id = c.category_id AND \
-    a.user_id = $1 AND a.time_start >= $2 AND a.time_start <= $3'
+    a.user_id = $1 AND a.time_start >= $2 AND a.time_start <= $3 \
+    ORDER BY a.time_start DESC'
     query_values = [userEmail, startRange, endRange]
     const { rows } = await db.query(query_text, query_values);
     return rows

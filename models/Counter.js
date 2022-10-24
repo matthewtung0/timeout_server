@@ -30,7 +30,7 @@ async function getUserCounters(id) {
     query_values = [id]
     try {
         const { rows } = await db.query(query_text, query_values)
-        console.log("Returning counters", rows)
+        //console.log("Returning counters", rows)
         return rows
     } catch (err) {
         console.log('error code is ', err)
@@ -119,6 +119,42 @@ async function resetCount(counterId) {
     } catch (err) { console.log('error code is ', err) }
 }
 
+async function deleteCounter(user_id, counterId) {
+    query_text = 'UPDATE counter SET archived = true WHERE counter_id = $1;'
+    query_values = [counterId]
+    try {
+        await db.query(query_text, query_values)
+        return
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
+async function setColor(user_id, counterId, colorId) {
+    query_text = 'UPDATE counter SET color_id = $1 WHERE \
+    counter_id = $2;'
+    query_values = [colorId, counterId]
+    try {
+        const { rows } = await db.query(query_text, query_values)
+        return rows
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
+async function setArchive(user_id, counterId, archived) {
+    query_text = 'UPDATE counter SET archived = $1 WHERE \
+    counter_id = $2;'
+    query_values = [archived, counterId]
+    try {
+        const { rows } = await db.query(query_text, query_values)
+        return rows
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
 module.exports = {
-    getUserCounters, getCounterByUsername, setColor, addCounter, addTally, getCounterRange, resetCount
+    getUserCounters, getCounterByUsername, setColor, addCounter, addTally, getCounterRange, resetCount,
+    deleteCounter, setColor, setArchive
 }

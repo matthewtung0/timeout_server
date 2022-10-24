@@ -15,6 +15,7 @@ async function addCategory(userId, categoryName, chosenColor, isPublic, timeSubm
 }
 
 async function deleteCategory(userId, categoryId) {
+    console.log("Trying to delete category with categoryId ",categoryId)
     query_text = 'UPDATE category SET is_active = false WHERE \
     category_id = $1;'
     //query_text = 'DELETE FROM category WHERE category_id = $1;'

@@ -9,7 +9,7 @@ const { publicDecrypt } = require('crypto');
 const router = new Router();
 router.use(requireAuth);
 
-router.get('/self_user', async (req, res) => {
+router.get('/info/self', async (req, res) => {
     const user_id = req.user_id
     try {
         user_info = await user.getInfoFromId(user_id)
@@ -17,9 +17,9 @@ router.get('/self_user', async (req, res) => {
     } catch (err) { return res.status(422).send(err.message); }
 })
 
-router.get('/user/stats', async (req, res) => {
+router.get('/stats/:id', async (req, res) => {
     let username = req.query.username
-    let id = req.query.id
+    let id = req.params.id
     try {
         console.log("Trying with username" + username + " and id " + id)
         if (typeof (id) != 'undefined') {
@@ -178,21 +178,23 @@ router.delete('/self_user', async (req, res) => {
     // delete from user_timeout (user info)
 })
 
-router.get('/friends', async (req, res) => {
+router.get('/friends/:id', async (req, res) => {
+    let id = req.params.id
     const user_id = req.user_id
     try {
-        friends = await user.getFriendsList(user_id)
+        friends = await user.getFriendsList(id)
         res.send(friends)
     } catch (err) {
         return res.status(422).send(err.message)
     }
 })
 
-router.patch('/self_user/points', async (req, res) => {
-    const user_id = req.user_id
+router.patch('/points/:id', async (req, res) => {
+    //const user_id = req.user_id
+    let id = req.params.id
     const { pointsToAdd } = req.body
     try {
-        newPoints = await user.addPoints(user_id, pointsToAdd)
+        newPoints = await user.addPoints(id, pointsToAdd)
         res.send(newPoints)
     } catch (err) {
         return res.status(422).send(err.message)

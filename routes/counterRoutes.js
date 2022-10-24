@@ -80,4 +80,36 @@ router.get('/counter/month', async (req, res) => {
     }
 })
 
+router.delete('/counter/:id', async (req, res) => {
+    const user_id = req.user_id
+    const counterId = req.params.id
+    try {
+        await counter.deleteCounter(user_id, counterId)
+        res.status(200).send()
+    } catch (err) {
+        console.log("Problem deleting counter: ", err)
+        res.status(403).send({ error: "Error deleting counter!" })
+    }
+})
+
+router.patch('/counter/:id', async (req, res) => {
+    const counterId = req.params.id
+    const user_id = req.user_id
+    const {archived, colorId, isPublic } = req.body
+    try {
+        if (archived !== undefined) {
+            await counter.setArchive(user_id, counterId, archived)
+        } else if (colorId !== undefined) {
+            await counter.setColor(user_id, counterId, colorId)
+        } else if (isPublic !== undefined) {
+            await counter.setPublic(user_id, counterId, isPublic)
+        }
+
+        res.status(200).send()
+    } catch (err) {
+        console.log(err.stack)
+        res.status(403).send({ error: "Error patching counter!" })
+    }
+})
+
 module.exports = router;

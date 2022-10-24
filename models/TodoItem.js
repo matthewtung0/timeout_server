@@ -28,7 +28,8 @@ async function editTodoItem(userId, toDoItemName, categoryId, notes, oldToDoName
 }
 
 async function deleteTodoItem(userId, toDoId) {
-    query_text = 'DELETE FROM todo_item WHERE item_id = $1;'
+    //query_text = 'DELETE FROM todo_item WHERE item_id = $1;'
+    query_text = 'UPDATE todo_item SET is_active = false WHERE item_id = $1;'
     query_values = [toDoId]
     try {
         await db.query(query_text, query_values)
@@ -41,7 +42,7 @@ async function deleteTodoItem(userId, toDoId) {
 
 async function getTodoItems(userId) {
     query_text = 'SELECT t.*, c.category_name, c.color_id FROM todo_item t, category c \
-    WHERE t.user_id = $1 AND t.category_id = c.category_id'
+    WHERE t.user_id = $1 AND t.category_id = c.category_id AND t.is_active = TRUE;'
     query_values = [userId]
     try {
         const { rows } = await db.query(query_text, query_values)
