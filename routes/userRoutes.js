@@ -145,9 +145,9 @@ router.get('/avatar1', async (req, res) => {
 
 router.patch('/self_user', async (req, res) => {
     const user_id = req.user_id
-    const { firstName, lastName, username } = req.body;
+    const { firstName, lastName, username, bio } = req.body;
     try {
-        user_info = await user.updateInfo(firstName, lastName, username, user_id);
+        user_info = await user.updateInfo(firstName, lastName, username, bio, user_id);
         return res.status(200).send()
     } catch (err) {
         console.log(err)

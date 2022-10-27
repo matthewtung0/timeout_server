@@ -220,10 +220,10 @@ async function getCredentialsFromId(userId) {
     return user_info
 }
 
-async function updateInfo(firstName, lastName, username, user_id) {
-    query_text = 'UPDATE user_timeout SET first_name = $1, last_name = $2, username = $3\
-    WHERE user_id = $4;'
-    query_values = [firstName, lastName, username, user_id]
+async function updateInfo(firstName, lastName, username, bio, user_id) {
+    query_text = 'UPDATE user_timeout SET first_name = $1, last_name = $2, bio = $4, username = $3\
+    WHERE user_id = $5;'
+    query_values = [firstName, lastName, username, bio, user_id]
     const res = await db.query(query_text, query_values);
     return
 }
