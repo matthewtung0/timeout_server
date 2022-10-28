@@ -118,24 +118,27 @@ router.get('/monthSessions', async (req, res) => {
 })
 
 router.post('/save_session', async (req, res) => {
-    const { chosenCategory, chosenCatId, customActivity, sessionStartTime,
-        sessionEndTime, endEarlyFlag, prodRating } = req.body
-    try {
-        let user_id = req.user_id
 
-        let result = await session.set_user_session(chosenCategory, chosenCatId, customActivity,
-            sessionStartTime, sessionEndTime, endEarlyFlag, prodRating, user_id)
-        console.log(result)
-        if (!result) {
+    // req.body is an array of len 1 or more
+    for (const element of req.body) {
+
+        const { chosenCategory, chosenCatId, customActivity, sessionStartTime,
+            sessionEndTime, endEarlyFlag, prodRating } = element
+        try {
+            var user_id = req.user_id
+            var result = await session.set_user_session(chosenCategory, chosenCatId, customActivity,
+                sessionStartTime, sessionEndTime, endEarlyFlag, prodRating, user_id)
+            console.log(result)
+            if (!result) {
+                return res.status(422).send({ error: "Error saving session!" });
+            }
+        } catch (err) {
+            console.log("error saving this session!", err)
             return res.status(422).send({ error: "Error saving session!" });
-        } else {
-            return res.status(200).send({ msg: "Success!" });
         }
-
-    } catch (err) {
-        console.log("error saving this session!", err)
-        return res.status(422).send({ error: "Error saving session!" });
     }
+    // all sessions successfully saved
+    return res.status(200).send({ msg: "Success!" });
 });
 
 module.exports = router;
