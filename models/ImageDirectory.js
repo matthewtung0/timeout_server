@@ -44,7 +44,8 @@ const eyeColors = ['brown', 'black', 'blue', 'green', 'gold', 'red', 'light-grey
 const glasses1 = '1_glasses/1_round_1_black-01.png'
 const glasses2 = '1_glasses/2_rectangle-clear_1_black-01.png'
 const glasses3 = '1_glasses/2_rectangle-shade-1_black.png'
-const glassesTypes = [[unknown], [glasses1], [glasses2], [glasses3]]
+//const glassesTypes = [ [glasses1], [glasses2], [glasses3]]
+const glassesTypes = [[glasses1], [glasses2], [glasses3]]
 
 // ---------------------------------------- PIERCINGS ----------------------------------------------
 const piercingsHoop1 = '2_piercings/1_brow-hoop_1_black.png'
@@ -82,7 +83,7 @@ const piercingsChain2 = '2_piercings/7_earcuff-chain_2_silver.png'
 const piercingsChain3 = '2_piercings/7_earcuff-chain_3_gold.png'
 const piercingsChain = [piercingsChain1, piercingsChain2, piercingsChain3]
 
-const piercingsTypes = [[unknown], piercingsHoop, piercingsBarbell, piercingsIndustrial,
+const piercingsTypes = [piercingsHoop, piercingsBarbell, piercingsIndustrial,
     piercingsEarcuff, piercingsHeart, piercingsCross, piercingsChain]
 const piercingsColors = ['#000', '#C0C0C0', '#FFD700']
 
@@ -113,7 +114,7 @@ const frontMidpart5 = '4_hair_front/3_midpart_5_blue.png'
 const frontMidpart6 = '4_hair_front/3_midpart_6_green.png'
 const frontMidpart = [frontMidpart1, frontMidpart2, frontMidpart3, frontMidpart4, frontMidpart5, frontMidpart6]
 
-const hairFrontTypes = [[unknown], frontBangsPart, frontBangsFull, frontMidpart]
+const hairFrontTypes = [frontBangsPart, frontBangsFull, frontMidpart]
 const hairFrontColors = ['black', 'brown', 'yellow', 'white', 'blue', 'green']
 
 // ---------------------------------------- HAIR SIDE ----------------------------------------------
@@ -133,7 +134,7 @@ const coversNeck5 = '5_hair_side/2_coversneck_5_blue-01.png'
 const coversNeck6 = '5_hair_side/2_coversneck_6_green-01.png'
 const coversNeck = [coversNeck1, coversNeck2, coversNeck3, coversNeck4, coversNeck5, coversNeck6]
 
-const hairSideTypes = [[unknown], sideburn, coversNeck]
+const hairSideTypes = [sideburn, coversNeck]
 
 // ---------------------------------------- HAIR  ----------------------------------------------
 const sidesweep1 = '6_hair/1_sidesweep_1_black.png'
@@ -171,14 +172,14 @@ const down5 = '18_hair_back/3_down-fluffy_5_blue.png'
 const down6 = '18_hair_back/3_down-fluffy_6_green.png'
 const down = [down1, down2, down3, down4, down5, down6]
 
-const backHairTypes = [[unknown], ponytail, down]
+const backHairTypes = [ponytail, down]
 
 // -------------------------------------- EYE MAKEUP  --------------------------------------
 const makeup1 = '13_eye_makeup/1_silver.png'
 const makeup2 = '13_eye_makeup/2_black.png'
 const makeup3 = '13_eye_makeup/3_gold.png'
 const makeup4 = '13_eye_makeup/4_pink.png'
-const makeupTypes = [[unknown], [makeup1], [makeup2], [makeup3], [makeup4]]
+const makeupTypes = [[makeup1], [makeup2], [makeup3], [makeup4]]
 
 // -------------------------------------- EYEBROWS  -----------------------------------------
 const browThick1 = '15_eyebrows/1_neutral-thick_1_black-01.png'
@@ -238,7 +239,7 @@ const bomber10 = '7_outerwear/1_bomber_10_green.png'
 const bomber = [bomber1, bomber2, bomber3, bomber4, bomber5, bomber6, bomber7, bomber8, bomber9, bomber10,]
 
 const outerwearColors = ['black', 'white', 'pink', 'red', 'purple', 'dark-blue', 'light-blue', 'dark-yellow', 'light-yellow', 'green']
-const outerwearTypes = [[unknown], bomber]
+const outerwearTypes = [bomber]
 
 // ---------------------------------------- TOP --------------------------------------------
 const overalls1 = '9_top/1_overalls_1_black.png'
@@ -276,7 +277,7 @@ const spag8 = '9_top/3_spaghetti_8_darkyellow.png'
 const spag9 = '9_top/3_spaghetti_9_lightyellow.png'
 const spag10 = '9_top/3_spaghetti_10_green.png'
 const spag = [spag1, spag2, spag3, spag4, spag5, spag6, spag7, spag8, spag9, spag10]
-const topTypes = [[unknown], overalls, plaid, spag]
+const topTypes = [overalls, plaid, spag]
 // topColors use outerwearColors
 
 // ---------------------------------------- UNDERLAYER --------------------------------------------
@@ -398,7 +399,7 @@ const underlayerTypes = [uspag, tank, turtleSleeveless, widecut, vneck, tshirt, 
 const accessoryChoker = '8_accessories/1_choker.png'
 const accessoryPendant = '8_accessories/2_pendant.png'
 const accessoryDogtag = '8_accessories/3_dogtags.png'
-const accessoryTypes = [[unknown], [accessoryChoker], [accessoryPendant], [accessoryDogtag]]
+const accessoryTypes = [[accessoryChoker], [accessoryPendant], [accessoryDogtag]]
 
 // ------------------------------------HAIR ACCESSORIES ------------------------------------------
 const ponytailRibbon1 = '17_hair_accessories/1_ponytail-ribbon_1_black.png'
@@ -414,7 +415,7 @@ const ponytailRibbon10 = '17_hair_accessories/1_ponytail-ribbon_10_green.png'
 const ponytailRibbon = [ponytailRibbon1, ponytailRibbon2, ponytailRibbon3, ponytailRibbon4, ponytailRibbon5,
     ponytailRibbon6, ponytailRibbon7, ponytailRibbon8, ponytailRibbon9, ponytailRibbon10]
 
-const hairAccessoryTypes = [[unknown], ponytailRibbon]
+const hairAccessoryTypes = [ponytailRibbon]
 // same color as outerwearColors
 
 // ---------------------------------------- BASE ----------------------------------------------

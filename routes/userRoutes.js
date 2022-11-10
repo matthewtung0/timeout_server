@@ -212,6 +212,35 @@ router.patch('/self_user/lastsignin', async (req, res) => {
     }
 })
 
+router.post('/self_user/avatar2', async (req, res) => {
+    const user_id = req.user_id
+    const { avatarJSON } = req.body
+    try {
+        await Avatar.saveUserAvatar2(user_id, avatarJSON)
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message)
+    }
+    try {
+        await Avatar.generateAvatarFromData2({ avatarJSON }, user_id)
+
+        // send back the updated avatar
+
+        var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
+        const file = d + user_id + '_avatar.png'
+        var img = fs.readFileSync(file, { encoding: 'base64' })
+
+        res.writeHead(200, {
+            'Content-Type': 'image/png',
+        })
+        res.end(img)
+        //return res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message)
+    }
+})
+
 router.post('/self_user/avatar', async (req, res) => {
     const user_id = req.user_id
 
