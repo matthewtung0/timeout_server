@@ -115,6 +115,159 @@ function reformatBasicInfo(r) {
 }
 
 function reformatAvatarInfo(r) {
+    console.log("Avatar info", r)
+    let avatarJSON = {
+        face: {
+            mouth: {
+                item: r.mouth_index,
+                color: r.mouth_color,
+                active: r.mouth_active,
+            },
+            eyes: {
+                item: r.eyes_index,
+                color: r.eyes_color,
+                active: r.eyes_active,
+            },
+            makeup: {
+                item: r.eye_makeup_index,
+                color: r.eye_makeup_color,
+                active: r.eye_makeup_active,
+            },
+            eyebrows: {
+                item: r.eyebrows_index,
+                color: r.eyebrows_color,
+                active: r.eyebrows_active,
+            },
+            base: {
+                item: r.base_index,
+                color: r.base_color,
+                active: r.base_active,
+            },
+        },
+        accessories: {
+            hair: {
+                item: r.hair_accessories_index,
+                color: r.hair_accessories_color,
+                active: r.hair_accessories_active,
+            },
+            general: {
+                item: r.gen_accessories_index,
+                color: r.gen_accessories_color,
+                active: r.gen_accessories_active,
+            },
+            piercings: {
+                item: r.piercings_index,
+                color: r.piercings_color,
+                active: r.piercings_active,
+            },
+            glasses: {
+                item: r.glasses_index,
+                color: r.glasses_color,
+                active: r.glasses_active,
+            }, background: {
+                item: r.background_index,
+                color: r.background_color,
+                active: r.background_active,
+            },
+        },
+        clothing: {
+            under: {
+                item: r.underlayer_index,
+                color: r.underlayer_color,
+                active: r.underlayer_active,
+            },
+            top: {
+                item: r.top_index,
+                color: r.top_color,
+                active: r.top_active,
+            },
+            outer: {
+                item: r.outer_index,
+                color: r.outer_color,
+                active: r.outer_active,
+            },
+        },
+        hair: {
+            base: {
+                item: r.hair_base_index,
+                color: r.hair_base_color,
+                active: r.hair_base_active,
+            },
+            front: {
+                item: r.hair_front_index,
+                color: r.hair_front_color,
+                active: r.hair_front_active,
+            },
+            back: {
+                item: r.hair_back_index,
+                color: r.hair_back_color,
+                active: r.hair_back_active,
+            },
+            side: {
+                item: r.hair_side_index,
+                color: r.hair_side_color,
+                active: r.hair_side_active,
+            },
+        },
+    }
+    return { avatarJSON }
+    /*
+mouth_index: 0,
+  mouth_color: 0,
+  mouth_active: true,
+  eyes_index: 0,
+  eyes_color: 0,
+  eyes_active: true,
+  eye_makeup_index: 0,
+  eye_makeup_color: 0,
+  eye_makeup_active: false,
+  eyebrows_index: 0,
+  eyebrows_color: 0,
+  eyebrows_active: true,
+  base_index: 0,
+  base_color: -1,
+  base_active: true,
+  hair_accessories_index: 0,
+  hair_accessories_color: 0,
+  hair_accessories_active: true,
+  gen_accessories_index: 0,
+  gen_accessories_color: -1,
+  gen_accessories_active: false,
+  background_index: 0,
+  background_color: -1,
+  background_active: true,
+  underlayer_index: 4,
+  underlayer_color: 0,
+  underlayer_active: true,
+  top_index: 1,
+  top_color: 4,
+  top_active: true,
+  outer_index: 0,
+  outer_color: 3,
+  outer_active: true,
+  hair_base_index: 0,
+  hair_base_color: 0,
+  hair_base_active: true,
+  hair_front_index: 0,
+  hair_front_color: 0,
+  hair_front_active: false,
+  hair_back_index: 0,
+  hair_back_color: 0,
+  hair_back_active: false,
+  hair_side_index: 0,
+  hair_side_color: 0,
+  hair_side_active: false,
+  piercings_index: 0,
+  piercings_color: 0,
+  piercings_active: false,
+  glasses_index: 0,
+  glasses_color: 0,
+  glasses_active: false
+
+
+    */
+
+
     let avatarItems = {
         face: { mouth: r.mouth, eyes: r.eyes, makeup: r.makeup, eyebrows: r.eyebrows, base: r.base, },
         accessories: { glasses: r.glasses, piercings: r.piercings, accessories: r.accessories, hairAccessories: r.hairaccessories },
@@ -180,7 +333,9 @@ async function getItemsOwnedFromId(userId) {
     query_values = [userId]
     query_text = 'SELECT * FROM user_owned WHERE user_id = $1;'
     const { rows } = await db.query(query_text, query_values)
-    avatarItemsOwned = reformatAvatarOwnedInfo(rows)
+    console.log("AVATAR ITEMS OWNED: ", rows)
+    //avatarItemsOwned = reformatAvatarOwnedInfo(rows)
+    avatarItemsOwned = rows
     return avatarItemsOwned
 }
 
@@ -189,20 +344,24 @@ async function getItemsOwnedFromUsername(username) {
     query_text = 'SELECT a.* FROM user_owned a, user_timeout b \
     WHERE a.user_id = b.user_id AND b.username = $1;'
     const { rows } = await db.query(query_text, query_values)
-    avatarItemsOwned = reformatAvatarOwnedInfo(rows)
+    //avatarItemsOwned = reformatAvatarOwnedInfo(rows)
+    avatarItemsOwned = rows
     return avatarItemsOwned
 }
 
 async function getInfoFromId(userId) {
-
+    console.log("Getting user info from id")
     query_text = 'SELECT *\
-     FROM user_timeout WHERE user_id = $1;'
+     FROM user_timeout a \
+     LEFT OUTER JOIN user_avatar b on a.user_id = b.user_id WHERE a.user_id = $1;'
     query_values = [userId]
     const { rows } = await db.query(query_text, query_values);
+    console.log("RESULTS", rows)
     query_text2 = 'SELECT count(time_start) as num_tasks, \
     sum(time_end - time_start) as total_time from activity where user_id = $1;'
 
     const { rows: statsRow } = await db.query(query_text2, query_values);
+
     user_info = reformatBasicInfo(rows[0])
     user_stats = statsRow[0]
     user_avatar = reformatAvatarInfo(rows[0])

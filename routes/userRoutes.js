@@ -14,7 +14,10 @@ router.get('/info/self', async (req, res) => {
     try {
         user_info = await user.getInfoFromId(user_id)
         res.send(user_info);
-    } catch (err) { return res.status(422).send(err.message); }
+    } catch (err) {
+        console.log("Something went wrong", err)
+        return res.status(422).send(err.message);
+    }
 })
 
 router.get('/stats/:id', async (req, res) => {
