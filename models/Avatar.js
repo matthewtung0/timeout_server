@@ -1,6 +1,7 @@
 const db = require('../db')
 const dir = require('../models/ImageDirectory')
 Images = require('images')
+const format = require('pg-format')
 
 async function stitchDefault() {
     var d = '/Users/matthewtung/timeout_server/assets/avatar/'
@@ -273,6 +274,32 @@ async function generateAvatarFromData(avatarData, user_id) {
     userAvatar
         .size(200)
         .save('generatedAvatarsTemp/' + user_id + '_avatar.png')
+}
+
+async function purchaseItems(user_id, items_to_redeem_formatted, points) {
+    // items format: [item_id_0, item_id_1, .. ]
+    const client = await db.connect()
+    try {
+        await client.query('BEGIN')
+        db.query(format('INSERT INTO user_owned\
+        (user_id, item_id, time_created, item_cat_lvl_1, item_cat_lvl_2) VALUES %L', items_to_redeem_formatted),
+            [], (err, result) => {
+                console.log(err)
+                console.log(result)
+            })
+        // deduct points from user
+        query_text = 'UPDATE user_timeout SET points = points - $1 WHERE user_id = $2 RETURNING points;'
+        query_values = [points, user_id]
+        await db.query(query_text, query_values)
+
+        await client.query('COMMIT')
+    } catch (e) {
+        await client.query('ROLLBACK')
+        console.log("Error setting user info transaction!", e.stack)
+    } finally {
+        client.release()
+    }
+
 }
 
 async function saveUserAvatar2(user_id, avatarJSON) {
@@ -594,5 +621,5 @@ async function saveUserAvatar(user_id, items, colors, hasItems) {
 
 module.exports = {
     stitchDefault, saveUserAvatar, generateAvatarFromData,
-    generateAvatarFromData2, saveUserAvatar2
+    generateAvatarFromData2, saveUserAvatar2, purchaseItems
 }

@@ -217,13 +217,33 @@ router.patch('/self_user/lastsignin', async (req, res) => {
 
 router.post('/self_user/avatar2', async (req, res) => {
     const user_id = req.user_id
-    const { avatarJSON } = req.body
+    const { avatarJSON, items_to_redeem, items_cost } = req.body
+
+    // add items to user owned if there are items to redeem
+    if (items_to_redeem.length > 0) {
+        try {
+            let items_to_redeem_formatted = []
+            for (let i = 0; i < items_to_redeem.length; i++) {
+                items_to_redeem_formatted.push([user_id, items_to_redeem[i], new Date(), 0, 0])
+            }
+            await Avatar.purchaseItems(user_id, items_to_redeem_formatted, items_cost)
+            console.log("Purchase items completed")
+        } catch (err) {
+            console.log(err)
+            return res.status(422).send(err.message)
+        }
+    }
+
+    // save user avatar choice
     try {
         await Avatar.saveUserAvatar2(user_id, avatarJSON)
+        console.log("Avatar save completed")
     } catch (err) {
         console.log(err)
         return res.status(422).send(err.message)
     }
+
+    // generate avatar png
     try {
         await Avatar.generateAvatarFromData2({ avatarJSON }, user_id)
 
@@ -237,6 +257,7 @@ router.post('/self_user/avatar2', async (req, res) => {
             'Content-Type': 'image/png',
         })
         res.end(img)
+        console.log("Avatar png generation completed")
         //return res.status(200).send()
     } catch (err) {
         console.log(err)
