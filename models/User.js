@@ -411,9 +411,29 @@ async function comparePassword(given_password, correct_pw) {
     });
 }
 
+async function postToken(token, email) {
+    query_text = 'INSERT INTO password_reset(reset_key, email, time_issued, is_active) \
+    VALUES ($1,$2,$3,$4) \
+    ON CONFLICT (email) DO UPDATE \
+    SET \
+    reset_key = $1, \
+    time_issued = $3, \
+    is_active = true;'
+    query_values = [token, email, new Date(), true]
+    try {
+        await db.query(query_text, query_values)
+        return 1
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+
+}
+
 async function validateAndResetPassword(token, password) {
 
-    query_text = 'SELECT email FROM password_reset WHERE reset_key = $1;'
+    query_text = "SELECT email FROM password_reset WHERE reset_key = $1 \
+    AND is_active = true \
+    AND time_issued >= (now() - '1 day'::interval);"
     query_values = [token]
     try {
         const { rows } = await db.query(query_text, query_values)
@@ -430,6 +450,17 @@ async function validateAndResetPassword(token, password) {
             } catch (err) {
                 console.log(err)
             }
+
+            // inactivate the listing in password_reset
+            query_text = 'UPDATE password_reset SET is_active = false WHERE email = $1;'
+            query_values = [rows[0]['email']]
+            try {
+                const res = await db.query(query_text, query_values)
+            } catch (err) {
+                console.log(err)
+            }
+
+
         }
         return rows;
     } catch (err) {
@@ -483,5 +514,5 @@ module.exports = {
     comparePassword, validateAndResetPassword, getInfoFromId,
     updatePassword, getCredentialsFromId, deleteAll, addPoints, updateLastSignin,
     getStatsFromId, getStatsFromUsername, getItemsOwnedFromId, getItemsOwnedFromUsername,
-    purchaseItems, doesUsernameExist, doesEmailExist,
+    purchaseItems, doesUsernameExist, doesEmailExist, postToken
 }

@@ -6,6 +6,7 @@ async function get_day_session(startRange, endRange, userEmail) {
     query_text = 'SELECT a.*, c.category_name, c.color_id FROM activity a, category c\
     WHERE a.cat_id = c.category_id AND \
     a.user_id = $1 AND a.time_start >= $2 AND a.time_start <= $3 \
+    AND a.is_active = true \
     ORDER BY a.time_start DESC'
     query_values = [userEmail, startRange, endRange]
     const { rows } = await db.query(query_text, query_values);
@@ -14,9 +15,9 @@ async function get_day_session(startRange, endRange, userEmail) {
 
 async function set_user_session(chosenCategory, chosenCatId, customActivity, sessionStartTime, sessionEndTime,
     endEarlyFlag, prodRating, user_id) {
-    query_text = 'INSERT INTO activity(activity_id,user_id,cat_id,time_start,time_end,prod_rating,activity_name,end_early, reaction_count) \
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *'
-    query_values = [uuid(), user_id, chosenCatId, sessionStartTime, sessionEndTime, prodRating, customActivity, endEarlyFlag, 0]
+    query_text = 'INSERT INTO activity(activity_id,user_id,cat_id,time_start,time_end,prod_rating,activity_name,end_early,reaction_count,is_active) \
+    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *'
+    query_values = [uuid(), user_id, chosenCatId, sessionStartTime, sessionEndTime, prodRating, customActivity, endEarlyFlag, 0, true]
     try {
         const res = await db.query(query_text, query_values)
         return 1
@@ -98,10 +99,24 @@ async function getTotalSessionCount(userId) {
     return rows
 }
 
+async function deleteSession(user_id, sessionId) {
+    console.log("Trying to delete session with sessionId ", sessionId)
+    query_text = 'UPDATE activity SET is_active = false WHERE \
+    activity_id = $1;'
+    //query_text = 'DELETE FROM category WHERE category_id = $1;'
+    query_values = [sessionId]
+    try {
+        await db.query(query_text, query_values)
+        return
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
 
 
 module.exports = {
     set_user_session, get_day_session, getAllSessions, getSession, getSessionBatch, getSelfSessionsBatch,
-    getSessionBatchByUsername,
+    getSessionBatchByUsername, deleteSession,
 
 }

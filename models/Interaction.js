@@ -18,9 +18,9 @@ async function toggleInteraction(reaction_id, activity_id, user_id) {
             incrementValues = [activity_id]
             await db.query(incrementQuery, incrementValues)
 
-            addReactionQuery = 'INSERT INTO interaction(interaction_id, reaction_id, activity_id, user_id, is_active)\
+            addReactionQuery = 'INSERT INTO interaction(interaction_id, reaction_id, activity_id, user_id, is_active, time_created)\
             VALUES($1,$2,$3,$4,$5)'
-            addReactionValues = [uuid(), reaction_id, activity_id, user_id, true]
+            addReactionValues = [uuid(), reaction_id, activity_id, user_id, true, new Date()]
             await db.query(addReactionQuery, addReactionValues)
 
             // if user has already liked, unlike and decrement
@@ -45,6 +45,21 @@ async function toggleInteraction(reaction_id, activity_id, user_id) {
     }
 }
 
+async function getInteractionsForUserId(user_id) {
+    // b.user_id is the recipient of interaction
+    // a.user_id is the interactor
+    query = 'SELECT a.interaction_id, a.time_created, a.user_id, b.time_start, b.time_end, c.username, d.category_name \
+    FROM interaction a \
+    LEFT JOIN activity b ON a.activity_id = b.activity_id \
+    LEFT JOIN user_timeout c on a.user_id = c.user_id \
+    LEFT JOIN category d on b.cat_id = d.category_id \
+    WHERE b.user_id = $1 AND a.user_id <> $1;'
+    values = [user_id]
+    const { rows } = await db.query(query, values)
+    return rows;
+
+}
+
 async function getInteractionsFromUserId(user_id) {
     query = 'SELECT activity_id FROM interaction WHERE user_id = $1 AND is_active = $2'
     values = [user_id, true]
@@ -60,5 +75,6 @@ async function getInteractionsFromActivityId(activity_id) {
 }
 
 module.exports = {
-    toggleInteraction, getInteractionsFromUserId, getInteractionsFromActivityId
+    toggleInteraction, getInteractionsFromUserId, getInteractionsFromActivityId,
+    getInteractionsForUserId,
 }

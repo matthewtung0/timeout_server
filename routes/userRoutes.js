@@ -80,19 +80,19 @@ router.get('/user/owned', async (req, res) => {
 })
 
 // TESTING MAX AGE 60 SEC CACHE
-router.get('/avatar12345/:userId', async (req, res) => {
-    let userId = req.params.userId
-    console.log("getting avatar for", userId)
+router.get('/avatar12345/:id', async (req, res) => {
+    console.log("got here?")
+    let id = req.params.id
+    console.log("getting avatar for", id)
     var avatarPath = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
-    let filename = avatarPath + userId + '_avatar.png'
+    let filename = avatarPath + id + '_avatar.png'
     var img = fs.readFileSync(filename, { encoding: 'base64' })
     res.writeHead(200, {
         'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=60'
+        'Cache-Control': 'public, max-age=240'
         //'Cache-Control': 'no-cache'
     })
     res.end(img)
-
 })
 
 router.get('/avatar1', async (req, res) => {

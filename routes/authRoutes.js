@@ -25,6 +25,17 @@ router.post('/change_password', async (req, res) => {
 
 
 router.post('/forgot_password', async (req, res) => {
+
+    // CREATE TOKEN
+    var reset_token = uuid();
+    var email = "x";
+    try {
+        result = await user.postToken(reset_token, email);
+    } catch (err) {
+        console.log("Problem posting reset password token: ", err)
+    }
+
+
     const client_id = CONSTANTS.CLIENT_ID
     const client_secret = CONSTANTS.CLIENT_SECRET
     const refresh_token = CONSTANTS.REFRESH_TOKEN
@@ -68,7 +79,7 @@ router.post('/forgot_password', async (req, res) => {
         from: CONSTANTS.EMAIL_ADR_FROM,
         to: CONSTANTS.EMAIL_ADR_TO,
         subject: 'test email forgot password',
-        text: 'test body'
+        text: `Click this link to reset your password: http://localhost:3001/?token=${reset_token}`
     };
 
     transporter.sendMail(mailOptions, function (error, info) {

@@ -31,7 +31,18 @@ router.get('/interaction', async (req, res) => {
         console.log("Problem fetching users interactions: ", err)
         return res.status(403).send({ error: "Problem fetching interactions" });
     }
+})
 
+// get notifications for the user
+router.get('/notifications', async (req, res) => {
+    const user_id = req.user_id
+    try {
+        const rows = await interaction.getInteractionsForUserId(user_id);
+        res.status(200).send(rows)
+    } catch (err) {
+        console.log("Problem fetching notifications: ", err)
+        return res.status(403).send({ error: "Problem fetching notifications" });
+    }
 })
 
 module.exports = router;

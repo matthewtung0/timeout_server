@@ -141,4 +141,16 @@ router.post('/save_session', async (req, res) => {
     return res.status(200).send({ msg: "Success!" });
 });
 
+router.delete('/session/:id', async (req, res) => {
+    const user_id = req.user_id
+    const sessionId = req.params.id
+    try {
+        await session.deleteSession(user_id, sessionId)
+        res.status(200).send()
+    } catch (err) {
+        console.log("Problem deleting session: ", err)
+        res.status(403).send({ error: "Error deleting session!" })
+    }
+})
+
 module.exports = router;

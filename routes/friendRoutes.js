@@ -40,6 +40,8 @@ router.get('/friendsList', async (req, res) => {
     }
 })
 
+router.get('/friendAvatars',)
+
 router.get('/friendRequestsIncoming', async (req, res) => {
     const user_id = req.user_id
     try {
