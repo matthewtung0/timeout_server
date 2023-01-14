@@ -33,6 +33,18 @@ router.get('/interaction', async (req, res) => {
     }
 })
 
+// get users who liked an activity
+router.get('/interaction/reaction/:id', async (req, res) => {
+    const activity_id = req.params.id
+    try {
+        const rows = await interaction.getLikersFromActivityId(activity_id);
+        res.status(200).send(rows)
+    } catch (err) {
+        console.log("Problem fetching reaction list: ", err)
+        return res.status(403).send({ error: "Problem fetching reaction list" });
+    }
+})
+
 // get notifications for the user
 router.get('/notifications', async (req, res) => {
     const user_id = req.user_id

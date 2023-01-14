@@ -81,10 +81,6 @@ router.get('/sessionFeed', async (req, res) => {
 })
 
 
-
-
-
-
 router.get('/daySessions', async (req, res) => {
     const startRange = req.query.startTime
     const endRange = req.query.endTime
@@ -150,6 +146,20 @@ router.delete('/session/:id', async (req, res) => {
     } catch (err) {
         console.log("Problem deleting session: ", err)
         res.status(403).send({ error: "Error deleting session!" })
+    }
+})
+
+router.patch('/session/:id', async (req, res) => {
+    const sessionId = req.params.id
+    const user_id = req.user_id
+    const { notes } = req.body
+    console.log("Updating sessionId with notes ", notes)
+    try {
+        await session.updateNotes(notes, sessionId)
+        res.status(200).send()
+    } catch (err) {
+        console.log(err.stack)
+        res.status(403).send({ error: "Error patching session!" })
     }
 })
 

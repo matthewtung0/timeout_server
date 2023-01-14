@@ -115,7 +115,7 @@ function reformatBasicInfo(r) {
 }
 
 function reformatAvatarInfo(r) {
-    console.log("Avatar info", r)
+    //console.log("Avatar info", r)
     let avatarJSON = {
         face: {
             mouth: {
@@ -356,7 +356,8 @@ async function getInfoFromId(userId) {
      LEFT OUTER JOIN user_avatar b on a.user_id = b.user_id WHERE a.user_id = $1;'
     query_values = [userId]
     const { rows } = await db.query(query_text, query_values);
-    console.log("RESULTS", rows)
+    console.log("ROWS IS ", rows)
+    //console.log("RESULTS", rows)
     query_text2 = 'SELECT count(time_start) as num_tasks, \
     sum(time_end - time_start) as total_time from activity where user_id = $1;'
 

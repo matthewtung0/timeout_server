@@ -113,10 +113,22 @@ async function deleteSession(user_id, sessionId) {
     }
 }
 
+async function updateNotes(notes, sessionid) {
+    query_text = 'UPDATE activity SET notes = $1 WHERE \
+    activity_id = $2;'
+    query_values = [notes, sessionid]
+    try {
+        const { rows } = await db.query(query_text, query_values)
+        return rows
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
 
 
 module.exports = {
     set_user_session, get_day_session, getAllSessions, getSession, getSessionBatch, getSelfSessionsBatch,
-    getSessionBatchByUsername, deleteSession,
+    getSessionBatchByUsername, deleteSession, updateNotes,
 
 }

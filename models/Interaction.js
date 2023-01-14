@@ -19,7 +19,7 @@ async function toggleInteraction(reaction_id, activity_id, user_id) {
             await db.query(incrementQuery, incrementValues)
 
             addReactionQuery = 'INSERT INTO interaction(interaction_id, reaction_id, activity_id, user_id, is_active, time_created)\
-            VALUES($1,$2,$3,$4,$5)'
+            VALUES($1,$2,$3,$4,$5,$6)'
             addReactionValues = [uuid(), reaction_id, activity_id, user_id, true, new Date()]
             await db.query(addReactionQuery, addReactionValues)
 
@@ -74,7 +74,17 @@ async function getInteractionsFromActivityId(activity_id) {
     return rows;
 }
 
+async function getLikersFromActivityId(activity_id) {
+    query = 'SELECT a.user_id, b.username \
+    FROM interaction a \
+    LEFT JOIN user_timeout b on a.user_id = b.user_id \
+    WHERE a.activity_id = $1 AND a.is_active = $2 AND a.reaction_id = $3;'
+    values = [activity_id, true, '0']
+    const { rows } = await db.query(query, values)
+    return rows;
+}
+
 module.exports = {
     toggleInteraction, getInteractionsFromUserId, getInteractionsFromActivityId,
-    getInteractionsForUserId,
+    getInteractionsForUserId, getLikersFromActivityId,
 }

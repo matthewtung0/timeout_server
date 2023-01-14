@@ -15,7 +15,7 @@ async function addCategory(userId, categoryName, chosenColor, isPublic, timeSubm
 }
 
 async function deleteCategory(userId, categoryId) {
-    console.log("Trying to delete category with categoryId ",categoryId)
+    console.log("Trying to delete category with categoryId ", categoryId)
     query_text = 'UPDATE category SET is_active = false WHERE \
     category_id = $1;'
     //query_text = 'DELETE FROM category WHERE category_id = $1;'
@@ -52,6 +52,18 @@ async function getUserCategories(userId, getPrivate) {
     if (!getPrivate) query_text = query_text + query_addendum
 
     query_values = [userId, '3'] //3 is unsorted
+    try {
+        const { rows } = await db.query(query_text, query_values)
+        return rows
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
+async function setAll(user_id, categoryId, archived, isPublic, colorId) {
+    query_text = 'UPDATE category SET archived = $1,public = $2,color_id = $3 WHERE \
+    category_id = $4;'
+    query_values = [archived, isPublic, colorId, categoryId]
     try {
         const { rows } = await db.query(query_text, query_values)
         return rows
@@ -97,5 +109,6 @@ async function setColor(user_id, categoryId, colorId) {
 }
 
 module.exports = {
-    addCategory, getUserCategories, deleteCategory, setColor, setArchive, getCategoryByUsername, setPublic
+    addCategory, getUserCategories, deleteCategory, setColor, setArchive, getCategoryByUsername, setPublic,
+    setAll,
 }

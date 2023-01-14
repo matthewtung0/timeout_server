@@ -11,8 +11,11 @@ router.use(requireAuth);
 
 router.get('/info/self', async (req, res) => {
     const user_id = req.user_id
+
     try {
+
         user_info = await user.getInfoFromId(user_id)
+        console.log("SENDING USER INFO ", user_info)
         res.send(user_info);
     } catch (err) {
         console.log("Something went wrong", err)

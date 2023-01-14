@@ -8,6 +8,14 @@ router.use(requireAuth);
 router.get('/category/:id', async (req, res) => {
     let id = req.params.id
     let getPrivate = req.query.getPrivate
+    let isSelf = req.query.isSelf
+
+    const user_id = req.user_id
+    if (isSelf) {
+        id = user_id;
+    }
+
+    console.log("Trying to get category with id", id)
 
     try {
         rows = await category.getUserCategories(id, getPrivate);
@@ -56,8 +64,15 @@ router.post('/category', async (req, res) => {
 router.patch('/category/:id', async (req, res) => {
     const categoryId = req.params.id
     const user_id = req.user_id
-    const {archived, colorId, isPublic } = req.body
+    const { archived, colorId, isPublic } = req.body
     try {
+        await category.setAll(user_id, categoryId, archived, isPublic, colorId)
+        res.status(200).send()
+    } catch (err) {
+        console.log(err.stack)
+        res.status(403).send({ error: "Error patching category!" })
+    }
+    /*try {
         if (archived !== undefined) {
             await category.setArchive(user_id, categoryId, archived)
         } else if (colorId !== undefined) {
@@ -70,7 +85,7 @@ router.patch('/category/:id', async (req, res) => {
     } catch (err) {
         console.log(err.stack)
         res.status(403).send({ error: "Error patching category!" })
-    }
+    }*/
 })
 
 router.delete('/category/:id', async (req, res) => {
