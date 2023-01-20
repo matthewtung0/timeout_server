@@ -2,6 +2,15 @@ const db = require('../db')
 const dir = require('../models/ImageDirectory')
 Images = require('images')
 const format = require('pg-format')
+const AWS = require('aws-sdk');
+const fs = require('fs')
+const PNG = require('png-js')
+const Jimp = require("jimp")
+const CONSTANTS = require('../constants.json')
+const s3 = new AWS.S3({
+    accessKeyId: CONSTANTS.AWS_ACCESS_KEY_ID,
+    secretAccessKey: CONSTANTS.AWS_SECRET_ACCESS_KEY
+});
 
 async function stitchDefault() {
     var d = '/Users/matthewtung/timeout_server/assets/avatar/'
@@ -34,6 +43,7 @@ async function stitchDefault() {
 }
 
 async function generateAvatarFromData2(avatarData, user_id) {
+    console.time('read to Jimp')
     var d = '/Users/matthewtung/timeout_server/assets/avatar/'
     /*
     {
@@ -177,19 +187,103 @@ async function generateAvatarFromData2(avatarData, user_id) {
     if (avatarJSON.accessories.piercings.active) { wardrobe.push(piercingsSrc) }
     if (avatarJSON.accessories.glasses.active) { wardrobe.push(glassesSrc) }
 
-    let userAvatar = Images(wardrobe[0])
-    console.log("wARDROBE IS ", wardrobe)
+    //let userAvatar = Images(wardrobe[0])
+    console.log("Wardrobe is ", wardrobe)
 
-    for (var i = 1; i < wardrobe.length; i++) {
+    var jimp20 = (await Jimp.read(bgSrc)).resize(500, 500)
+    var jimp19 = (await Jimp.read(overlaySrc)).resize(500, 500)
+    var jimp18 = (await Jimp.read(hairBackSrc)).resize(500, 500)
+    var jimp17 = (await Jimp.read(hairAccessoriesSrc)).resize(500, 500)
+    var jimp16 = (await Jimp.read(baseSrc)).resize(500, 500)
+    var jimp15 = (await Jimp.read(eyebrowsSrc)).resize(500, 500)
+    var jimp13 = (await Jimp.read(makeupSrc)).resize(500, 500)
+    var jimp12 = (await Jimp.read(eyesSrc)).resize(500, 500)
+    var jimp11 = (await Jimp.read(mouthSrc)).resize(500, 500)
+    var jimp10 = (await Jimp.read(underSrc)).resize(500, 500)
+    var jimp9 = (await Jimp.read(topSrc)).resize(500, 500)
+    var jimp8 = (await Jimp.read(accessoriesSrc)).resize(500, 500)
+    var jimp7 = (await Jimp.read(outerwearSrc)).resize(500, 500)
+    var jimp6 = (await Jimp.read(hairSrc)).resize(500, 500)
+    var jimp5 = (await Jimp.read(hairSideSrc)).resize(500, 500)
+    var jimp4 = (await Jimp.read(hairFrontSrc)).resize(500, 500)
+    var jimp3 = (await Jimp.read(earsSrc)).resize(500, 500)
+    var jimp2 = (await Jimp.read(piercingsSrc)).resize(500, 500)
+    var jimp1 = (await Jimp.read(glassesSrc)).resize(500, 500)
+
+    console.timeEnd('read to Jimp')
+    console.time('Compositing')
+
+    jimp_wardrobe = []
+    jimp_wardrobe.push(jimp20, jimp19)
+    if (avatarJSON.hair.back.active) { jimp_wardrobe.push(jimp18) }
+    if (avatarJSON.accessories.hair.active) { jimp_wardrobe.push(jimp17) }
+    jimp_wardrobe.push(jimp16, jimp15)
+    if (avatarJSON.face.makeup.active) { jimp_wardrobe.push(jimp13) }
+    jimp_wardrobe.push(jimp12)
+    jimp_wardrobe.push(jimp11)
+    jimp_wardrobe.push(jimp10)
+    if (avatarJSON.clothing.top.active) { jimp_wardrobe.push(jimp9) }
+    if (avatarJSON.accessories.general.active) { jimp_wardrobe.push(jimp8) }
+    if (avatarJSON.clothing.outer.active) { jimp_wardrobe.push(jimp7) }
+    if (avatarJSON.hair.base.active) { jimp_wardrobe.push(jimp6) }
+    if (avatarJSON.hair.side.active) { jimp_wardrobe.push(jimp5) }
+    if (avatarJSON.hair.front.active) { jimp_wardrobe.push(jimp4) }
+    jimp_wardrobe.push(jimp3)
+    if (avatarJSON.accessories.piercings.active) { jimp_wardrobe.push(jimp2) }
+    if (avatarJSON.accessories.glasses.active) { jimp_wardrobe.push(jimp1) }
+
+    var finalJimp = jimp20
+
+    for (var i = 1; i < jimp_wardrobe.length; i++) {
+        console.log("Compositing " + i)
+        finalJimp = finalJimp.composite(jimp_wardrobe[i], 0, 0)
+    }
+    var avatarBuffer = await finalJimp.getBufferAsync(Jimp.MIME_PNG);
+    await uploadToS3(avatarBuffer, user_id)
+
+    /*for (var i = 1; i < wardrobe.length; i++) {
         console.log("Drawing " + wardrobe[i])
         userAvatar = userAvatar.draw(Images(wardrobe[i], 0, 0))
     }
 
-
     userAvatar
         .size(200)
         .save('generatedAvatarsTemp/' + user_id + '_avatar.png')
+    */
+    console.log("This one is done");
+    console.timeEnd('Compositing')
+    return avatarBuffer;
 
+}
+
+async function fetchFromS3(user_id) {
+    try {
+        const params = {
+            Bucket: "timeoutavatars",
+            Key: user_id + "_avatar.png"
+        }
+
+        const data = await s3.getObject(params).promise();
+
+        return data.Body.toString('base64');
+    } catch (e) {
+        throw new Error(`Could not retrieve file from S3: ${e.message}`)
+    }
+
+}
+
+async function uploadToS3(buffer, user_id) {
+    const params = {
+        Bucket: "timeoutavatars",
+        Key: user_id + '_avatar.png',
+        Body: buffer
+    }
+
+    s3.upload(params, (err, data) => {
+        if (err) {
+            console.log(err)
+        }
+    })
 }
 
 async function generateAvatarFromData(avatarData, user_id) {
@@ -323,7 +417,7 @@ async function saveUserAvatar2(user_id, avatarJSON) {
         j.hair.front.item, j.hair.front.color, j.hair.front.active,
         j.hair.back.item, j.hair.back.color, j.hair.back.active,
         j.hair.side.item, j.hair.side.color, j.hair.side.active,
-        user_id
+        user_id, new Date()
     ]
     /*
         Column          |       Type        | Collation | Nullable | Default 
@@ -380,6 +474,7 @@ async function saveUserAvatar2(user_id, avatarJSON) {
          glasses_index           | integer           |           |          | 
          glasses_color           | integer           |           |          | 
          glasses_active          | boolean           |           |          | 
+        last_updated             | timestamp with time zone |    |          | 
         */
 
     query_text = 'INSERT INTO user_avatar \
@@ -391,10 +486,10 @@ async function saveUserAvatar2(user_id, avatarJSON) {
     glasses_color,glasses_active,background_index,background_color,background_active,underlayer_index,underlayer_color,\
     underlayer_active,top_index,top_color,top_active,outer_index,outer_color,outer_active,hair_base_index,hair_base_color,\
     hair_base_active,hair_front_index,hair_front_color,hair_front_active,hair_back_index,hair_back_color,hair_back_active,\
-    hair_side_index,hair_side_color,hair_side_active,user_id)\
+    hair_side_index,hair_side_color,hair_side_active,user_id, last_updated)\
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,\
         $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,\
-        $41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52)  \
+        $41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53)  \
     ON CONFLICT (user_id) DO UPDATE \
     SET \
     mouth_index = $1,\
@@ -447,7 +542,8 @@ async function saveUserAvatar2(user_id, avatarJSON) {
     hair_back_active =$48,\
     hair_side_index =$49,\
     hair_side_color =$50,\
-    hair_side_active =$51;'
+    hair_side_active =$51,\
+    last_updated= $53;'
 
     /*
         {
@@ -553,6 +649,13 @@ async function saveUserAvatar2(user_id, avatarJSON) {
     return rows;
 }
 
+async function getLastUpdate(user_id) {
+    query_text = 'SELECT last_updated FROM user_avatar where user_id = $1;'
+    query_values = [user_id]
+    const { rows } = await db.query(query_text, query_values);
+    return rows[0];
+}
+
 
 async function saveUserAvatar(user_id, items, colors, hasItems) {
     const { face, accessories, clothing, hair, background, overlay } = items
@@ -621,5 +724,6 @@ async function saveUserAvatar(user_id, items, colors, hasItems) {
 
 module.exports = {
     stitchDefault, saveUserAvatar, generateAvatarFromData,
-    generateAvatarFromData2, saveUserAvatar2, purchaseItems
+    generateAvatarFromData2, saveUserAvatar2, purchaseItems,
+    uploadToS3, fetchFromS3, getLastUpdate
 }

@@ -5,6 +5,8 @@ const requireAuth = require('../middlewares/requireAuth');
 const fs = require('fs')
 const images = require('images');
 const { publicDecrypt } = require('crypto');
+const AWS = require('aws-sdk');
+const CONSTANTS = require('../constants.json')
 
 const router = new Router();
 router.use(requireAuth);
@@ -82,20 +84,37 @@ router.get('/user/owned', async (req, res) => {
     }
 })
 
+router.get('/avatar12345/last_updated/:id', async (req, res) => {
+    let id = req.params.id
+    try {
+        var result = await Avatar.getLastUpdate(id);
+        console.log("Last updated: ", result)
+        res.send(result);
+    } catch (err) {
+        console.log(err);
+        return res.status(422).send(err.message);
+    }
+
+})
+
 // TESTING MAX AGE 60 SEC CACHE
 router.get('/avatar12345/:id', async (req, res) => {
     console.log("got here?")
     let id = req.params.id
     console.log("getting avatar for", id)
+    var s3data = await Avatar.fetchFromS3(id);
+    console.log("Sending s3 data of size ", s3data.length);
+    res.end(s3data)
+    /*console.log("S3 data is", s3data);
     var avatarPath = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
     let filename = avatarPath + id + '_avatar.png'
     var img = fs.readFileSync(filename, { encoding: 'base64' })
     res.writeHead(200, {
         'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=240'
+        'Cache-Control': 'public, max-age=1'
         //'Cache-Control': 'no-cache'
     })
-    res.end(img)
+    res.end(img)*/
 })
 
 router.get('/avatar1', async (req, res) => {
@@ -248,24 +267,38 @@ router.post('/self_user/avatar2', async (req, res) => {
 
     // generate avatar png
     try {
-        await Avatar.generateAvatarFromData2({ avatarJSON }, user_id)
+        var bufferData = await Avatar.generateAvatarFromData2({ avatarJSON }, user_id)
 
         // send back the updated avatar
+        bufferString = bufferData.toString('base64')
+        res.end(bufferString)
 
-        var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
+        /*var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
         const file = d + user_id + '_avatar.png'
         var img = fs.readFileSync(file, { encoding: 'base64' })
 
         res.writeHead(200, {
             'Content-Type': 'image/png',
         })
-        res.end(img)
+        res.end(img)*/
         console.log("Avatar png generation completed")
         //return res.status(200).send()
     } catch (err) {
         console.log(err)
         return res.status(422).send(err.message)
     }
+
+    // try upload test
+    /*try {
+        await Avatar.upload(user_id)
+    } catch (err) {
+        console.log(err)
+    }*/
+
+    // delete png from server temp folder
+
+
+
 })
 
 router.post('/self_user/avatar', async (req, res) => {

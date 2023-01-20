@@ -2,6 +2,9 @@ const db = require('../db')
 const uuid = require('uuid-random');
 const bcrypt = require('bcrypt')
 const format = require('pg-format')
+const AWS = require('aws-sdk');
+const fs = require('fs')
+const CONSTANTS = require('../constants.json')
 
 async function hash_pw(password) {
     const salt = await bcrypt.genSalt(10);
@@ -510,10 +513,34 @@ async function deleteAll(userId) {
     // delete from user_timeout (user info)
 }
 
+
+async function uploadFileTest(file, user_id) {
+
+    const s3 = new AWS.S3({
+        accessKeyId: CONSTANTS.AWS_ACCESS_KEY_ID,
+        secretAccessKey: CONSTANTS.AWS_SECRET_ACCESS_KEY
+    });
+    var filePath = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
+    var img = fs.readFileSync(filePath + "imagesTesting1.png")// { encoding: 'base64' })
+    const params = {
+        Bucket: "timeoutavatars",
+        Key: 'testing_avatar.png',
+        Body: img
+    }
+
+    s3.upload(params, (err, data) => {
+        if (err) {
+            console.log(err)
+        }
+    })
+
+}
+
 module.exports = {
     set_user_info, hash_pw, get_user_info, updateInfo,
     comparePassword, validateAndResetPassword, getInfoFromId,
     updatePassword, getCredentialsFromId, deleteAll, addPoints, updateLastSignin,
     getStatsFromId, getStatsFromUsername, getItemsOwnedFromId, getItemsOwnedFromUsername,
-    purchaseItems, doesUsernameExist, doesEmailExist, postToken
+    purchaseItems, doesUsernameExist, doesEmailExist, postToken,
+    uploadFileTest
 }
