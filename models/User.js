@@ -476,7 +476,6 @@ async function addPoints(userId, pointsToAdd) {
     query_text = 'UPDATE user_timeout SET points = points + $1 where user_id = $2 RETURNING points;'
     query_values = [pointsToAdd, userId]
     const { rows } = await db.query(query_text, query_values);
-    return rows;
 }
 
 async function updateLastSignin(userId) {

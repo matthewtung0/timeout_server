@@ -101,6 +101,7 @@ router.get('/monthSessions', async (req, res) => {
     const startRange = req.query.startTime
     const endRange = req.query.endTime
     console.log("getting session for month ", startRange)
+    console.log(" and ending at month ", endRange)
     try {
         let user_id = req.user_id
 
@@ -118,12 +119,34 @@ router.post('/save_session', async (req, res) => {
     // req.body is an array of len 1 or more
     for (const element of req.body) {
 
-        const { chosenCategory, chosenCatId, customActivity, sessionStartTime,
-            sessionEndTime, endEarlyFlag, prodRating } = element
+        const { activity_id, chosenCategory, cat_id, activity_name, time_start,
+            time_end, end_early, prod_rating } = element
+
+        /*try {
+            var user_id = req.user_id
+            const yesterday_task = await session.check_first_session(user_id, yesterdayStartRange, yesterdayEndRange)
+            const today_first_task = await session.check_first_session(user_id, startRange, endRange)
+            console.log("YESTERDAY TASK IS ", yesterday_task)
+            console.log("TODAY FIRST TASK IS ", today_first_task)
+            if (yesterday_task == 0 && today_first_task == 0) {
+                // this session is start of a new streak
+                console.log("this session is start of a new streak")
+            } else if (yesterday_task > 0 && today_first_task == 0) {
+                // this session extends an existing streak
+                console.log("this session extends an existing streak")
+            } else {
+                // already did a session today, nothing to update
+                console.log("already did a session today, nothing to update")
+            }
+
+        } catch (err) {
+        }*/
+        var user_stats = null;
+
         try {
             var user_id = req.user_id
-            var result = await session.set_user_session(chosenCategory, chosenCatId, customActivity,
-                sessionStartTime, sessionEndTime, endEarlyFlag, prodRating, user_id)
+            var result = await session.set_user_session(activity_id, chosenCategory, cat_id, activity_name,
+                time_start, time_end, end_early, prod_rating, user_id)
             console.log(result)
             if (!result) {
                 return res.status(422).send({ error: "Error saving session!" });
@@ -132,6 +155,13 @@ router.post('/save_session', async (req, res) => {
             console.log("error saving this session!", err)
             return res.status(422).send({ error: "Error saving session!" });
         }
+
+        // update stats to check for achievements
+        /*try {
+            user_stats = await user.getStatsFromId(id)
+        } catch (err) {
+            console.log("error getting user stats after session save")
+        }*/
     }
     // all sessions successfully saved
     return res.status(200).send({ msg: "Success!" });

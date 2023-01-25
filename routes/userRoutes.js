@@ -15,7 +15,6 @@ router.get('/info/self', async (req, res) => {
     const user_id = req.user_id
 
     try {
-
         user_info = await user.getInfoFromId(user_id)
         console.log("SENDING USER INFO ", user_info)
         res.send(user_info);
@@ -23,6 +22,8 @@ router.get('/info/self', async (req, res) => {
         console.log("Something went wrong", err)
         return res.status(422).send(err.message);
     }
+
+
 })
 
 router.get('/stats/:id', async (req, res) => {

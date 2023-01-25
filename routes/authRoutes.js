@@ -11,6 +11,7 @@ const CONSTANTS = require('../constants.json')
 
 router.post('/change_password', async (req, res) => {
     const { token, password } = req.body;
+    console.log("Trying to change password with token ", token)
     try {
         result = await user.validateAndResetPassword(token, password);
         if (!result) {
@@ -21,6 +22,31 @@ router.post('/change_password', async (req, res) => {
     } catch {
 
     }
+});
+
+router.post('/forgot_password_test', async (req, res) => {
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'nofuss.exe@gmail.com',
+            pass: CONSTANTS.NOFUSS_APP_PASSWORD,
+        }
+    });
+
+    var mailOptions = {
+        from: 'nofuss.exe@gmail.com',
+        to: 'tungm@usc.edu',
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
 });
 
 
