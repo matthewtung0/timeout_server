@@ -54,7 +54,7 @@ async function getSession(id) {
     return rows
 }
 
-async function getSessionBatch(startIndex, batchSize, friends) {
+async function getSessionBatch(startIndex, batchSize, friends,) {
     /*query_text1 = format('SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c\
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($1::int[])',[friends])*/

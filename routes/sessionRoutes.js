@@ -59,8 +59,11 @@ router.get('/sessionFeed', async (req, res) => {
     let friends = req.query.friends
 
     if (friends) {
-        friends.push(user_id)
-    } else { friends = [user_id] }
+        //friends.push(user_id)
+    } else {
+        friends = [];
+        //friends = [user_id]
+    }
 
     var start = 0
     if (startIndex) {

@@ -51,10 +51,11 @@ router.post('/forgot_password_test', async (req, res) => {
 
 
 router.post('/forgot_password', async (req, res) => {
+    const { email } = req.body;
 
     // CREATE TOKEN
     var reset_token = uuid();
-    var email = "x";
+    //var email = "x";
     try {
         result = await user.postToken(reset_token, email);
     } catch (err) {
@@ -62,7 +63,7 @@ router.post('/forgot_password', async (req, res) => {
     }
 
 
-    const client_id = CONSTANTS.CLIENT_ID
+    /*const client_id = CONSTANTS.CLIENT_ID
     const client_secret = CONSTANTS.CLIENT_SECRET
     const refresh_token = CONSTANTS.REFRESH_TOKEN
     const oauth2Client = new OAuth2(client_id,
@@ -106,7 +107,31 @@ router.post('/forgot_password', async (req, res) => {
         to: CONSTANTS.EMAIL_ADR_TO,
         subject: 'test email forgot password',
         text: `Click this link to reset your password: http://localhost:3001/?token=${reset_token}`
+    };*/
+
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'nofuss.exe@gmail.com',
+            pass: CONSTANTS.NOFUSS_APP_PASSWORD,
+        }
+    });
+
+    var mailOptions = {
+        from: 'nofuss.exe@gmail.com',
+        to: email,
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
     };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
 
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
@@ -120,7 +145,7 @@ router.post('/forgot_password', async (req, res) => {
 })
 
 router.post('/signup', async (req, res) => {
-    const { email, password, username, firstName, lastName, categoryArr } = req.body;
+    const { email, password, username, firstName, lastName, categoryArr, bio } = req.body;
 
     //INSERT INTO category(category_id, user_id, category_name, time_created, color_id, public, archived)
 
@@ -134,11 +159,12 @@ router.post('/signup', async (req, res) => {
         for (let i = 0; i < categoryArr.length; i++) {
             if (categoryArr[i][2]) { // if user chose this
                 chosenCategories.push([uuid(), user_id, categoryArr[i][1], new Date(),
-                categoryArr[i][3], true, false])
+                categoryArr[i][3], true, false, true])
             }
+            // (category_id, user_id, category_name, time_created, color_id, public, archived, is_active)
         }
 
-        await user.set_user_info(email, hashed_pw, username, firstName, lastName, user_id, chosenCategories);
+        await user.set_user_info(email, hashed_pw, username, firstName, lastName, user_id, chosenCategories, bio);
         const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY');
         res.status(200).send({ token });
     } catch (err) {
@@ -148,6 +174,7 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body;
+    console.log(`email is ${email} and password is ${password}`)
 
     if (!email || !password) {
         return res.status(422).send({ error: 'must provide email and password' });

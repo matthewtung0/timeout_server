@@ -12,7 +12,7 @@ async function hash_pw(password) {
     return password;
 };
 
-async function set_user_info(email, password, username, firstName, lastName, user_id, chosenCategories) {
+async function set_user_info(email, password, username, firstName, lastName, user_id, chosenCategories, bio) {
     const client = await db.connect()
 
     try {
@@ -24,6 +24,13 @@ async function set_user_info(email, password, username, firstName, lastName, use
         while (insert_result != 1) {
             try {
                 let friend_code = generateFriendCode()
+                user_query_text = 'INSERT INTO user_timeout(\
+                    user_id, first_name,last_name,username, time_created,last_signin,friend_code,points,bio)\
+                    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *'
+                user_query_values = [user_id, firstName, lastName, username, dt_now, dt_now, friend_code, 0, bio]
+
+                /*
+                old query
                 user_query_text = 'INSERT INTO user_timeout(\
                     user_id, first_name,last_name,username, time_created,last_signin,friend_code,points, \
                     mouth,eyes,makeup,eyebrows,base,glasses,piercings,accessories,outerwear,top,under,hairfront,hairback,hairside,hair,background, \
@@ -38,8 +45,8 @@ async function set_user_info(email, password, username, firstName, lastName, use
                     false, false, false, false, true, true, true, false,
                     0, 0,
                     false, false
-                ]
-                const res = await db.query(user_query_text, user_query_values)
+                ]*/
+                const res = await client.query(user_query_text, user_query_values)
                 // it is a success
                 insert_result = 1
             } catch (err) {
@@ -48,13 +55,34 @@ async function set_user_info(email, password, username, firstName, lastName, use
             }
         }
 
+        // INITIATE USER IN AVATAR TABLE
+        user_query_text = 'INSERT INTO user_avatar(\
+                mouth_index, mouth_color, mouth_active,eyes_index,eyes_color,eyes_active,\
+                    eye_makeup_index,eye_makeup_color,eye_makeup_active,eyebrows_index,eyebrows_color,eyebrows_active\
+                    ,base_index,base_color,base_active,\
+                    hair_accessories_index,hair_accessories_color,hair_accessories_active,gen_accessories_index,\
+                    gen_accessories_color,gen_accessories_active,piercings_index,piercings_color,piercings_active,glasses_index,\
+                    glasses_color,glasses_active,background_index,background_color,background_active,underlayer_index,underlayer_color,\
+                    underlayer_active,top_index,top_color,top_active,outer_index,outer_color,outer_active,hair_base_index,hair_base_color,\
+                    hair_base_active,hair_front_index,hair_front_color,hair_front_active,hair_back_index,hair_back_color,hair_back_active,\
+                    hair_side_index,hair_side_color,hair_side_active,user_id, last_updated)\
+                    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,\
+                        $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,\
+                        $41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53);'
+        user_query_values = [0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true,
+            0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true,
+            0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true,
+            0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true,
+            user_id, new Date()]
+        const res = await client.query(user_query_text, user_query_values)
+
         // TRY SETTING USER CREDENTIALS
         creds_query_text = 'INSERT INTO user_credential(user_id, password, email) VALUES($1,$2,$3) RETURNING *'
         creds_query_values = [user_id, password, email]
         await db.query(creds_query_text, creds_query_values)
 
-        db.query(format('INSERT INTO category\
-        (category_id, user_id, category_name, time_created, color_id, public, archived) VALUES %L', chosenCategories),
+        const res3 = await client.query(format('INSERT INTO category\
+        (category_id, user_id, category_name, time_created, color_id, public, archived, is_active) VALUES %L', chosenCategories),
             [], (err, result) => {
                 console.log(err)
                 console.log(result)
@@ -113,8 +141,8 @@ async function get_user_info(given_email) {
 }
 
 function reformatBasicInfo(r) {
-    let { user_id, first_name, last_name, username, friend_code, points, bio } = r
-    return { user_id, first_name, last_name, username, friend_code, points, bio }
+    let { user_id, first_name, last_name, username, friend_code, points, bio, avatar_active } = r
+    return { user_id, first_name, last_name, username, friend_code, points, bio, avatar_active }
 }
 
 function reformatAvatarInfo(r) {
