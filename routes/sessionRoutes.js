@@ -1,8 +1,11 @@
 const session = require('../models/Session');
+const counter = require('../models/Counter')
 const express = require('express')
 const db = require('../db')
 const Router = require('express-promise-router');
 const requireAuth = require('../middlewares/requireAuth');
+const { format, parseISO, startOfMonth, endOfMonth } = require('date-fns');
+const { enUS } = require('date-fns/locale/en-US');
 
 const router = new Router();
 router.use(requireAuth)
@@ -83,7 +86,7 @@ router.get('/sessionFeed', async (req, res) => {
     }
 })
 
-
+/*
 router.get('/daySessions', async (req, res) => {
     const startRange = req.query.startTime
     const endRange = req.query.endTime
@@ -98,13 +101,146 @@ router.get('/daySessions', async (req, res) => {
         console.log("error getting day's session: ", err)
         return res.status(422).send({ error: "Error getting day's session!" });
     }
-})
+})*/
 
+const byMonthKey = (dt, parse = false) => {
+    if (parse) {
+        return format(parseISO(dt), 'M/yyyy', { locale: enUS }).toString()
+    }
+    return format(dt, 'M/yyyy', { locale: enUS }).toString()
+
+}
+
+const byDayKey = (dt, parse = false) => {
+    if (parse) {
+        var actual_date = format(parseISO(dt), 'M/dd/yyyy', { locale: enUS })
+        var actual_parts = actual_date.split('/')
+        var yr = actual_parts[2]
+        var month = actual_parts[0]
+        var day = actual_parts[1]
+
+        return month + "/" + day + "/" + yr
+    } else {
+        var actual_date = format(dt, 'M/dd/yyyy', { locale: enUS })
+        var actual_parts = actual_date.split('/')
+        var yr = actual_parts[2]
+        var month = actual_parts[0]
+        var day = actual_parts[1]
+
+        return month + "/" + day + "/" + yr
+    }
+
+}
+
+// key is month only, for summary
+const groupMonthlyTasksForSummary = (monthSessions) => {
+    var overallMap = {}
+    for (var i = 0; i < monthSessions.length; i++) {
+        var session = monthSessions[i]
+        var monthKey = byMonthKey(session.time_start)
+
+        if (monthKey in overallMap) {
+            overallMap[monthKey].push(session)
+        } else {
+            overallMap[monthKey] = [session]
+        }
+    }
+    return overallMap //Object.entries(overallMap)
+}
+
+// key is month as well as day, for detail
+const groupMonthlyTasks = (monthSessions) => {
+    var overallMap = {}
+    for (var i = 0; i < monthSessions.length; i++) {
+        var session = monthSessions[i]
+        var dayKey = byDayKey(session.time_start)
+        var monthKey = byMonthKey(session.time_start)
+
+        if (monthKey in overallMap) {
+            if (dayKey in overallMap[monthKey]) {
+                overallMap[monthKey][dayKey].push(session)
+            } else {
+                overallMap[monthKey][dayKey] = [session]
+            }
+        } else {
+            overallMap[monthKey] = {}
+            overallMap[monthKey][dayKey] = [session]
+        }
+    }
+    var intermediateMap = {}
+    for (const [key, value] of Object.entries(overallMap)) {
+        intermediateMap[key] = {}
+        for (var i in Object.entries(value)) {
+            // sort this: Object.entries(value)[i][1]
+            Object.entries(value)[i][1].sort((a, b) => {
+                if (a.entry_type == 1 && b.entry_type == 1) { // do alphabetical
+                    if (a.counter_name <= b.counter_name) {
+                        return -1
+                    } return 1
+                }
+                else if (a.entry_type == 1) {
+                    return -1
+                }
+                return 1
+            })
+        }
+        var dayKeyArray = Object.keys(overallMap[key]).sort().reverse()
+        for (var key_ in dayKeyArray) {
+            intermediateMap[key][dayKeyArray[key_]] = overallMap[key][dayKeyArray[key_]]
+        }
+    }
+    // map to existing format that works
+    var finalMap = {}
+    for (var K in intermediateMap) {
+        finalMap[K] = Object.keys(intermediateMap[K]).map((key) => [key, intermediateMap[K][key]])
+    }
+    return finalMap
+}
+
+/* get sessions and counters together, format server-side, then send over */
+
+router.get('/testSessionsAndCounters', async (req, res) => {
+    const startRange = req.query.startTime
+    const endRange = req.query.endTime
+    let sessionData = null;
+    let counterData = null;
+    console.log(`getting sessions for month ${startRange} and ending at month ${endRange}`)
+    try {
+        let user_id = req.user_id
+
+        sessionData = await session.get_day_session(startRange, endRange, user_id)
+        //res.send(result)
+
+    } catch (err) {
+        console.log("error getting month's session: ", err)
+        return res.status(422).send({ error: "Error getting month's session!" });
+    }
+
+    console.log(`getting counters for month ${startRange} and ending at month ${endRange}`)
+    try {
+        let user_id = req.user_id
+        counterData = await counter.getCounterRange(startRange, endRange, user_id)
+        //res.send(result)
+    } catch (err) {
+        console.log("error getting month's counters: ", err)
+        return res.status(422).send({ error: "Error getting month's counters!" });
+    }
+    let combinedData = sessionData.concat(counterData)
+    let groupedData = groupMonthlyTasks(combinedData)
+    let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
+
+    //console.log("Session raw data: ", sessionData)
+    //console.log("Counter raw data: ", counterData)
+    //console.log("Combined data: ", groupedCombinedData)
+
+    res.send({ groupedData, groupedDataForSummary })
+
+
+})
 router.get('/monthSessions', async (req, res) => {
     const startRange = req.query.startTime
     const endRange = req.query.endTime
-    console.log("getting session for month ", startRange)
-    console.log(" and ending at month ", endRange)
+    console.log(`getting sessions for month ${startRange} and ending at month ${endRange}`)
     try {
         let user_id = req.user_id
 

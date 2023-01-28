@@ -15,9 +15,16 @@ async function addCounter(userId, counterName, chosenColor, isPublic, timeSubmit
     }
 }
 
-async function getUserCounters(id) {
+async function getUserCounters(id, startDate) {
+
+    query_text2 = 'SELECT c.*, COALESCE(point_count,0) as point_count FROM counter c LEFT JOIN \
+    (SELECT sum(COALESCE(update_by,0)) as point_count, counter_id FROM counter_tally WHERE user_id = $1 AND time_start >= $2 GROUP BY counter_id) b \
+    ON c.counter_id = b.counter_id \
+    WHERE c.user_id = $1'
+
     query_text = 'SELECT c.*, sum(COALESCE(update_by,0)) as point_count FROM counter c  \
-    LEFT JOIN counter_tally t ON c.counter_id = t.counter_id WHERE c.user_id = $1 \
+    LEFT JOIN counter_tally t ON c.counter_id = t.counter_id \
+    WHERE c.user_id = $1 AND t.time_start >= $2\
     GROUP BY c.counter_id, c.user_id, c.counter_name, \
     c.time_created, c.color_id, c.archived, c.public, c.cur_count'
     /*query_text = 'SELECT c.*, sum(update_by) as point_count FROM counter c, counter_tally t WHERE \
@@ -27,9 +34,9 @@ async function getUserCounters(id) {
 
     //if (!getPrivate) query_text = query_text + query_addendum
 
-    query_values = [id]
+    query_values = [id, startDate]
     try {
-        const { rows } = await db.query(query_text, query_values)
+        const { rows } = await db.query(query_text2, query_values)
         //console.log("Returning counters", rows)
         return rows
     } catch (err) {
@@ -63,14 +70,14 @@ async function updateCount(user_id, counterId, updateAmount) {
     } catch (err) { console.log('error code is ', err) }
 }
 
-async function addTally(user_id, counterId, updateAmount) {
+async function addTally(user_id, counterId, updateAmount, tally_time) {
 
     const client = await db.connect()
     try {
         await client.query('BEGIN')
-        detailQuery = 'INSERT INTO counter_tally(user_id, update_by, time_created, counter_id) \
+        detailQuery = 'INSERT INTO counter_tally(user_id, update_by, time_start, counter_id) \
         VALUES ($1,$2,$3,$4) RETURNING *'
-        detailValues = [user_id, updateAmount, new Date(), counterId]
+        detailValues = [user_id, updateAmount, tally_time, counterId]
         await db.query(detailQuery, detailValues)
 
         countQuery = 'UPDATE counter SET cur_count = cur_count + $1 WHERE counter_id = $2 AND user_id = $3;'
@@ -89,11 +96,12 @@ async function addTally(user_id, counterId, updateAmount) {
 
 async function getCounterRange(startRange, endRange, user_id) {
     // group on day level, then join
-    query_text = 'select a.*, b.time_created, b.daily_count \
+    query_text = 'select a.*, b.time_start, b.daily_count, 1 as entry_type \
     FROM counter a, \
-    (select time_created::date, sum(update_by) as daily_count, counter_id from counter_tally \
-    group by time_created::date, counter_id) b \
-    WHERE a.counter_id = b.counter_id AND a.user_id = $1 AND b.time_created >= $2 AND b.time_created < $3'
+    (select time_start::date, sum(update_by) as daily_count, counter_id from counter_tally \
+    group by time_start::date, counter_id) b \
+    WHERE a.counter_id = b.counter_id AND a.user_id = $1 AND b.time_start >= $2 AND b.time_start < $3 \
+    AND b.daily_count > 0'
 
     query_values = [user_id, startRange, endRange]
     const { rows } = await db.query(query_text, query_values);

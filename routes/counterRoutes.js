@@ -5,10 +5,11 @@ const counter = require('../models/Counter')
 const router = new Router();
 router.use(requireAuth);
 
-
+/* change to fetch only current day's counters */
 router.get('/counter', async (req, res) => {
     let username = req.query.username
     let id = req.query.id
+    let startDate = req.query.startDate
     let getPrivate = req.query.getPrivate
     const user_id = req.user_id
 
@@ -17,7 +18,8 @@ router.get('/counter', async (req, res) => {
     try {
         console.log("Getting counters")
         if (typeof (id) != 'undefined') {
-            results = await counter.getUserCounters(id)
+            results = await counter.getUserCounters(id, startDate)
+            console.log("COunter results: ", results)
         } else {
             results = await counter.getCounterByUsername(username)
         }
@@ -56,9 +58,9 @@ router.post('/counter/reset', async (req, res) => {
 
 router.post('/counter/tally', async (req, res) => {
     const user_id = req.user_id
-    const { counterId, updateAmount } = req.body
+    const { counterId, updateAmount, tally_time } = req.body
     try {
-        await counter.addTally(user_id, counterId, updateAmount)
+        await counter.addTally(user_id, counterId, updateAmount, tally_time)
         res.status(200).send()
     } catch (err) {
         console.log("Problem adding tally for counter for user", user_id)
@@ -70,6 +72,7 @@ router.post('/counter/tally', async (req, res) => {
 router.get('/counter/month', async (req, res) => {
     const startRange = req.query.startTime
     const endRange = req.query.endTime
+    console.log(`getting counters for month ${startRange} and ending at month ${endRange}`)
     try {
         let user_id = req.user_id
         let result = await counter.getCounterRange(startRange, endRange, user_id)
@@ -95,7 +98,7 @@ router.delete('/counter/:id', async (req, res) => {
 router.patch('/counter/:id', async (req, res) => {
     const counterId = req.params.id
     const user_id = req.user_id
-    const {archived, colorId, isPublic } = req.body
+    const { archived, colorId, isPublic } = req.body
     try {
         if (archived !== undefined) {
             await counter.setArchive(user_id, counterId, archived)

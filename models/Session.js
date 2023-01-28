@@ -3,7 +3,7 @@ const uuid = require('uuid-random');
 const format = require('pg-format')
 
 async function get_day_session(startRange, endRange, userEmail) {
-    query_text = 'SELECT a.*, c.category_name, c.color_id FROM activity a, category c\
+    query_text = 'SELECT a.*, c.category_name, c.color_id, 0 as entry_type FROM activity a, category c\
     WHERE a.cat_id = c.category_id AND \
     a.user_id = $1 AND a.time_start >= $2 AND a.time_start <= $3 \
     AND a.is_active = true \
