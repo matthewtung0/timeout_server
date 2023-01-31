@@ -13,6 +13,27 @@ async function get_day_session(startRange, endRange, userEmail) {
     return rows
 }
 
+async function get_session_by_search(searchTerm, searchCatId, userId) {
+
+    query_text = 'SELECT a.*, c.category_name, c.color_id, 0 as entry_type FROM activity a, category c\
+    WHERE a.cat_id = c.category_id\
+    AND a.user_id = $1 AND position($2 in LOWER(a.activity_name)) > 0\
+    AND a.is_active = true '
+    query_addendum = 'AND a.cat_id = $3'
+    console.log(query_text)
+
+    if (typeof (searchCatId) == 'undefined' || searchCatId == 'All categories') {
+        query_text_final = query_text
+        query_values = [userId, searchTerm.trim()]
+    } else {
+        query_text_final = query_text + query_addendum
+        query_values = [userId, searchTerm.trim(), searchCatId]
+    }
+
+    const { rows } = await db.query(query_text_final, query_values);
+    return rows
+}
+
 /* check if user has done a session on this day already. used to calculate streaks */
 async function check_first_session(user_id, startTime, endTime) {
     query_text = 'SELECT COUNT(*) FROM activity WHERE user_id = $1 AND time_start >= $2 AND time_start < $3;'
@@ -139,6 +160,6 @@ async function updateNotes(notes, sessionid) {
 
 module.exports = {
     set_user_session, get_day_session, getAllSessions, getSession, getSessionBatch, getSelfSessionsBatch,
-    getSessionBatchByUsername, deleteSession, updateNotes, check_first_session,
+    getSessionBatchByUsername, deleteSession, updateNotes, check_first_session, get_session_by_search,
 
 }

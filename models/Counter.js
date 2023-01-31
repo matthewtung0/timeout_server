@@ -17,7 +17,9 @@ async function addCounter(userId, counterName, chosenColor, isPublic, timeSubmit
 
 async function getUserCounters(id, startDate) {
 
-    query_text2 = 'SELECT c.*, COALESCE(point_count,0) as point_count FROM counter c LEFT JOIN \
+    query_text2 = 'SELECT c.counter_id, c.user_id, c.counter_name as activity_name, c.time_created,\
+    c.color_id, c.archived, c.public, c.cur_count, \
+    COALESCE(point_count,0) as point_count FROM counter c LEFT JOIN \
     (SELECT sum(COALESCE(update_by,0)) as point_count, counter_id FROM counter_tally WHERE user_id = $1 AND time_start >= $2 GROUP BY counter_id) b \
     ON c.counter_id = b.counter_id \
     WHERE c.user_id = $1'
@@ -93,10 +95,34 @@ async function addTally(user_id, counterId, updateAmount, tally_time) {
         return 1;
     }
 }
+async function get_counter_by_search(searchTerm, searchCatId, user_id) {
+    // group on day level, then join
+    query_text = 'select a.counter_id, a.user_id, a.counter_name as activity_name, a.time_created,\
+    a.color_id, a.archived, a.public, a.cur_count, b.time_start, b.daily_count, 1 as entry_type \
+    FROM counter a, \
+    (select time_start::date, sum(update_by) as daily_count, counter_id from counter_tally \
+    group by time_start::date, counter_id) b \
+    WHERE a.counter_id = b.counter_id AND position($2 in LOWER(a.counter_name)) > 0 \
+    AND a.user_id = $1 \
+    AND b.daily_count > 0 '
+
+    query_text_final = query_text
+    query_values = [user_id, searchTerm]
+
+    if (typeof (searchCatId) != 'undefined' && searchCatId != 'All categories') {
+        // search by category is active, return no counters
+        query_text_final = query_text + ' AND a.counter_name = $3'
+        query_values = [user_id, searchTerm, searchCatId]
+    }
+
+    const { rows } = await db.query(query_text_final, query_values);
+    return rows
+}
 
 async function getCounterRange(startRange, endRange, user_id) {
     // group on day level, then join
-    query_text = 'select a.*, b.time_start, b.daily_count, 1 as entry_type \
+    query_text = 'select a.counter_id, a.user_id, a.counter_name as activity_name, a.time_created,\
+    a.color_id, a.archived, a.public, a.cur_count, b.time_start, b.daily_count, 1 as entry_type \
     FROM counter a, \
     (select time_start::date, sum(update_by) as daily_count, counter_id from counter_tally \
     group by time_start::date, counter_id) b \
@@ -164,5 +190,5 @@ async function setArchive(user_id, counterId, archived) {
 
 module.exports = {
     getUserCounters, getCounterByUsername, setColor, addCounter, addTally, getCounterRange, resetCount,
-    deleteCounter, setColor, setArchive
+    deleteCounter, setColor, setArchive, get_counter_by_search,
 }

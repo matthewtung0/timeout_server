@@ -5,6 +5,8 @@ const format = require('pg-format')
 const AWS = require('aws-sdk');
 const fs = require('fs')
 const CONSTANTS = require('../constants.json')
+const Avatar = require('../models/Avatar');
+const { buffer } = require('buffer');
 
 async function hash_pw(password) {
     const salt = await bcrypt.genSalt(10);
@@ -79,8 +81,10 @@ async function set_user_info(email, password, username, firstName, lastName, use
         // TRY SETTING USER CREDENTIALS
         creds_query_text = 'INSERT INTO user_credential(user_id, password, email) VALUES($1,$2,$3) RETURNING *'
         creds_query_values = [user_id, password, email]
-        await db.query(creds_query_text, creds_query_values)
+        await client.query(creds_query_text, creds_query_values)
 
+
+        // setting initial categories user selected
         const res3 = await client.query(format('INSERT INTO category\
         (category_id, user_id, category_name, time_created, color_id, public, archived, is_active) VALUES %L', chosenCategories),
             [], (err, result) => {
@@ -89,6 +93,10 @@ async function set_user_info(email, password, username, firstName, lastName, use
             })
 
         await client.query('COMMIT')
+
+        // setting default avatar for user
+        await Avatar.uploadToS3(Buffer.from(CONSTANTS.defaultBase64.replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id)
+
     } catch (e) {
         await client.query('ROLLBACK')
         console.log("Error setting user info transaction!", e.stack)

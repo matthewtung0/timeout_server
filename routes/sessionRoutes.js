@@ -4,7 +4,7 @@ const express = require('express')
 const db = require('../db')
 const Router = require('express-promise-router');
 const requireAuth = require('../middlewares/requireAuth');
-const { format, parseISO, startOfMonth, endOfMonth } = require('date-fns');
+const { format, parseISO, compareAsc } = require('date-fns');
 const { enUS } = require('date-fns/locale/en-US');
 
 const router = new Router();
@@ -148,6 +148,52 @@ const groupMonthlyTasksForSummary = (monthSessions) => {
     return overallMap //Object.entries(overallMap)
 }
 
+// only group by day, since we will include all months together
+const groupMonthlyTasksForSearch = (monthSessions) => {
+    var overallMap = {}
+    for (var i = 0; i < monthSessions.length; i++) {
+        var session = monthSessions[i]
+        var dayKey = byDayKey(session.time_start)
+        //var monthKey = byMonthKey(session.time_start)
+
+        if (dayKey in overallMap) {
+            overallMap[dayKey].push(session)
+        } else {
+            overallMap[dayKey] = [session]
+        }
+    }
+    var mapToArray = Object.keys(overallMap).map((key) => [key, overallMap[key]])
+    mapToArray.sort((a, b) => {
+        var a_split = a[0].split('/');
+        var b_split = b[0].split('/');
+        var a_yr = parseInt(a_split[2])
+        var a_month = parseInt(a_split[0])
+        var a_day = parseInt(a_split[1])
+        var b_yr = parseInt(b_split[2])
+        var b_month = parseInt(b_split[0])
+        var b_day = parseInt(b_split[1])
+
+        if (a_yr > b_yr) {
+            return -1
+        }
+        if (b_yr > a_yr) {
+            return 1
+        }
+        if (a_month > b_month) {
+            return -1
+        }
+        if (b_month > a_month) {
+            return 1
+        }
+        if (a_day > b_day) {
+            return -1
+        }
+        return 1
+    })
+    console.log("OVERALL MAP ", mapToArray)
+    return mapToArray
+}
+
 // key is month as well as day, for detail
 const groupMonthlyTasks = (monthSessions) => {
     var overallMap = {}
@@ -174,7 +220,7 @@ const groupMonthlyTasks = (monthSessions) => {
             // sort this: Object.entries(value)[i][1]
             Object.entries(value)[i][1].sort((a, b) => {
                 if (a.entry_type == 1 && b.entry_type == 1) { // do alphabetical
-                    if (a.counter_name <= b.counter_name) {
+                    if (a.activity_name <= b.activity_name) {
                         return -1
                     } return 1
                 }
@@ -194,6 +240,7 @@ const groupMonthlyTasks = (monthSessions) => {
     for (var K in intermediateMap) {
         finalMap[K] = Object.keys(intermediateMap[K]).map((key) => [key, intermediateMap[K][key]])
     }
+    console.log("fINAL MAP ", finalMap)
     return finalMap
 }
 
@@ -234,9 +281,45 @@ router.get('/testSessionsAndCounters', async (req, res) => {
     //console.log("Combined data: ", groupedCombinedData)
 
     res.send({ groupedData, groupedDataForSummary })
-
-
 })
+
+router.get('/searchSessionsAndCounters', async (req, res) => {
+    const searchTerm = req.query.searchTerm
+    const searchCatId = req.query.searchCatId
+    let sessionData = null;
+    let counterData = null;
+    console.log(`getting sessions with search term ${searchTerm} and category ${searchCatId}`)
+    try {
+        let user_id = req.user_id
+
+        sessionData = await session.get_session_by_search(searchTerm, searchCatId, user_id)
+        //res.send(result)
+
+    } catch (err) {
+        console.log("error getting session search results: ", err)
+        return res.status(422).send({ error: "Error getting session search results!" });
+    }
+    try {
+        let user_id = req.user_id
+        counterData = await counter.get_counter_by_search(searchTerm, searchCatId, user_id)
+        //res.send(result)
+    } catch (err) {
+        console.log("error getting counter search results: ", err)
+        return res.status(422).send({ error: "Error getting counter search results!" });
+    }
+    let combinedData = sessionData.concat(counterData)
+    let groupedData = groupMonthlyTasksForSearch(combinedData)
+    //let groupedData = groupMonthlyTasks(combinedData)
+    let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
+
+    //console.log("Session raw data: ", sessionData)
+    //console.log("Counter raw data: ", counterData)
+    //console.log("Combined data: ", groupedCombinedData)
+
+    res.send({ groupedData, groupedDataForSummary })
+})
+
+
 router.get('/monthSessions', async (req, res) => {
     const startRange = req.query.startTime
     const endRange = req.query.endTime
