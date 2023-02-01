@@ -116,22 +116,15 @@ router.post('/forgot_password', async (req, res) => {
             pass: CONSTANTS.NOFUSS_APP_PASSWORD,
         }
     });
+    var resetLink = `${CONSTANTS.PASSWORD_RESET_URL}?token=${reset_token}`
 
     var mailOptions = {
         from: 'nofuss.exe@gmail.com',
-        to: email,
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
+        to: 'mtung@berkeley.edu', //email,
+        subject: 'Password reset link for TimeOut',
+        html: `<p>Use the link <a href="${resetLink}">here</a> to reset your password. Link is valid for 24 hours after the request was first made.</p>`,
+        //text: `Use the following link to reset your password. Link is valid for 24 hours after the request was made.\n${resetLink}`
     };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-
 
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {

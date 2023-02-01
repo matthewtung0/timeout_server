@@ -65,6 +65,8 @@ router.get('/sessionFeed', async (req, res) => {
         //friends.push(user_id)
     } else {
         friends = [];
+        res.status(200).send([])
+        return;
         //friends = [user_id]
     }
 
@@ -74,11 +76,13 @@ router.get('/sessionFeed', async (req, res) => {
     } else {
         start = 0;
     }
+    console.log(`Friends is ${friends} and starIndex is ${start}`)
 
     try {
         var rows = undefined
         //rows = await session.getSelfSessionsBatch(start, 10, user_id)
         rows = await session.getSessionBatch(start, 10, friends);
+        console.log("Rows to return ", rows)
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem retrieving session feed:", err)

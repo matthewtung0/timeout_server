@@ -22,11 +22,11 @@ async function getUserCounters(id, startDate) {
     COALESCE(point_count,0) as point_count FROM counter c LEFT JOIN \
     (SELECT sum(COALESCE(update_by,0)) as point_count, counter_id FROM counter_tally WHERE user_id = $1 AND time_start >= $2 GROUP BY counter_id) b \
     ON c.counter_id = b.counter_id \
-    WHERE c.user_id = $1'
+    WHERE c.user_id = $1 AND c.archived = FALSE'
 
     query_text = 'SELECT c.*, sum(COALESCE(update_by,0)) as point_count FROM counter c  \
     LEFT JOIN counter_tally t ON c.counter_id = t.counter_id \
-    WHERE c.user_id = $1 AND t.time_start >= $2\
+    WHERE c.user_id = $1 AND c.archived = FALSE AND t.time_start >= $2\
     GROUP BY c.counter_id, c.user_id, c.counter_name, \
     c.time_created, c.color_id, c.archived, c.public, c.cur_count'
     /*query_text = 'SELECT c.*, sum(update_by) as point_count FROM counter c, counter_tally t WHERE \
@@ -48,7 +48,7 @@ async function getUserCounters(id, startDate) {
 
 async function getCounterByUsername(username) {
     query_text = 'SELECT c.* FROM counter c, user_timeout u WHERE \
-    u.username = $1 AND u.user_id = c.user_id'
+    u.username = $1 AND c.archived = FALSE AND u.user_id = c.user_id'
     query_addendum = ' AND public = TRUE;'
 
     //if (!getPrivate) query_text = query_text + query_addendum
