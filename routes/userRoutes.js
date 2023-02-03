@@ -85,6 +85,20 @@ router.get('/user/owned', async (req, res) => {
     }
 })
 
+router.get('/avatar12345/last_updated/multiple', async (req, res) => {
+    let user_cache_map = JSON.parse(req.query.user_id_avatar_dt_map)
+    console.log(`12345 ${user_cache_map}`)
+    var keyArr = Object.keys(user_cache_map)
+    try {
+        var result = await Avatar.getLastUpdateMultiple(keyArr)
+        console.log("ACTUAL UPDATE IS ", result)
+        return res.status(200).send(result)
+    } catch (err) {
+        console.log("ERROR FETCHING MULTIPLE ", err)
+        return res.status(404)
+    }
+})
+
 router.get('/avatar12345/last_updated/:id', async (req, res) => {
     let id = req.params.id
     try {

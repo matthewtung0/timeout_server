@@ -656,6 +656,15 @@ async function getLastUpdate(user_id) {
     return rows[0];
 }
 
+async function getLastUpdateMultiple(user_id_list) {
+    console.log(user_id_list)
+    query_text = 'SELECT user_id,last_updated FROM user_avatar where user_id = any($1);'
+    query_values = [[user_id_list]]
+
+    const { rows } = await db.query(query_text, query_values);
+    return rows;
+}
+
 
 async function saveUserAvatar(user_id, items, colors, hasItems) {
     const { face, accessories, clothing, hair, background, overlay } = items
@@ -725,5 +734,5 @@ async function saveUserAvatar(user_id, items, colors, hasItems) {
 module.exports = {
     stitchDefault, saveUserAvatar, generateAvatarFromData,
     generateAvatarFromData2, saveUserAvatar2, purchaseItems,
-    uploadToS3, fetchFromS3, getLastUpdate
+    uploadToS3, fetchFromS3, getLastUpdate, getLastUpdateMultiple
 }

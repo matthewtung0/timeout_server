@@ -57,12 +57,13 @@ router.get('/session', async (req, res) => {
 router.get('/sessionFeed', async (req, res) => {
     const user_id = req.user_id
     const startIndex = req.query.startIndex
+    var numToRetrieve = req.query.numToRetrieve
 
     //list of friend id's
     let friends = req.query.friends
 
     if (friends) {
-        //friends.push(user_id)
+        friends.push(user_id) // COMMENT THIS OUT LATER
     } else {
         friends = [];
         res.status(200).send([])
@@ -76,13 +77,18 @@ router.get('/sessionFeed', async (req, res) => {
     } else {
         start = 0;
     }
-    console.log(`Friends is ${friends} and starIndex is ${start}`)
+
+    if (!numToRetrieve) {
+        numToRetrieve = 100;
+    }
+    console.log(`Friends is ${friends} and startIndex is ${start}`)
 
     try {
         var rows = undefined
         //rows = await session.getSelfSessionsBatch(start, 10, user_id)
-        rows = await session.getSessionBatch(start, 10, friends);
-        console.log("Rows to return ", rows)
+        console.log(`Trying with start: ${start} and friends ${friends}`)
+        rows = await session.getSessionBatch(start, numToRetrieve, friends);
+        console.log("Num rows to return ", rows.length)
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem retrieving session feed:", err)
