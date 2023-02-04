@@ -28,7 +28,6 @@ async function editTodoItem(userId, toDoItemName, categoryId, notes, oldToDoName
 }
 
 async function deleteTodoItem(userId, toDoId) {
-    //query_text = 'DELETE FROM todo_item WHERE item_id = $1;'
     query_text = 'UPDATE todo_item SET is_active = false WHERE item_id = $1;'
     query_values = [toDoId]
     try {
