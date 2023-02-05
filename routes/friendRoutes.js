@@ -12,18 +12,18 @@ router.post('/requestFriend', async (req, res) => {
         let requestResult = await friendship.requestFriend(user_id, codeToRequest)
         if (requestResult == -1) { // no user associated with this friend code
             console.log("INVALID FRIEND CODE")
-            return res.status(200).send({ error: 'Invalid friend code' })
+            return res.status(200).send({ msg: 'Invalid friend code', resultCode: -1 })
         } else if (requestResult == -2) { // invalid request (already friends, blocked, etc.)
             console.log("INVALID FRIEND REQUEST")
-            return res.status(200).send({ error: 'Invalid request' })
+            return res.status(200).send({ msg: 'Invalid request', resultCode: -2 })
         } else {
-            return res.status(200).send({ msg: 'All good' })
+            return res.status(200).send({ msg: 'All good', resultCode: 0 })
         }
 
     } catch (err) {
         console.log("Problem requesting friend for code:", codeToRequest)
         console.log(err.stack)
-        return res.status(403).send({ error: "Error sending friend request!" })
+        return res.status(403).send({ msg: "Error sending friend request!", resultCode: -3, })
     }
 })
 

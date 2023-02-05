@@ -45,6 +45,22 @@ async function toggleInteraction(reaction_id, activity_id, user_id) {
     }
 }
 
+async function getInteractionForUserIdBatch(user_id, startIndex, batchSize) {
+    query_text = 'SELECT a.interaction_id, a.time_created, a.user_id, b.time_start, b.time_end, c.username, d.category_name \
+    FROM interaction a \
+    LEFT JOIN activity b ON a.activity_id = b.activity_id \
+    LEFT JOIN user_timeout c on a.user_id = c.user_id \
+    LEFT JOIN category d on b.cat_id = d.category_id \
+    WHERE b.user_id = $1 AND a.user_id <> $1 \
+    ORDER BY a.time_created DESC \
+    OFFSET $2 ROWS \
+    FETCH NEXT $3 ROWS ONLY;'
+
+    query_values = [user_id, startIndex, batchSize]
+    const { rows } = await db.query(query_text, query_values)
+    return rows
+}
+
 async function getInteractionsForUserId(user_id) {
     // b.user_id is the recipient of interaction
     // a.user_id is the interactor
@@ -53,7 +69,8 @@ async function getInteractionsForUserId(user_id) {
     LEFT JOIN activity b ON a.activity_id = b.activity_id \
     LEFT JOIN user_timeout c on a.user_id = c.user_id \
     LEFT JOIN category d on b.cat_id = d.category_id \
-    WHERE b.user_id = $1 AND a.user_id <> $1;'
+    WHERE b.user_id = $1 AND a.user_id <> $1 \
+    ORDER BY a.time_created DESC;'
     values = [user_id]
     const { rows } = await db.query(query, values)
     return rows;
@@ -86,5 +103,5 @@ async function getLikersFromActivityId(activity_id) {
 
 module.exports = {
     toggleInteraction, getInteractionsFromUserId, getInteractionsFromActivityId,
-    getInteractionsForUserId, getLikersFromActivityId,
+    getInteractionsForUserId, getLikersFromActivityId, getInteractionForUserIdBatch,
 }
