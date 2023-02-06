@@ -33,6 +33,22 @@ async function setUpViews(userId) {
     await db.query(latestEventQuery)
 }
 
+async function setFriendUpdate(bool_, user_id) {
+    query_text = "UPDATE user_timeout SET friend_update = $1 WHERE user_id = $2;"
+    query_values = [bool_, user_id]
+
+    const res = await db.query(query_text, query_values)
+    return res.rows;
+}
+
+async function getFriendUpdate(user_id) {
+    query_text = "SELECT friend_update FROM user_timeout where user_id = $1;"
+    query_values = [user_id]
+
+    const res = await db.query(query_text, query_values)
+    return res.rows;
+}
+
 async function getFriends(userId) {
     // set up views
     await setUpViews(userId)
@@ -185,5 +201,5 @@ SELECT * FROM latest_interactions where status_id = '2';
 module.exports = {
     requestFriend, getRequestsIncoming,
     getRequestsOutgoing, acceptFriendRequest, rejectFriendRequest,
-    getFriends,
+    getFriends, setFriendUpdate, getFriendUpdate,
 }

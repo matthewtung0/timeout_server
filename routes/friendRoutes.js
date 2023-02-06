@@ -32,9 +32,34 @@ router.get('/friendsList', async (req, res) => {
     try {
         console.log("trying to fetch friends");
         let results = await friendship.getFriends(user_id)
+
+        // set friend_update to false to show we have the latest friends list
+        let results2 = await friendship.setFriendUpdate(false, user_id);
+
         res.status(200).send(results)
     } catch (err) {
         console.log("Problem retrieving friends for user:", user_id)
+        console.log(err.stack)
+        return res.status(403).send({ error: "Probably retrieving friends!" });
+    }
+})
+
+router.get('/friendsUpdate', async (req, res) => {
+    const user_id = req.user_id
+    try {
+        let results = await friendship.getFriendUpdate(user_id)
+        var is_friend_update = results[0].friend_update
+        console.log("rESULT IS ", is_friend_update)
+
+        if (is_friend_update) { // we need to update friend list
+            let results = await friendship.getFriends(user_id)
+
+            friendship.setFriendUpdate(false, user_id)
+            res.status(200).send(results)
+        } else {
+            res.status(200).send("no update")
+        }
+    } catch (err) {
         console.log(err.stack)
         return res.status(403).send({ error: "Probably retrieving friends!" });
     }
@@ -74,6 +99,10 @@ router.post('/acceptFriendRequest', async (req, res) => {
     try {
         user_info = await friendship.acceptFriendRequest(user_id, idToAccept)
         console.log("success accepting friend");
+
+        // set friend_update to true so next time they open their feed, their friend list is updated
+        await friendship.setFriendUpdate(true, idToAccept);
+
         res.status(200).send()
     } catch (err) {
         console.log("Problem accepting friend:", idToAccept)
