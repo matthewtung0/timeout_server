@@ -112,12 +112,12 @@ router.get('/avatar12345/last_updated/:id', async (req, res) => {
 
 })
 
-// TESTING MAX AGE 60 SEC CACHE
 router.get('/avatar12345/:id', async (req, res) => {
     console.log("got here?")
     let id = req.params.id
-    console.log("getting avatar for", id)
-    var s3data = await Avatar.fetchFromS3(id);
+    const isThumbnail = req.query.isThumbnail
+    console.log(`getting avatar for ${id} and isThumbnail: ${isThumbnail}`)
+    var s3data = await Avatar.fetchFromS3(id, isThumbnail);
     console.log("Sending s3 data of size ", s3data.length);
     res.end(s3data)
     /*console.log("S3 data is", s3data);
@@ -282,20 +282,14 @@ router.post('/self_user/avatar2', async (req, res) => {
 
     // generate avatar png
     try {
-        var bufferData = await Avatar.generateAvatarFromData2({ avatarJSON }, user_id)
+        const { avatarBuffer, avatarThumbnailBuffer } = await Avatar.generateAvatarFromData2({ avatarJSON }, user_id)
 
         // send back the updated avatar
-        bufferString = bufferData.toString('base64')
-        res.end(bufferString)
+        bufferString = avatarBuffer.toString('base64')
+        thumbnailBufferString = avatarThumbnailBuffer.toString('base64')
+        //res.end(bufferString)
+        res.end({ bufferString, thumbnailBufferString })
 
-        /*var d = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
-        const file = d + user_id + '_avatar.png'
-        var img = fs.readFileSync(file, { encoding: 'base64' })
-
-        res.writeHead(200, {
-            'Content-Type': 'image/png',
-        })
-        res.end(img)*/
         console.log("Avatar png generation completed")
         //return res.status(200).send()
     } catch (err) {

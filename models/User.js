@@ -95,7 +95,8 @@ async function set_user_info(email, password, username, firstName, lastName, use
         await client.query('COMMIT')
 
         // setting default avatar for user
-        await Avatar.uploadToS3(Buffer.from(CONSTANTS.defaultBase64.replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id)
+        await Avatar.uploadToS3(Buffer.from(CONSTANTS.defaultBase64.replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id, false)
+        await Avatar.uploadToS3(Buffer.from(CONSTANTS.defaultThumbnailBase64.replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id, true)
 
     } catch (e) {
         await client.query('ROLLBACK')

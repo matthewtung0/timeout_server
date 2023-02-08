@@ -238,8 +238,14 @@ async function generateAvatarFromData2(avatarData, user_id) {
         console.log("Compositing " + i)
         finalJimp = finalJimp.composite(jimp_wardrobe[i], 0, 0)
     }
+
     var avatarBuffer = await finalJimp.getBufferAsync(Jimp.MIME_PNG);
-    await uploadToS3(avatarBuffer, user_id)
+    await uploadToS3(avatarBuffer, user_id, false)
+
+
+    finalJimpAvatar = finalJimp.resize(150, 150);
+    var avatarThumbnailBuffer = await finalJimpAvatar.getBufferAsync(Jimp.MIME_PNG);
+    await uploadToS3(avatarThumbnailBuffer, user_id, true)
 
     /*for (var i = 1; i < wardrobe.length; i++) {
         console.log("Drawing " + wardrobe[i])
@@ -252,15 +258,19 @@ async function generateAvatarFromData2(avatarData, user_id) {
     */
     console.log("This one is done");
     console.timeEnd('Compositing')
-    return avatarBuffer;
+    return { avatarBuffer, avatarThumbnailBuffer };
 
 }
 
-async function fetchFromS3(user_id) {
+async function fetchFromS3(user_id, is_thumbnail = false) {
+    if (is_thumbnail === 'true') { var title = user_id + "_thumbnail_" } else {
+        var title = user_id
+    }
+    console.log(`Is thumbnail is ${is_thumbnail} and getting title ${title}`)
     try {
         const params = {
             Bucket: "timeoutavatars",
-            Key: user_id + "_avatar.png"
+            Key: title + "_avatar.png"
         }
 
         const data = await s3.getObject(params).promise();
@@ -269,13 +279,15 @@ async function fetchFromS3(user_id) {
     } catch (e) {
         throw new Error(`Could not retrieve file from S3: ${e.message}`)
     }
-
 }
 
-async function uploadToS3(buffer, user_id) {
+async function uploadToS3(buffer, user_id, is_thumbnail = false) {
+    let title = user_id
+    if (is_thumbnail) { title = user_id + "_thumbnail_" }
+
     const params = {
         Bucket: "timeoutavatars",
-        Key: user_id + '_avatar.png',
+        Key: title + '_avatar.png',
         Body: buffer
     }
 

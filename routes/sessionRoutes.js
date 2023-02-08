@@ -63,7 +63,7 @@ router.get('/sessionFeed', async (req, res) => {
     let friends = req.query.friends
 
     if (friends) {
-        friends.push(user_id) // COMMENT THIS OUT LATER
+        //friends.push(user_id) // COMMENT THIS OUT LATER
     } else {
         friends = [];
         res.status(200).send([])
