@@ -5,6 +5,7 @@ const format = require('pg-format')
 const AWS = require('aws-sdk');
 const fs = require('fs')
 //const CONSTANTS = require('../constants.json')
+const IMAGE_CONSTANTS = require('../image_constants.json')
 const Avatar = require('../models/Avatar');
 const { buffer } = require('buffer');
 
@@ -96,12 +97,10 @@ async function set_user_info(email, password, username, firstName, lastName, use
 
         // setting default avatar for user
         await Avatar.uploadToS3(Buffer.from(
-            process.env.defaultBase64
-                //CONSTANTS.defaultBase64
+            IMAGE_CONSTANTS.defaultBase64
                 .replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id, false)
         await Avatar.uploadToS3(Buffer.from(
-            process.env.defaultThumbnailBase64
-                //CONSTANTS.defaultThumbnailBase64
+            IMAGE_CONSTANTS.defaultThumbnailBase64
                 .replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id, true)
 
     } catch (e) {
