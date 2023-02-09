@@ -1,10 +1,8 @@
 const db = require('../db')
 const dir = require('../models/ImageDirectory')
-Images = require('images')
+//Images = require('images')
 const format = require('pg-format')
 const AWS = require('aws-sdk');
-const fs = require('fs')
-const PNG = require('png-js')
 const Jimp = require("jimp")
 const path = require('path')
 //const CONSTANTS = require('../constants.json')
@@ -16,7 +14,7 @@ const AVATAR_SIZE_REGULAR = 500;
 const AVATAR_SIZE_THUMBNAIL = 150;
 
 
-async function stitchDefault() {
+/*async function stitchDefault() {
     var d = '/Users/matthewtung/timeout_server/assets/avatar/'
     const flagUrl = d + '17_BACKGROUND/1_lgbtq-01.png'
     const hairbackUrl = d + '16_hair_back/3_down-fluffy_brown-01.png'
@@ -44,7 +42,7 @@ async function stitchDefault() {
         userAvatar = userAvatar.draw(Images(wardrobe[i], 0, 0))
     }
     userAvatar.save('generatedAvatarsTemp/imagesTesting1.png')
-}
+}*/
 
 async function generateAvatarFromData2(avatarData, user_id) {
     console.time('read to Jimp')
@@ -305,32 +303,10 @@ async function uploadToS3(buffer, user_id, is_thumbnail = false) {
     })
 }
 
-async function generateAvatarFromData(avatarData, user_id) {
+/*async function generateAvatarFromData(avatarData, user_id) {
     var d = '/Users/matthewtung/timeout_server/assets/avatar/'
     // from User.js
     var { avatarItems, avatarColors, hasItems } = avatarData
-
-    /*let avatarItems = {
-        face: { mouth: r.mouth, eyes: r.eyes, makeup: r.makeup, eyebrows: r.eyebrows, base: r.base, },
-        accessories: { glasses: r.glasses, piercings: r.piercings, accessories: r.accessories, hairAccessories: r.hairaccessories },
-        clothing: { outerwear: r.outerwear, top: r.top, under: r.under },
-        hair: { front: r.hairfront, back: r.hairback, side: r.hairside, general: r.hair },
-        background: r.background,
-        overlay: r.overlay
-    }
-    let avatarColors = {
-        face: { mouth: r.mouthc, eyes: r.eyesc, eyebrows: r.eyebrowsc, base: r.basec },
-        accessories: { piercings: r.piercingsc, hairAccessories: r.hairaccessoriesc },
-        clothing: { outerwear: r.outerwearc, top: r.outerwearc, under: r.outerwearc },
-        hair: { front: r.hairc, back: r.hairc, side: r.hairc, general: r.hairc, }
-    }
-    let hasItems = {
-        hasOuterwear: r.hasouterwear, hasTop: r.hastop, hasGlasses: r.hasglasses, hasPiercings: r.haspiercings,
-        hasHairFront: r.hashairfront, hasHairBack: r.hashairback, hasHairSide: r.hashairside,
-        hasMakeup: r.hasmakeup, hasHairAccessories: r.hashairaccessories, hasAccessories: r.hasaccessories
-    }
-    return { avatarItems, avatarColors, hasItems }*/
-
     var bgIndex = avatarItems.background
 
     // ------------------------------items WITHOUT option to not have it---------------------------------
@@ -387,7 +363,7 @@ async function generateAvatarFromData(avatarData, user_id) {
     userAvatar
         .size(200)
         .save('generatedAvatarsTemp/' + user_id + '_avatar.png')
-}
+}*/
 
 async function purchaseItems(user_id, items_to_redeem_formatted, points) {
     // items format: [item_id_0, item_id_1, .. ]

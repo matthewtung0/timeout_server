@@ -3,9 +3,6 @@ const Avatar = require('../models/Avatar')
 const Router = require('express-promise-router');
 const requireAuth = require('../middlewares/requireAuth');
 const fs = require('fs')
-const images = require('images');
-const { publicDecrypt } = require('crypto');
-const AWS = require('aws-sdk');
 //const CONSTANTS = require('../constants.json')
 
 const router = new Router();
