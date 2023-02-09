@@ -47,7 +47,9 @@ const AVATAR_SIZE_THUMBNAIL = 150;
 async function generateAvatarFromData2(avatarData, user_id) {
     console.time('read to Jimp')
     //var d = '/Users/matthewtung/timeout_server/assets/avatar/'
-    var d = path.join(__dirname, '..', 'assets', 'avatar') + "/"
+    //var d = path.join(__dirname, '..', 'assets', 'avatar') + "/"
+    var d = path.join(__dirname, '..', 'assets', 'avatar_500') + "/"
+
     /*
     {
             face: {
@@ -193,25 +195,25 @@ async function generateAvatarFromData2(avatarData, user_id) {
     //let userAvatar = Images(wardrobe[0])
     console.log("Wardrobe is ", wardrobe)
 
-    var jimp20 = (await Jimp.read(bgSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp19 = (await Jimp.read(overlaySrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp18 = (await Jimp.read(hairBackSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp17 = (await Jimp.read(hairAccessoriesSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp16 = (await Jimp.read(baseSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp15 = (await Jimp.read(eyebrowsSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp13 = (await Jimp.read(makeupSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp12 = (await Jimp.read(eyesSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp11 = (await Jimp.read(mouthSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp10 = (await Jimp.read(underSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp9 = (await Jimp.read(topSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp8 = (await Jimp.read(accessoriesSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp7 = (await Jimp.read(outerwearSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp6 = (await Jimp.read(hairSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp5 = (await Jimp.read(hairSideSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp4 = (await Jimp.read(hairFrontSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp3 = (await Jimp.read(earsSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp2 = (await Jimp.read(piercingsSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
-    var jimp1 = (await Jimp.read(glassesSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp20 = (await Jimp.read(bgSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp19 = (await Jimp.read(overlaySrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp18 = (await Jimp.read(hairBackSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp17 = (await Jimp.read(hairAccessoriesSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp16 = (await Jimp.read(baseSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp15 = (await Jimp.read(eyebrowsSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp13 = (await Jimp.read(makeupSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp12 = (await Jimp.read(eyesSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp11 = (await Jimp.read(mouthSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp10 = (await Jimp.read(underSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp9 = (await Jimp.read(topSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp8 = (await Jimp.read(accessoriesSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp7 = (await Jimp.read(outerwearSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp6 = (await Jimp.read(hairSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp5 = (await Jimp.read(hairSideSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp4 = (await Jimp.read(hairFrontSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp3 = (await Jimp.read(earsSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp2 = (await Jimp.read(piercingsSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp1 = (await Jimp.read(glassesSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
 
     console.timeEnd('read to Jimp')
     console.time('Compositing')
