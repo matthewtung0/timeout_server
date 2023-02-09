@@ -6,6 +6,7 @@ const AWS = require('aws-sdk');
 const fs = require('fs')
 const PNG = require('png-js')
 const Jimp = require("jimp")
+const path = require('path')
 //const CONSTANTS = require('../constants.json')
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID, //CONSTANTS.AWS_ACCESS_KEY_ID,
@@ -48,7 +49,7 @@ async function stitchDefault() {
 async function generateAvatarFromData2(avatarData, user_id) {
     console.time('read to Jimp')
     //var d = '/Users/matthewtung/timeout_server/assets/avatar/'
-    var d = ''
+    var d = path.join(__dirname, '..', 'assets', 'avatar')
     /*
     {
             face: {

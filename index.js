@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const path = require('path')
 const sessionRoutes = require('./routes/sessionRoutes')
 const interactionRoutes = require('./routes/interactionRoutes')
 const authRoutes = require('./routes/authRoutes')
@@ -23,7 +24,8 @@ app.use(categoryRoutes);
 app.use(counterRoutes);
 app.use(todoRoutes);
 
-app.use(express.static('./assets/avatar'))
+//app.use(express.static('./assets/avatar'))
+//app.use('/static', express.static(path.join(__dirname,'assets/avatar' )))
 
 app.get('/', (req, res) => {
     res.send("Test home route works in dev branch")
