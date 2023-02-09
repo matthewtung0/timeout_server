@@ -27,9 +27,6 @@ app.use(categoryRoutes);
 app.use(counterRoutes);
 app.use(todoRoutes);
 
-//app.use(express.static('./assets/avatar'))
-//app.use('/static', express.static(path.join(__dirname,'assets/avatar' )))
-
 const port = process.env.port || 3000;
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
