@@ -727,7 +727,7 @@ async function saveUserAvatar(user_id, items, colors, hasItems) {
 }
 
 module.exports = {
-    stitchDefault, saveUserAvatar, generateAvatarFromData,
+    saveUserAvatar,
     generateAvatarFromData2, saveUserAvatar2, purchaseItems,
     uploadToS3, fetchFromS3, getLastUpdate, getLastUpdateMultiple
 }
