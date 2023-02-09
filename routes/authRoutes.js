@@ -4,8 +4,8 @@ const router = new Router();
 const jwt = require('jsonwebtoken');
 const uuid = require('uuid-random');
 const nodemailer = require('nodemailer');
-const { google } = require("googleapis");
-const OAuth2 = google.auth.OAuth2;
+//const { google } = require("googleapis");
+//const OAuth2 = google.auth.OAuth2;
 //const CONSTANTS = require('../constants.json')
 
 
