@@ -6,10 +6,10 @@ const AWS = require('aws-sdk');
 const fs = require('fs')
 const PNG = require('png-js')
 const Jimp = require("jimp")
-const CONSTANTS = require('../constants.json')
+//const CONSTANTS = require('../constants.json')
 const s3 = new AWS.S3({
-    accessKeyId: CONSTANTS.AWS_ACCESS_KEY_ID,
-    secretAccessKey: CONSTANTS.AWS_SECRET_ACCESS_KEY
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, //CONSTANTS.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY //CONSTANTS.AWS_SECRET_ACCESS_KEY
 });
 const AVATAR_SIZE_REGULAR = 500;
 const AVATAR_SIZE_THUMBNAIL = 150;

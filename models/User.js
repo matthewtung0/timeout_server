@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const format = require('pg-format')
 const AWS = require('aws-sdk');
 const fs = require('fs')
-const CONSTANTS = require('../constants.json')
+//const CONSTANTS = require('../constants.json')
 const Avatar = require('../models/Avatar');
 const { buffer } = require('buffer');
 
@@ -95,8 +95,14 @@ async function set_user_info(email, password, username, firstName, lastName, use
         await client.query('COMMIT')
 
         // setting default avatar for user
-        await Avatar.uploadToS3(Buffer.from(CONSTANTS.defaultBase64.replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id, false)
-        await Avatar.uploadToS3(Buffer.from(CONSTANTS.defaultThumbnailBase64.replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id, true)
+        await Avatar.uploadToS3(Buffer.from(
+            process.env.defaultBase64
+                //CONSTANTS.defaultBase64
+                .replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id, false)
+        await Avatar.uploadToS3(Buffer.from(
+            process.env.defaultThumbnailBase64
+                //CONSTANTS.defaultThumbnailBase64
+                .replace(/^data:image\/\w+;base64,/, ""), 'base64'), user_id, true)
 
     } catch (e) {
         await client.query('ROLLBACK')
@@ -553,8 +559,8 @@ async function deleteAll(userId) {
 async function uploadFileTest(file, user_id) {
 
     const s3 = new AWS.S3({
-        accessKeyId: CONSTANTS.AWS_ACCESS_KEY_ID,
-        secretAccessKey: CONSTANTS.AWS_SECRET_ACCESS_KEY
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID, //CONSTANTS.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY //CONSTANTS.AWS_SECRET_ACCESS_KEY
     });
     var filePath = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
     var img = fs.readFileSync(filePath + "imagesTesting1.png")// { encoding: 'base64' })

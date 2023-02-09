@@ -6,7 +6,7 @@ const fs = require('fs')
 const images = require('images');
 const { publicDecrypt } = require('crypto');
 const AWS = require('aws-sdk');
-const CONSTANTS = require('../constants.json')
+//const CONSTANTS = require('../constants.json')
 
 const router = new Router();
 router.use(requireAuth);
