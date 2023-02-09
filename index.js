@@ -23,6 +23,10 @@ app.use(categoryRoutes);
 app.use(counterRoutes);
 app.use(todoRoutes);
 
+app.get('/', (req, res) => {
+    res.send("Test home route works")
+})
+
 const port = process.env.port || 3000;
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
