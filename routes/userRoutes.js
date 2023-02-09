@@ -242,6 +242,7 @@ router.patch('/points/:id', async (req, res) => {
 })
 
 router.patch('/self_user/lastsignin', async (req, res) => {
+    console.log("Got to last sign in..")
     const user_id = req.user_id
     try {
         await user.updateLastSignin(user_id)
