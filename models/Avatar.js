@@ -11,6 +11,9 @@ const s3 = new AWS.S3({
     accessKeyId: CONSTANTS.AWS_ACCESS_KEY_ID,
     secretAccessKey: CONSTANTS.AWS_SECRET_ACCESS_KEY
 });
+const AVATAR_SIZE_REGULAR = 500;
+const AVATAR_SIZE_THUMBNAIL = 150;
+
 
 async function stitchDefault() {
     var d = '/Users/matthewtung/timeout_server/assets/avatar/'
@@ -190,25 +193,25 @@ async function generateAvatarFromData2(avatarData, user_id) {
     //let userAvatar = Images(wardrobe[0])
     console.log("Wardrobe is ", wardrobe)
 
-    var jimp20 = (await Jimp.read(bgSrc)).resize(500, 500)
-    var jimp19 = (await Jimp.read(overlaySrc)).resize(500, 500)
-    var jimp18 = (await Jimp.read(hairBackSrc)).resize(500, 500)
-    var jimp17 = (await Jimp.read(hairAccessoriesSrc)).resize(500, 500)
-    var jimp16 = (await Jimp.read(baseSrc)).resize(500, 500)
-    var jimp15 = (await Jimp.read(eyebrowsSrc)).resize(500, 500)
-    var jimp13 = (await Jimp.read(makeupSrc)).resize(500, 500)
-    var jimp12 = (await Jimp.read(eyesSrc)).resize(500, 500)
-    var jimp11 = (await Jimp.read(mouthSrc)).resize(500, 500)
-    var jimp10 = (await Jimp.read(underSrc)).resize(500, 500)
-    var jimp9 = (await Jimp.read(topSrc)).resize(500, 500)
-    var jimp8 = (await Jimp.read(accessoriesSrc)).resize(500, 500)
-    var jimp7 = (await Jimp.read(outerwearSrc)).resize(500, 500)
-    var jimp6 = (await Jimp.read(hairSrc)).resize(500, 500)
-    var jimp5 = (await Jimp.read(hairSideSrc)).resize(500, 500)
-    var jimp4 = (await Jimp.read(hairFrontSrc)).resize(500, 500)
-    var jimp3 = (await Jimp.read(earsSrc)).resize(500, 500)
-    var jimp2 = (await Jimp.read(piercingsSrc)).resize(500, 500)
-    var jimp1 = (await Jimp.read(glassesSrc)).resize(500, 500)
+    var jimp20 = (await Jimp.read(bgSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp19 = (await Jimp.read(overlaySrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp18 = (await Jimp.read(hairBackSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp17 = (await Jimp.read(hairAccessoriesSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp16 = (await Jimp.read(baseSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp15 = (await Jimp.read(eyebrowsSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp13 = (await Jimp.read(makeupSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp12 = (await Jimp.read(eyesSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp11 = (await Jimp.read(mouthSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp10 = (await Jimp.read(underSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp9 = (await Jimp.read(topSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp8 = (await Jimp.read(accessoriesSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp7 = (await Jimp.read(outerwearSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp6 = (await Jimp.read(hairSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp5 = (await Jimp.read(hairSideSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp4 = (await Jimp.read(hairFrontSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp3 = (await Jimp.read(earsSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp2 = (await Jimp.read(piercingsSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+    var jimp1 = (await Jimp.read(glassesSrc)).resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
 
     console.timeEnd('read to Jimp')
     console.time('Compositing')
@@ -239,11 +242,13 @@ async function generateAvatarFromData2(avatarData, user_id) {
         finalJimp = finalJimp.composite(jimp_wardrobe[i], 0, 0)
     }
 
+    //finalJimpRegular = finalJimp.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
+
     var avatarBuffer = await finalJimp.getBufferAsync(Jimp.MIME_PNG);
     await uploadToS3(avatarBuffer, user_id, false)
 
 
-    finalJimpAvatar = finalJimp.resize(150, 150);
+    finalJimpAvatar = finalJimp.resize(AVATAR_SIZE_THUMBNAIL, AVATAR_SIZE_THUMBNAIL);
     var avatarThumbnailBuffer = await finalJimpAvatar.getBufferAsync(Jimp.MIME_PNG);
     await uploadToS3(avatarThumbnailBuffer, user_id, true)
 

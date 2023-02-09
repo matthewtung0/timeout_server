@@ -288,7 +288,8 @@ router.post('/self_user/avatar2', async (req, res) => {
         bufferString = avatarBuffer.toString('base64')
         thumbnailBufferString = avatarThumbnailBuffer.toString('base64')
         //res.end(bufferString)
-        res.end({ bufferString, thumbnailBufferString })
+        //res.end({ bufferString, thumbnailBufferString })
+        return res.status(200).send({ bufferString, thumbnailBufferString })
 
         console.log("Avatar png generation completed")
         //return res.status(200).send()

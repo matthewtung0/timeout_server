@@ -434,6 +434,7 @@ const bg3 = '20_BACKGROUND/3_yellow.png'
 const bg4 = '20_BACKGROUND/4_green.png'
 const bg5 = '20_BACKGROUND/5_blue.png'
 const bg6 = '20_BACKGROUND/6_purple.png'
+const bg6_1 = '20_BACKGROUND/6_transgender.png'
 const bg7 = '20_BACKGROUND/7_genderfluid.png'
 const bg8 = '20_BACKGROUND/7_lgbtq.png'
 const bg9 = '20_BACKGROUND/8_lesbian.png'
@@ -444,7 +445,7 @@ const bg13 = '20_BACKGROUND/10_genderqueer.png'
 const bg14 = '20_BACKGROUND/10_pansexual.png'
 const bg15 = '20_BACKGROUND/11_asexual.png'
 
-const bgTypes = [[bg1], [bg2], [bg3], [bg4], [bg5], [bg6], [bg7], [bg8],
+const bgTypes = [[bg1], [bg2], [bg3], [bg4], [bg5], [bg6], [bg6_1], [bg7], [bg8],
 [bg9], [bg10], [bg11], [bg12], [bg13], [bg14], [bg15],]
 
 module.exports = {
