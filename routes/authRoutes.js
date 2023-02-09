@@ -179,6 +179,7 @@ router.post('/signin', async (req, res) => {
     user_info = await user.get_user_info(email)
     correct_pw = user_info['password']
     user_id = user_info['user_id']
+    console.log(`user_id is ${user_id}`)
 
     if (!user) {
         return res.status(422).send({ error: 'invalid password or email' });
@@ -188,7 +189,7 @@ router.post('/signin', async (req, res) => {
 
 
         const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY')
-
+        console.log(`Sending token.. ${token}`)
         await user.updateLastSignin(user_id)
 
         res.send({ token })

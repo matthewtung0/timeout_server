@@ -23,6 +23,8 @@ app.use(categoryRoutes);
 app.use(counterRoutes);
 app.use(todoRoutes);
 
+app.use(express.static('./assets/avatar'))
+
 app.get('/', (req, res) => {
     res.send("Test home route works in dev branch")
 })

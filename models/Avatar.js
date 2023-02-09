@@ -47,7 +47,8 @@ async function stitchDefault() {
 
 async function generateAvatarFromData2(avatarData, user_id) {
     console.time('read to Jimp')
-    var d = '/Users/matthewtung/timeout_server/assets/avatar/'
+    //var d = '/Users/matthewtung/timeout_server/assets/avatar/'
+    var d = ''
     /*
     {
             face: {
