@@ -24,7 +24,7 @@ app.use(counterRoutes);
 app.use(todoRoutes);
 
 app.get('/', (req, res) => {
-    res.send("Test home route works")
+    res.send("Test home route works in dev branch")
 })
 
 const port = process.env.port || 3000;
