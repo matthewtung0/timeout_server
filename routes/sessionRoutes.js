@@ -96,23 +96,6 @@ router.get('/sessionFeed', async (req, res) => {
     }
 })
 
-/*
-router.get('/daySessions', async (req, res) => {
-    const startRange = req.query.startTime
-    const endRange = req.query.endTime
-    console.log("getting session for day ", startRange)
-    try {
-        let user_id = req.user_id
-
-        let result = await session.get_day_session(startRange, endRange, user_id)
-        res.send(result)
-
-    } catch (err) {
-        console.log("error getting day's session: ", err)
-        return res.status(422).send({ error: "Error getting day's session!" });
-    }
-})*/
-
 const byMonthKey = (dt, parse = false) => {
     if (parse) {
         return format(parseISO(dt), 'M/yyyy', { locale: enUS }).toString()
@@ -250,7 +233,7 @@ const groupMonthlyTasks = (monthSessions) => {
     for (var K in intermediateMap) {
         finalMap[K] = Object.keys(intermediateMap[K]).map((key) => [key, intermediateMap[K][key]])
     }
-    console.log("fINAL MAP ", finalMap)
+    //console.log("fINAL MAP ", finalMap)
     return finalMap
 }
 
@@ -283,14 +266,15 @@ router.get('/testSessionsAndCounters', async (req, res) => {
         return res.status(422).send({ error: "Error getting month's counters!" });
     }
     let combinedData = sessionData.concat(counterData)
-    let groupedData = groupMonthlyTasks(combinedData)
-    let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
+    //let groupedData = groupMonthlyTasks(combinedData)
+    //let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
 
     //console.log("Session raw data: ", sessionData)
     //console.log("Counter raw data: ", counterData)
     //console.log("Combined data: ", groupedCombinedData)
 
-    res.send({ groupedData, groupedDataForSummary })
+    //res.send({ groupedData, groupedDataForSummary })
+    res.send(combinedData)
 })
 
 router.get('/searchSessionsAndCounters', async (req, res) => {
