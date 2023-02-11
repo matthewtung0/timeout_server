@@ -129,8 +129,17 @@ async function getCounterRange(startRange, endRange, user_id) {
     WHERE a.counter_id = b.counter_id AND a.user_id = $1 AND b.time_start >= $2 AND b.time_start < $3 \
     AND b.daily_count > 0'
 
+    // group by date_key instead of getting time_start::date
+    query_text_updated = 'select a.counter_id, a.user_id, a.counter_name as activity_name, a.time_created,\
+    a.color_id, a.archived, a.public, a.cur_count, b.date_key, b.daily_count, 1 as entry_type \
+    FROM counter a, \
+    (select date_key, sum(update_by) as daily_count, counter_id from counter_tally \
+    group by date_key, counter_id) b \
+    WHERE a.counter_id = b.counter_id AND a.user_id = $1 AND b.time_start >= $2 AND b.time_start < $3 \
+    AND b.daily_count > 0'
+
     query_values = [user_id, startRange, endRange]
-    const { rows } = await db.query(query_text, query_values);
+    const { rows } = await db.query(query_text_updated, query_values);
     return rows
 }
 
