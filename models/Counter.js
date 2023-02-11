@@ -134,8 +134,9 @@ async function getCounterRange(startRange, endRange, user_id) {
     a.color_id, a.archived, a.public, a.cur_count, b.date_key, b.daily_count, 1 as entry_type \
     FROM counter a, \
     (select date_key, sum(update_by) as daily_count, counter_id from counter_tally \
-    WHERE time_start >= $2 AND time_start < $3 AND daily_count > 0\
-    group by date_key, counter_id) b \
+    WHERE time_start >= $2 AND time_start < $3 \
+    group by date_key, counter_id \
+    HAVING sum(update_by) > 0) b \
     WHERE a.user_id = $1 AND a.counter_id = b.counter_id'
 
     query_values = [user_id, startRange, endRange]
