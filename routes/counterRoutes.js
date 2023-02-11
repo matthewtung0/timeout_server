@@ -58,9 +58,9 @@ router.post('/counter/reset', async (req, res) => {
 
 router.post('/counter/tally', async (req, res) => {
     const user_id = req.user_id
-    const { counterId, updateAmount, tally_time } = req.body
+    const { counterId, updateAmount, tally_time, dateKey } = req.body
     try {
-        await counter.addTally(user_id, counterId, updateAmount, tally_time)
+        await counter.addTally(user_id, counterId, updateAmount, tally_time, dateKey)
         res.status(200).send()
     } catch (err) {
         console.log("Problem adding tally for counter for user", user_id)

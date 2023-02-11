@@ -72,14 +72,14 @@ async function updateCount(user_id, counterId, updateAmount) {
     } catch (err) { console.log('error code is ', err) }
 }
 
-async function addTally(user_id, counterId, updateAmount, tally_time) {
+async function addTally(user_id, counterId, updateAmount, tally_time, dateKey) {
 
     const client = await db.connect()
     try {
         await client.query('BEGIN')
-        detailQuery = 'INSERT INTO counter_tally(user_id, update_by, time_start, counter_id) \
-        VALUES ($1,$2,$3,$4) RETURNING *'
-        detailValues = [user_id, updateAmount, tally_time, counterId]
+        detailQuery = 'INSERT INTO counter_tally(user_id, update_by, time_start, counter_id, date_key) \
+        VALUES ($1,$2,$3,$4, $5) RETURNING *'
+        detailValues = [user_id, updateAmount, tally_time, counterId, dateKey]
         await db.query(detailQuery, detailValues)
 
         countQuery = 'UPDATE counter SET cur_count = cur_count + $1 WHERE counter_id = $2 AND user_id = $3;'
