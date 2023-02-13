@@ -146,13 +146,9 @@ async function deleteSession(user_id, sessionId) {
 }
 
 async function updateNotes(notes, isPrivate, sessionid) {
-    var isPrivate_bool = false;
-    if (isPrivate == 'true') {
-        isPrivate_bool = true
-    }
     query_text = 'UPDATE activity SET notes = $1, is_private = $2 WHERE \
     activity_id = $2;'
-    query_values = [notes, isPrivate_bool, sessionid]
+    query_values = [notes, isPrivate, sessionid]
     try {
         const { rows } = await db.query(query_text, query_values)
         return rows

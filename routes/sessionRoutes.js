@@ -400,10 +400,10 @@ router.patch('/session/:id', async (req, res) => {
     const user_id = req.user_id
     const { notes, isPrivate } = req.body
 
-    var isPrivate_bool = (isPrivate === 'true')
-    console.log(`Updating sessionId with notes ${notes} and private: ${isPrivate_bool}`)
+    console.log(`Type of isPrivate is ${typeof (isPrivate)}`)
+    console.log(`Updating sessionId with notes ${notes} and private: ${isPrivate}`)
     try {
-        await session.updateNotes(notes, isPrivate_bool, sessionId)
+        await session.updateNotes(notes, isPrivate, sessionId)
         res.status(200).send()
     } catch (err) {
         console.log(err.stack)
