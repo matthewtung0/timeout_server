@@ -5,7 +5,7 @@ const pool = new Pool({
   user: 'nofussexe',//'matthewtung',
   host: 'timeoutapp.ctwghhzgkn52.us-east-1.rds.amazonaws.com',//'localhost',
   database: 'postgres',//'timeout',
-  password: process.env.DB_PW, //CONSTANTS.DB_PW,
+  password: process.env.DB_PW, //|| CONSTANTS.DB_PW,
   port: 5432,
 })
 

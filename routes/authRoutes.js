@@ -29,7 +29,7 @@ router.post('/forgot_password_test', async (req, res) => {
         service: 'gmail',
         auth: {
             user: 'nofuss.exe@gmail.com',
-            pass: process.env.NOFUSS_APP_PASSWORD //CONSTANTS.NOFUSS_APP_PASSWORD,
+            pass: process.env.NOFUSS_APP_PASSWORD// || CONSTANTS.NOFUSS_APP_PASSWORD,
         }
     });
 
@@ -113,10 +113,10 @@ router.post('/forgot_password', async (req, res) => {
         service: 'gmail',
         auth: {
             user: 'nofuss.exe@gmail.com',
-            pass: process.env.NOFUSS_APP_PASSWORD //CONSTANTS.NOFUSS_APP_PASSWORD,
+            pass: process.env.NOFUSS_APP_PASSWORD// || CONSTANTS.NOFUSS_APP_PASSWORD,
         }
     });
-    var resetLink = `${process.env.PASSWORD_RESET_URL//CONSTANTS.PASSWORD_RESET_URL
+    var resetLink = `${process.env.PASSWORD_RESET_URL// || CONSTANTS.PASSWORD_RESET_URL
         }
     ?token=${reset_token}`
 

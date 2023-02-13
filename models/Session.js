@@ -145,9 +145,9 @@ async function deleteSession(user_id, sessionId) {
     }
 }
 
-async function updateNotes(notes, isPrivate, sessionid) {
+async function updateSession(notes, isPrivate, sessionid) {
     query_text = 'UPDATE activity SET notes = $1, is_private = $2 WHERE \
-    activity_id = $2;'
+    activity_id = $3;'
     query_values = [notes, isPrivate, sessionid]
     try {
         const { rows } = await db.query(query_text, query_values)
@@ -160,6 +160,6 @@ async function updateNotes(notes, isPrivate, sessionid) {
 
 module.exports = {
     set_user_session, get_day_session, getAllSessions, getSession, getSessionBatch, getSelfSessionsBatch,
-    getSessionBatchByUsername, deleteSession, updateNotes, check_first_session, get_session_by_search,
+    getSessionBatchByUsername, deleteSession, updateSession, check_first_session, get_session_by_search,
 
 }

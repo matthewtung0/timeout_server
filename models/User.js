@@ -558,8 +558,8 @@ async function deleteAll(userId) {
 async function uploadFileTest(file, user_id) {
 
     const s3 = new AWS.S3({
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID, //CONSTANTS.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY //CONSTANTS.AWS_SECRET_ACCESS_KEY
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,// || CONSTANTS.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,// || CONSTANTS.AWS_SECRET_ACCESS_KEY
     });
     var filePath = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
     var img = fs.readFileSync(filePath + "imagesTesting1.png")// { encoding: 'base64' })
