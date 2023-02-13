@@ -336,7 +336,7 @@ router.post('/save_session', async (req, res) => {
     for (const element of req.body) {
 
         const { activity_id, chosenCategory, cat_id, activity_name, time_start,
-            time_end, end_early, prod_rating } = element
+            time_end, end_early, prod_rating, is_private } = element
 
         /*try {
             var user_id = req.user_id
@@ -362,7 +362,7 @@ router.post('/save_session', async (req, res) => {
         try {
             var user_id = req.user_id
             var result = await session.set_user_session(activity_id, chosenCategory, cat_id, activity_name,
-                time_start, time_end, end_early, prod_rating, user_id)
+                time_start, time_end, end_early, prod_rating, is_private, user_id)
             console.log(result)
             if (!result) {
                 return res.status(422).send({ error: "Error saving session!" });

@@ -44,11 +44,12 @@ async function check_first_session(user_id, startTime, endTime) {
 }
 
 async function set_user_session(activity_id, chosenCategory, chosenCatId, customActivity, sessionStartTime, sessionEndTime,
-    endEarlyFlag, prodRating, user_id) {
+    endEarlyFlag, prodRating, is_private, user_id) {
     query_text = 'INSERT INTO activity(activity_id,user_id,cat_id,time_start,time_end,prod_rating,activity_name,\
-        end_early,reaction_count,is_active) \
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *'
-    query_values = [activity_id, user_id, chosenCatId, sessionStartTime, sessionEndTime, prodRating, customActivity, endEarlyFlag, 0, true]
+        end_early,reaction_count,is_active,is_private) \
+    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *'
+    query_values = [activity_id, user_id, chosenCatId, sessionStartTime,
+        sessionEndTime, prodRating, customActivity, endEarlyFlag, 0, true, is_private]
     try {
         const res = await db.query(query_text, query_values)
         return 1
