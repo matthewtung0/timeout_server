@@ -60,7 +60,7 @@ router.get('/notifications', async (req, res) => {
         console.log(`Going with start ${start} and batchSize ${batchSize}`)
         //const rows = await interaction.getInteractionsForUserId(user_id);
         const rows = await interaction.getInteractionForUserIdBatch(user_id, start, batchSize);
-        console.log("# NOTIFICATIONS SENT ", rows.length)
+        //console.log("# NOTIFICATIONS SENT ", rows.length)
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem fetching notifications: ", err)

@@ -46,7 +46,7 @@ async function toggleInteraction(reaction_id, activity_id, user_id) {
 }
 
 async function getInteractionForUserIdBatch(user_id, startIndex, batchSize) {
-    query_text = 'SELECT a.interaction_id, a.time_created, a.user_id, b.time_start, b.time_end, c.username, d.category_name \
+    query_text = 'SELECT a.interaction_id, a.time_created, a.user_id, b.time_start, b.time_end, b.activity_name, c.username, d.category_name \
     FROM interaction a \
     LEFT JOIN activity b ON a.activity_id = b.activity_id \
     LEFT JOIN user_timeout c on a.user_id = c.user_id \
@@ -64,7 +64,7 @@ async function getInteractionForUserIdBatch(user_id, startIndex, batchSize) {
 async function getInteractionsForUserId(user_id) {
     // b.user_id is the recipient of interaction
     // a.user_id is the interactor
-    query = 'SELECT a.interaction_id, a.time_created, a.user_id, b.time_start, b.time_end, c.username, d.category_name \
+    query = 'SELECT a.interaction_id, a.time_created, a.user_id, b.time_start, b.time_end, b.activity_name, c.username, d.category_name \
     FROM interaction a \
     LEFT JOIN activity b ON a.activity_id = b.activity_id \
     LEFT JOIN user_timeout c on a.user_id = c.user_id \
