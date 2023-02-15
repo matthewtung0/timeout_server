@@ -1,5 +1,3 @@
-
-
 const unknown = ''
 
 const base1 = '16_base/1.png'
