@@ -1,3 +1,5 @@
+
+
 const unknown = ''
 
 const base1 = '16_base/1.png'
@@ -5,14 +7,38 @@ const base2 = '16_base/2.png'
 const base3 = '16_base/3.png'
 const base4 = '16_base/4.png'
 const base5 = '16_base/5.png'
-const baseTypes = [base1, base2, base3, base4, base5]
+const base6 = '16_base/BASE_6.png'
+const base7 = '16_base/BASE_7.png'
+const base8 = '16_base/BASE_8.png'
+const base9 = '16_base/BASE_9.png'
+const base10 = '16_base/BASE_10.png'
+const base11 = '16_base/BASE_11.png'
+const base12 = '16_base/BASE_12.png'
+const base13 = '16_base/BASE_13.png'
+const base14 = '16_base/BASE_14.png'
+const base15 = '16_base/BASE_15.png'
+const base16 = '16_base/BASE_16.png'
+const baseTypes = [base1, base2, base3, base4, base5, base6, base7, base8, base9, base10, base11,
+    base12, base13, base14, base15, base16,]
 
 const ear1 = '3_ear/1.png'
 const ear2 = '3_ear/2.png'
 const ear3 = '3_ear/3.png'
 const ear4 = '3_ear/4.png'
 const ear5 = '3_ear/5.png'
-const earTypes = [ear1, ear2, ear3, ear4, ear5]
+const ear6 = '3_ear/BASE-ear_6.png'
+const ear7 = '3_ear/BASE-ear_7.png'
+const ear8 = '3_ear/BASE-ear_8.png'
+const ear9 = '3_ear/BASE-ear_9.png'
+const ear10 = '3_ear/BASE-ear_10.png'
+const ear11 = '3_ear/BASE-ear_11.png'
+const ear12 = '3_ear/BASE-ear_12.png'
+const ear13 = '3_ear/BASE-ear_13.png'
+const ear14 = '3_ear/BASE-ear_14.png'
+const ear15 = '3_ear/BASE-ear_15.png'
+const ear16 = '3_ear/BASE-ear_16.png'
+const earTypes = [ear1, ear2, ear3, ear4, ear5, ear6, ear7, ear8, ear9, ear10, ear11,
+    ear12, ear13, ear14, ear15, ear16,]
 
 // ---------------------------------------- Eyes ----------------------------------------------
 const eyesWide1 = '12_eyes/1_wide_1_brown.png'
@@ -21,8 +47,8 @@ const eyesWide3 = '12_eyes/1_wide_3_blue.png'
 const eyesWide4 = '12_eyes/1_wide_4_green.png'
 const eyesWide5 = '12_eyes/1_wide_5_gold.png'
 const eyesWide6 = '12_eyes/1_wide_6_red.png'
-const eyesWide7 = '12_eyes/1_wide_7_allwhite.png'
-const eyesWide8 = '12_eyes/1_wide_8_allblack.png'
+const eyesWide7 = '12_eyes/1_wide_7_teal.png'
+const eyesWide8 = '12_eyes/1_wide_8_gray.png'
 const eyesWide = [eyesWide1, eyesWide2, eyesWide3, eyesWide4, eyesWide5, eyesWide6, eyesWide7, eyesWide8,]
 
 const eyesNeutral1 = '12_eyes/2_neutral_1_brown.png'
@@ -31,21 +57,30 @@ const eyesNeutral3 = '12_eyes/2_neutral_3_blue.png'
 const eyesNeutral4 = '12_eyes/2_neutral_4_green.png'
 const eyesNeutral5 = '12_eyes/2_neutral_5_gold.png'
 const eyesNeutral6 = '12_eyes/2_neutral_6_red.png'
-const eyesNeutral7 = '12_eyes/2_neutral_7_allwhite.png'
-const eyesNeutral8 = '12_eyes/2_neutral_8_allblack.png'
+const eyesNeutral7 = '12_eyes/2_neutral_7_teal.png'
+const eyesNeutral8 = '12_eyes/2_neutral_8_gray.png'
 const eyesNeutral = [eyesNeutral1, eyesNeutral2, eyesNeutral3, eyesNeutral4, eyesNeutral5,
     eyesNeutral6, eyesNeutral7, eyesNeutral8,]
 
-const eyeTypes = [eyesWide, eyesNeutral]
-const eyeColors = ['brown', 'black', 'blue', 'green', 'gold', 'red', 'light-grey', 'grey']
+const robot_closed = '12_eyes/3_robot-closed.png'
+const eyesRobot = [robot_closed, robot_closed, robot_closed, robot_closed, robot_closed,
+    robot_closed, robot_closed, robot_closed,]
+
+const eyeTypes = [eyesWide, eyesNeutral, eyesRobot]
+const eyeColors = ['brown', 'black', 'blue', 'green', 'gold', 'red', 'teal', 'gray']
 
 
 // ---------------------------------------- GLASSES ----------------------------------------------
 const glasses1 = '1_glasses/1_round_1_black-01.png'
 const glasses2 = '1_glasses/2_rectangle-clear_1_black-01.png'
 const glasses3 = '1_glasses/2_rectangle-shade-1_black.png'
+
+const glasses4 = '1_glasses/4_rectangle-glasses-PINK.png'
+const glasses5 = '1_glasses/5_round-glasses-BLACK.png'
+const glasses6 = '1_glasses/6_round-glasses-PINK.png'
+
 //const glassesTypes = [ [glasses1], [glasses2], [glasses3]]
-const glassesTypes = [[glasses1], [glasses2], [glasses3]]
+const glassesTypes = [[glasses1], [glasses2], [glasses3], [glasses4], [glasses5], [glasses6]]
 
 // ---------------------------------------- PIERCINGS ----------------------------------------------
 const piercingsHoop1 = '2_piercings/1_brow-hoop_1_black.png'
@@ -114,7 +149,37 @@ const frontMidpart5 = '4_hair_front/3_midpart_5_blue.png'
 const frontMidpart6 = '4_hair_front/3_midpart_6_green.png'
 const frontMidpart = [frontMidpart1, frontMidpart2, frontMidpart3, frontMidpart4, frontMidpart5, frontMidpart6]
 
-const hairFrontTypes = [frontBangsPart, frontBangsFull, frontMidpart]
+
+
+
+const braidBack1_hairFront = '4_hair_front/04_braid-back_1_black.png'
+const braidBack2_hairFront = '4_hair_front/04_braid-back_2_brown.png'
+const braidBack3_hairFront = '4_hair_front/04_braid-back_3_blonde.png'
+const braidBack4_hairFront = '4_hair_front/04_braid-back_4_white.png'
+const braidBack5_hairFront = '4_hair_front/04_braid-back_5_blue.png'
+const braidBack6_hairFront = '4_hair_front/04_braid-back_6_green.png'
+const braidBack_hairFront = [braidBack1_hairFront, braidBack2_hairFront, braidBack3_hairFront,
+    braidBack4_hairFront, braidBack5_hairFront, braidBack6_hairFront,]
+
+const bangsWavyFull1 = '4_hair_front/5_bangs-wavy-full_1_black.png'
+const bangsWavyFull2 = '4_hair_front/5_bangs-wavy-full_2_brown.png'
+const bangsWavyFull3 = '4_hair_front/5_bangs-wavy-full_3_blonde.png'
+const bangsWavyFull4 = '4_hair_front/5_bangs-wavy-full_4_white.png'
+const bangsWavyFull5 = '4_hair_front/5_bangs-wavy-full_5_blue.png'
+const bangsWavyFull6 = '4_hair_front/5_bangs-wavy-full_6_green.png'
+const bangsWavyFull = [bangsWavyFull1, bangsWavyFull2, bangsWavyFull3, bangsWavyFull4, bangsWavyFull5, bangsWavyFull6,]
+
+const bangsWavyLight1 = '4_hair_front/6_bangs-wavy-light_1_black.png'
+const bangsWavyLight2 = '4_hair_front/6_bangs-wavy-light_2_brown.png'
+const bangsWavyLight3 = '4_hair_front/6_bangs-wavy-light_3_blonde.png'
+const bangsWavyLight4 = '4_hair_front/6_bangs-wavy-light_4_white.png'
+const bangsWavyLight5 = '4_hair_front/6_bangs-wavy-light_5_blue.png'
+const bangsWavyLight6 = '4_hair_front/6_bangs-wavy-light_6_green.png'
+const bangsWavyLight = [bangsWavyLight1, bangsWavyLight2, bangsWavyLight3, bangsWavyLight4, bangsWavyLight5, bangsWavyLight6,]
+
+
+const hairFrontTypes = [frontBangsPart, frontBangsFull, frontMidpart,
+    braidBack_hairFront, bangsWavyFull, bangsWavyLight]
 const hairFrontColors = ['black', 'brown', 'yellow', 'white', 'blue', 'green']
 
 // ---------------------------------------- HAIR SIDE ----------------------------------------------
@@ -153,7 +218,15 @@ const buzzcut5 = '6_hair/2_buzzcut_5_blue-01.png'
 const buzzcut6 = '6_hair/2_buzzcut_6_green-01.png'
 const buzzcut = [buzzcut1, buzzcut2, buzzcut3, buzzcut4, buzzcut5, buzzcut6]
 
-const hairTypes = [sidesweep, buzzcut]
+const buzzcutCurly1 = '6_hair/3_buzzcut-curly_1_black.png'
+const buzzcutCurly2 = '6_hair/3_buzzcut-curly_2_brown.png'
+const buzzcutCurly3 = '6_hair/3_buzzcut-curly_3_blonde.png'
+const buzzcutCurly4 = '6_hair/3_buzzcut-curly_4_white.png'
+const buzzcutCurly5 = '6_hair/3_buzzcut-curly_5_blue.png'
+const buzzcutCurly6 = '6_hair/3_buzzcut-curly_6_green.png'
+const buzzcutCurly = [buzzcutCurly1, buzzcutCurly2, buzzcutCurly3, buzzcutCurly4, buzzcutCurly5, buzzcutCurly6,]
+
+const hairTypes = [sidesweep, buzzcut, buzzcutCurly]
 
 // ---------------------------------------- HAIR BACK  --------------------------------------------
 const ponytail1 = '18_hair_back/2_ponytail-fluffy_1_black.png'
@@ -172,14 +245,141 @@ const down5 = '18_hair_back/3_down-fluffy_5_blue.png'
 const down6 = '18_hair_back/3_down-fluffy_6_green.png'
 const down = [down1, down2, down3, down4, down5, down6]
 
-const backHairTypes = [ponytail, down]
+
+
+//pigtails
+const pigtails1 = '18_hair_back/4_pigtails-high_1_black.png'
+const pigtails2 = '18_hair_back/4_pigtails-high_2_brown.png'
+const pigtails3 = '18_hair_back/4_pigtails-high_3_blonde.png'
+const pigtails4 = '18_hair_back/4_pigtails-high_4_white.png'
+const pigtails5 = '18_hair_back/4_pigtails-high_5_blue.png'
+const pigtails6 = '18_hair_back/4_pigtails-high_6_green.png'
+const pigtails = [pigtails1, pigtails2, pigtails3, pigtails4, pigtails5, pigtails6]
+
+
+//ponytail-short
+const ponytailShort1 = '18_hair_back/4_ponytail-short_1_black.png'
+const ponytailShort2 = '18_hair_back/4_ponytail-short_2_brown.png'
+const ponytailShort3 = '18_hair_back/4_ponytail-short_3_blonde.png'
+const ponytailShort4 = '18_hair_back/4_ponytail-short_4_white.png'
+const ponytailShort5 = '18_hair_back/4_ponytail-short_5_blue.png'
+const ponytailShort6 = '18_hair_back/4_ponytail-short_6_green.png'
+const ponytailShort = [ponytailShort1, ponytailShort2, ponytailShort3, ponytailShort4, ponytailShort5, ponytailShort6]
+
+//ponytail-high-short
+const ponytailHighShort1 = '18_hair_back/5_ponytail-high-short_1_black.png'
+const ponytailHighShort2 = '18_hair_back/5_ponytail-high-short_2_brown.png'
+const ponytailHighShort3 = '18_hair_back/5_ponytail-high-short_3_blonde.png'
+const ponytailHighShort4 = '18_hair_back/5_ponytail-high-short_4_white.png'
+const ponytailHighShort5 = '18_hair_back/5_ponytail-high-short_5_blue.png'
+const ponytailHighShort6 = '18_hair_back/5_ponytail-high-short_6_green.png'
+const ponytailHighShort = [ponytailHighShort1, ponytailHighShort2, ponytailHighShort3, ponytailHighShort4, ponytailHighShort5, ponytailHighShort6]
+
+//ponytail-high-long
+const ponytailHighLong1 = '18_hair_back/6_ponytail-high-long_1_black.png'
+const ponytailHighLong2 = '18_hair_back/6_ponytail-high-long_2_brown.png'
+const ponytailHighLong3 = '18_hair_back/6_ponytail-high-long_3_blonde.png'
+const ponytailHighLong4 = '18_hair_back/6_ponytail-high-long_4_white.png'
+const ponytailHighLong5 = '18_hair_back/6_ponytail-high-long_5_blue.png'
+const ponytailHighLong6 = '18_hair_back/6_ponytail-high-long_6_green.png'
+const ponytailHighLong = [ponytailHighLong1, ponytailHighLong2, ponytailHighLong3, ponytailHighLong4, ponytailHighLong5, ponytailHighLong6]
+
+//ponytail-curly
+const ponytailCurly1 = '18_hair_back/7_ponytail-curly_1_black.png'
+const ponytailCurly2 = '18_hair_back/7_ponytail-curly_2_brown.png'
+const ponytailCurly3 = '18_hair_back/7_ponytail-curly_3_blonde.png'
+const ponytailCurly4 = '18_hair_back/7_ponytail-curly_4_white.png'
+const ponytailCurly5 = '18_hair_back/7_ponytail-curly_5_blue.png'
+const ponytailCurly6 = '18_hair_back/7_ponytail-curly_6_green.png'
+const ponytailCurly = [ponytailCurly1, ponytailCurly2, ponytailCurly3, ponytailCurly4, ponytailCurly5, ponytailCurly6]
+
+//bun-side
+const bunSide1 = '18_hair_back/8_bun-side_1_black.png'
+const bunSide2 = '18_hair_back/8_bun-side_2_brown.png'
+const bunSide3 = '18_hair_back/8_bun-side_3_blonde.png'
+const bunSide4 = '18_hair_back/8_bun-side_4_white.png'
+const bunSide5 = '18_hair_back/8_bun-side_5_blue.png'
+const bunSide6 = '18_hair_back/8_bun-side_6_green.png'
+const bunSide = [bunSide1, bunSide2, bunSide3, bunSide4, bunSide5, bunSide6]
+
+//bun-afro
+const bunAfro1 = '18_hair_back/9_bun-afro_1_black.png'
+const bunAfro2 = '18_hair_back/9_bun-afro_2_brown.png'
+const bunAfro3 = '18_hair_back/9_bun-afro_3_blonde.png'
+const bunAfro4 = '18_hair_back/9_bun-afro_4_white.png'
+const bunAfro5 = '18_hair_back/9_bun-afro_5_blue.png'
+const bunAfro6 = '18_hair_back/9_bun-afro_6_green.png'
+const bunAfro = [bunAfro1, bunAfro2, bunAfro3, bunAfro4, bunAfro5, bunAfro6]
+
+//braid-back
+const braidBack1 = '18_hair_back/10_braid-back_1_black.png'
+const braidBack2 = '18_hair_back/10_braid-back_2_brown.png'
+const braidBack3 = '18_hair_back/10_braid-back_3_blonde.png'
+const braidBack4 = '18_hair_back/10_braid-back_4_white.png'
+const braidBack5 = '18_hair_back/10_braid-back_5_blue.png'
+const braidBack6 = '18_hair_back/10_braid-back_6_green.png'
+const braidBack = [braidBack1, braidBack2, braidBack3, braidBack4, braidBack5, braidBack6]
+
+//afro-up
+const afroUp1 = '18_hair_back/11_afro-up_1_black.png'
+const afroUp2 = '18_hair_back/11_afro-up_2_brown.png'
+const afroUp3 = '18_hair_back/11_afro-up_3_blonde.png'
+const afroUp4 = '18_hair_back/11_afro-up_4_white.png'
+const afroUp5 = '18_hair_back/11_afro-up_5_blue.png'
+const afroUp6 = '18_hair_back/11_afro-up_6_green.png'
+const afroUp = [afroUp1, afroUp2, afroUp3, afroUp4, afroUp5, afroUp6]
+
+//afro-down
+const afroDown1 = '18_hair_back/12_afro-down_1_black.png'
+const afroDown2 = '18_hair_back/12_afro-down_2_brown.png'
+const afroDown3 = '18_hair_back/12_afro-down_3_blonde.png'
+const afroDown4 = '18_hair_back/12_afro-down_4_white.png'
+const afroDown5 = '18_hair_back/12_afro-down_5_blue.png'
+const afroDown6 = '18_hair_back/12_afro-down_6_green.png'
+const afroDown = [afroDown1, afroDown2, afroDown3, afroDown4, afroDown5, afroDown6]
+
+//afro-asymmetric
+const afroAsymmetric1 = '18_hair_back/13_afro-asymmetric_1_black.png'
+const afroAsymmetric2 = '18_hair_back/13_afro-asymmetric_2_brown.png'
+const afroAsymmetric3 = '18_hair_back/13_afro-asymmetric_3_blonde.png'
+const afroAsymmetric4 = '18_hair_back/13_afro-asymmetric_4_white.png'
+const afroAsymmetric5 = '18_hair_back/13_afro-asymmetric_5_blue.png'
+const afroAsymmetric6 = '18_hair_back/13_afro-asymmetric_6_green.png'
+const afroAsymmetric = [afroAsymmetric1, afroAsymmetric2, afroAsymmetric3, afroAsymmetric4, afroAsymmetric5, afroAsymmetric6]
+
+
+const backHairTypes = [ponytail, down, pigtails, bunSide, ponytailHighLong, ponytailHighShort, braidBack,
+    ponytailShort, afroAsymmetric, afroDown, afroUp, bunAfro, ponytailCurly]
 
 // -------------------------------------- EYE MAKEUP  --------------------------------------
-const makeup1 = '13_eye_makeup/1_silver.png'
-const makeup2 = '13_eye_makeup/2_black.png'
-const makeup3 = '13_eye_makeup/3_gold.png'
-const makeup4 = '13_eye_makeup/4_pink.png'
-const makeupTypes = [[makeup1], [makeup2], [makeup3], [makeup4]]
+
+const eyeShadow1 = '13_eye_makeup/1_eyeshadow_1_black.png'
+const eyeShadow2 = '13_eye_makeup/1_eyeshadow_2_silver.png'
+const eyeShadow3 = '13_eye_makeup/1_eyeshadow_3_light-teal.png'
+const eyeShadow4 = '13_eye_makeup/1_eyeshadow_4_teal.png'
+const eyeShadow5 = '13_eye_makeup/1_eyeshadow_5_pink.png'
+const eyeShadow6 = '13_eye_makeup/1_eyeshadow_6_gold.png'
+const eyeShadowTypes = [eyeShadow1, eyeShadow2, eyeShadow3, eyeShadow4, eyeShadow5, eyeShadow6]
+
+const cyberpunkLines1 = '13_eye_makeup/2_cyberpunk-line_1_black.png'
+const cyberpunkLines2 = '13_eye_makeup/2_cyberpunk-line_2_silver.png'
+const cyberpunkLines3 = '13_eye_makeup/2_cyberpunk-line_3_light-teal.png'
+const cyberpunkLines4 = '13_eye_makeup/2_cyberpunk-line_4_teal.png'
+const cyberpunkLines5 = '13_eye_makeup/2_cyberpunk-line_5_pink.png'
+const cyberpunkLines6 = '13_eye_makeup/2_cyberpunk-line_6_gold.png'
+const cyberpunkLineTypes = [cyberpunkLines1, cyberpunkLines2, cyberpunkLines3, cyberpunkLines4, cyberpunkLines5, cyberpunkLines6]
+
+const cyberpunkLinesMakeup1 = '13_eye_makeup/3_cyberpunk-lines-makeup_1_black.png'
+const cyberpunkLinesMakeup2 = '13_eye_makeup/3_cyberpunk-lines-makeup_2_silver.png'
+const cyberpunkLinesMakeup3 = '13_eye_makeup/3_cyberpunk-lines-makeup_3_light-teal.png'
+const cyberpunkLinesMakeup4 = '13_eye_makeup/3_cyberpunk-lines-makeup_4_teal.png'
+const cyberpunkLinesMakeup5 = '13_eye_makeup/3_cyberpunk-lines-makeup_5_pink.png'
+const cyberpunkLinesMakeup6 = '13_eye_makeup/3_cyberpunk-lines-makeup_6_gold.png'
+const cyberpunkLinesMakeupTypes = [cyberpunkLinesMakeup1, cyberpunkLinesMakeup2, cyberpunkLinesMakeup3, cyberpunkLinesMakeup4, cyberpunkLinesMakeup5, cyberpunkLinesMakeup6]
+
+const makeupColors = ['black', 'silver', 'light-teal', 'teal', 'pink', 'gold']
+
+const makeupTypes = [eyeShadowTypes, cyberpunkLineTypes, cyberpunkLinesMakeupTypes]
 
 // -------------------------------------- EYEBROWS  -----------------------------------------
 const browThick1 = '15_eyebrows/1_neutral-thick_1_black-01.png'
@@ -197,7 +397,18 @@ const browThin4 = '15_eyebrows/2_neutral-thin_4_white-01.png'
 const browThin5 = '15_eyebrows/2_neutral-thin_5_blue-01.png'
 const browThin6 = '15_eyebrows/2_neutral-thin_6_green-01.png'
 const browThin = [browThin1, browThin2, browThin3, browThin4, browThin5, browThin6]
-const browTypes = [browThick, browThin]
+
+
+const shavedNeutral1 = '15_eyebrows/3_shaved-neutral_1_black.png'
+const shavedNeutral2 = '15_eyebrows/3_shaved-neutral_2_brown.png'
+const shavedNeutral3 = '15_eyebrows/3_shaved-neutral_3_blonde.png'
+const shavedNeutral4 = '15_eyebrows/3_shaved-neutral_4_white.png'
+const shavedNeutral5 = '15_eyebrows/3_shaved-neutral_5_blue.png'
+const shavedNeutral6 = '15_eyebrows/3_shaved-neutral_6_green.png'
+const shavedNeutral = [shavedNeutral1, shavedNeutral2, shavedNeutral3, shavedNeutral4, shavedNeutral5, shavedNeutral6,]
+
+
+const browTypes = [browThick, browThin, shavedNeutral]
 //browColors use hairFrontColors
 
 // -------------------------------------- MOUTH  --------------------------------------------
@@ -222,8 +433,15 @@ const lipstickSmile4 = '11_mouth/3_lipstick-smile_4_pink-01.png'
 const lipstickSmile5 = '11_mouth/3_lipstick-smile_5_green-01.png'
 const lipstickSmile = [lipstickSmile1, lipstickSmile2, lipstickSmile3, lipstickSmile4, lipstickSmile5]
 
+const openSmile1 = '11_mouth/4_open-smile_1_gray.png'
+const openSmile2 = '11_mouth/4_open-smile_2_black.png'
+const openSmile3 = '11_mouth/4_open-smile_3_red.png'
+const openSmile4 = '11_mouth/4_open-smile_4_pink.png'
+const openSmile5 = '11_mouth/4_open-smile_5_green.png'
+const openSmile = [openSmile1, openSmile2, openSmile3, openSmile4, openSmile5,]
+
 const mouthColors = ['gray', 'black', 'red', 'pink', 'green']
-const mouthTypes = [pressed, lipstick, lipstickSmile]
+const mouthTypes = [pressed, lipstick, lipstickSmile, openSmile]
 
 // ---------------------------------------- OUTERWEAR --------------------------------------------
 const bomber1 = '7_outerwear/1_bomber_1_black.png'
@@ -392,7 +610,7 @@ const turtleLong10 = '10_underlayer/9_turtle-long_10_green.png'
 const turtleLong = [turtleLong1, turtleLong2, turtleLong3, turtleLong4, turtleLong5,
     turtleLong6, turtleLong7, turtleLong8, turtleLong9, turtleLong10]
 
-const underlayerTypes = [uspag, tank, turtleSleeveless, widecut, vneck, tshirt, turtleShort, mesh, turtleLong]
+const underlayerTypes = [uspag, tank, turtleSleeveless, widecut, vneck, tshirt, turtleShort, turtleLong]
 //underlayercolors use outerwearColors
 
 // ---------------------------------------- ACCESSORIES ----------------------------------------------
@@ -415,7 +633,11 @@ const ponytailRibbon10 = '17_hair_accessories/1_ponytail-ribbon_10_green.png'
 const ponytailRibbon = [ponytailRibbon1, ponytailRibbon2, ponytailRibbon3, ponytailRibbon4, ponytailRibbon5,
     ponytailRibbon6, ponytailRibbon7, ponytailRibbon8, ponytailRibbon9, ponytailRibbon10]
 
-const hairAccessoryTypes = [ponytailRibbon]
+
+const catEars1 = '17_hair_accessories/3_cat-ear-white.png'
+const catEars = [catEars1, catEars1, catEars1, catEars1, catEars1, catEars1, catEars1, catEars1, catEars1, catEars1,]
+
+const hairAccessoryTypes = [ponytailRibbon, catEars]
 // same color as outerwearColors
 
 // ---------------------------------------- BASE ----------------------------------------------
@@ -423,8 +645,8 @@ const baseColors = ['#FBE8D9', '#FFCDAA', '#C38168', '#75443D', '#3A231D']
 
 
 // ---------------------------------------- OVERLAY  --------------------------------------------
-const overlay1 = '19_BACKGROUND OVERLAY/1_darken-01.png'
-const overlay2 = '19_BACKGROUND OVERLAY/2_grid-01.png'
+const overlay1 = '19_BACKGROUND_OVERLAY/1_darken-01.png'
+const overlay2 = '19_BACKGROUND_OVERLAY/2_grid-01.png'
 const overlayTypes = [[overlay1], [overlay2]]
 
 // ---------------------------------------- BACKGROUND  --------------------------------------------
