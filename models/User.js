@@ -68,15 +68,15 @@ async function set_user_info(email, password, username, firstName, lastName, use
                     glasses_color,glasses_active,background_index,background_color,background_active,underlayer_index,underlayer_color,\
                     underlayer_active,top_index,top_color,top_active,outer_index,outer_color,outer_active,hair_base_index,hair_base_color,\
                     hair_base_active,hair_front_index,hair_front_color,hair_front_active,hair_back_index,hair_back_color,hair_back_active,\
-                    hair_side_index,hair_side_color,hair_side_active,user_id, last_updated)\
+                    hair_side_index,hair_side_color,hair_side_active,user_id, last_updated, overlay_index, overlay_color, overlay_active)\
                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,\
                         $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,\
-                        $41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53);'
+                        $41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56);'
         user_query_values = [0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true,
             0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true,
             0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true,
             0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true, 0, 0, true,
-            user_id, new Date()]
+            user_id, new Date(), 0, 0, true]
         const res = await client.query(user_query_text, user_query_values)
 
         // TRY SETTING USER CREDENTIALS
@@ -213,6 +213,10 @@ function reformatAvatarInfo(r) {
                 item: r.background_index,
                 color: r.background_color,
                 active: r.background_active,
+            }, overlay: {
+                item: r.overlay_idex,
+                color: r.overlay_color,
+                active: r.overlay_active,
             },
         },
         clothing: {

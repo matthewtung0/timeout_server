@@ -315,6 +315,7 @@ async function saveUserAvatar2(user_id, avatarJSON) {
         j.accessories.piercings.item, j.accessories.piercings.color, j.accessories.piercings.active,
         j.accessories.glasses.item, j.accessories.glasses.color, j.accessories.glasses.active,
         j.accessories.background.item, j.accessories.background.color, j.accessories.background.active,
+        j.accessories.overlay.item, j.accessories.overlay.color, j.accessories.overlay.active,
         j.clothing.under.item, j.clothing.under.color, j.clothing.under.active,
         j.clothing.top.item, j.clothing.top.color, j.clothing.top.active,
         j.clothing.outer.item, j.clothing.outer.color, j.clothing.outer.active,
@@ -380,6 +381,10 @@ async function saveUserAvatar2(user_id, avatarJSON) {
          glasses_color           | integer           |           |          | 
          glasses_active          | boolean           |           |          | 
         last_updated             | timestamp with time zone |    |          | 
+         overlay_index           | integer                  |           |          | 
+         overlay_color           | integer                  |           |          | 
+         overlay_active          | boolean                  |           |          | 
+
         */
 
     query_text = 'INSERT INTO user_avatar \
@@ -394,7 +399,7 @@ async function saveUserAvatar2(user_id, avatarJSON) {
     hair_side_index,hair_side_color,hair_side_active,user_id, last_updated)\
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,\
         $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,\
-        $41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53)  \
+        $41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56)  \
     ON CONFLICT (user_id) DO UPDATE \
     SET \
     mouth_index = $1,\
@@ -448,7 +453,10 @@ async function saveUserAvatar2(user_id, avatarJSON) {
     hair_side_index =$49,\
     hair_side_color =$50,\
     hair_side_active =$51,\
-    last_updated= $53;'
+    last_updated= $53,\
+    overlay_index=$54,\
+    overlay_color=$55,\
+    overlay_active=$56;'
 
     /*
         {
