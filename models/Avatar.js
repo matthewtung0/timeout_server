@@ -127,7 +127,7 @@ async function generateAvatarFromData2(avatarData, user_id) {
     var earsSrc = d + dir.earTypes[avatarJSON.face.base.item] /* ears follow the base */
     var underSrc = d + dir.underlayerTypes[avatarJSON.clothing.under.item][avatarJSON.clothing.under.color]
 
-    var overlaySrc = d + dir.overlayTypes[0][0]
+    var overlaySrc = d + dir.overlayTypes[avatarJSON.accessories.overlay.item][0]
     var hairFrontSrc = d + dir.hairFrontTypes[avatarJSON.hair.front.item][avatarJSON.hair.front.color]
     var hairBackSrc = d + dir.backHairTypes[avatarJSON.hair.back.item][avatarJSON.hair.back.color]
     var hairSideSrc = d + dir.hairSideTypes[avatarJSON.hair.side.item][avatarJSON.hair.side.color]
