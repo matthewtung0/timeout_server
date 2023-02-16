@@ -214,7 +214,7 @@ function reformatAvatarInfo(r) {
                 color: r.background_color,
                 active: r.background_active,
             }, overlay: {
-                item: r.overlay_idex,
+                item: r.overlay_index,
                 color: r.overlay_color,
                 active: r.overlay_active,
             },
