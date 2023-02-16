@@ -64,7 +64,7 @@ const robot_closed = '12_eyes/3_robot-closed.png'
 const eyesRobot = [robot_closed, robot_closed, robot_closed, robot_closed, robot_closed,
     robot_closed, robot_closed, robot_closed,]
 
-const eyeTypes = [eyesWide, eyesNeutral, eyesRobot]
+const eyeTypes = [eyesNeutral, eyesWide, eyesRobot] // switched neutral and wide
 const eyeColors = ['brown', 'black', 'blue', 'green', 'gold', 'red', 'teal', 'gray']
 
 
