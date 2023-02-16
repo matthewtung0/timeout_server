@@ -65,10 +65,10 @@ async function set_user_session(activity_id, chosenCategory, chosenCatId, custom
 
 async function getSession(id) {
     /*query_text1 = format('SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c\
-    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($1::int[])',[friends])*/
     query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
-    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = $1 \
     ORDER BY time_start desc;'
     query_values = [id]
@@ -81,7 +81,7 @@ async function getSessionBatch(startIndex, batchSize, friends,) {
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($1::int[])',[friends])*/
     query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
-    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($3) \
     ORDER BY time_start desc \
     OFFSET $1 ROWS \
@@ -93,7 +93,7 @@ async function getSessionBatch(startIndex, batchSize, friends,) {
 
 async function getSessionBatchByUsername(startIndex, batchSize, usernames) {
     query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
-    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and b.username = any($3) \
     ORDER BY time_start desc \
     OFFSET $1 ROWS \

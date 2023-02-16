@@ -78,7 +78,8 @@ const glasses5 = '1_glasses/5_round-glasses-BLACK.png'
 const glasses6 = '1_glasses/6_round-glasses-PINK.png'
 
 //const glassesTypes = [ [glasses1], [glasses2], [glasses3]]
-const glassesTypes = [[glasses1], [glasses2], [glasses3], [glasses4], [glasses5], [glasses6]]
+const glassesTypes = [[glasses1], [glasses5], [glasses6], [glasses2], [glasses3], [glasses4]]
+// reordered so that round and rectangle are next to each other
 
 // ---------------------------------------- PIERCINGS ----------------------------------------------
 const piercingsHoop1 = '2_piercings/1_brow-hoop_1_black.png'
