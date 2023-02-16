@@ -333,8 +333,10 @@ router.get('/monthSessions', async (req, res) => {
 router.post('/save_session', async (req, res) => {
 
     // req.body is an array of len 1 or more
+    console.log(`req.body is ${req.body}`)
     for (const element of req.body) {
 
+        console.log(`req body element: ${element}`)
         const { activity_id, chosenCategory, cat_id, activity_name, time_start,
             time_end, end_early, prod_rating, is_private } = element
 
