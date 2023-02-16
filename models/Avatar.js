@@ -315,7 +315,6 @@ async function saveUserAvatar2(user_id, avatarJSON) {
         j.accessories.piercings.item, j.accessories.piercings.color, j.accessories.piercings.active,
         j.accessories.glasses.item, j.accessories.glasses.color, j.accessories.glasses.active,
         j.accessories.background.item, j.accessories.background.color, j.accessories.background.active,
-        j.accessories.overlay.item, j.accessories.overlay.color, j.accessories.overlay.active,
         j.clothing.under.item, j.clothing.under.color, j.clothing.under.active,
         j.clothing.top.item, j.clothing.top.color, j.clothing.top.active,
         j.clothing.outer.item, j.clothing.outer.color, j.clothing.outer.active,
@@ -323,7 +322,8 @@ async function saveUserAvatar2(user_id, avatarJSON) {
         j.hair.front.item, j.hair.front.color, j.hair.front.active,
         j.hair.back.item, j.hair.back.color, j.hair.back.active,
         j.hair.side.item, j.hair.side.color, j.hair.side.active,
-        user_id, new Date()
+        user_id, new Date(),
+        j.accessories.overlay.item, j.accessories.overlay.color, j.accessories.overlay.active,
     ]
     /*
         Column          |       Type        | Collation | Nullable | Default 
@@ -396,7 +396,7 @@ async function saveUserAvatar2(user_id, avatarJSON) {
     glasses_color,glasses_active,background_index,background_color,background_active,underlayer_index,underlayer_color,\
     underlayer_active,top_index,top_color,top_active,outer_index,outer_color,outer_active,hair_base_index,hair_base_color,\
     hair_base_active,hair_front_index,hair_front_color,hair_front_active,hair_back_index,hair_back_color,hair_back_active,\
-    hair_side_index,hair_side_color,hair_side_active,user_id, last_updated)\
+    hair_side_index,hair_side_color,hair_side_active,user_id, last_updated,overlay_index, overlay_color, overlay_active)\
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,\
         $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,\
         $41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56)  \
