@@ -333,33 +333,12 @@ router.get('/monthSessions', async (req, res) => {
 router.post('/save_session', async (req, res) => {
 
     // req.body is an array of len 1 or more
-    console.log(`req.body is ${req.body}`)
+    console.log(`req.body is ${JSON.stringify(req.body)}`)
     for (const element of req.body) {
 
-        console.log(`req body element: ${element}`)
+        console.log(`req body element: ${JSON.stringify(element)}`)
         const { activity_id, chosenCategory, cat_id, activity_name, time_start,
             time_end, end_early, prod_rating, is_private } = element
-
-        /*try {
-            var user_id = req.user_id
-            const yesterday_task = await session.check_first_session(user_id, yesterdayStartRange, yesterdayEndRange)
-            const today_first_task = await session.check_first_session(user_id, startRange, endRange)
-            console.log("YESTERDAY TASK IS ", yesterday_task)
-            console.log("TODAY FIRST TASK IS ", today_first_task)
-            if (yesterday_task == 0 && today_first_task == 0) {
-                // this session is start of a new streak
-                console.log("this session is start of a new streak")
-            } else if (yesterday_task > 0 && today_first_task == 0) {
-                // this session extends an existing streak
-                console.log("this session extends an existing streak")
-            } else {
-                // already did a session today, nothing to update
-                console.log("already did a session today, nothing to update")
-            }
-
-        } catch (err) {
-        }*/
-        var user_stats = null;
 
         try {
             var user_id = req.user_id
