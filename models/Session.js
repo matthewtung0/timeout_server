@@ -80,7 +80,7 @@ async function getSessionBatch(startIndex, batchSize, friends,) {
     /*query_text1 = format('SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c\
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($1::int[])',[friends])*/
-    query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
+    query_text = 'SELECT a.*, b.username, b.expo_token, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
     WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($3) \
     ORDER BY time_start desc \
