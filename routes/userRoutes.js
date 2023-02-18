@@ -249,6 +249,18 @@ router.patch('/self_user/lastsignin', async (req, res) => {
     }
 })
 
+router.patch('/self_user/expo_token', async (req, res) => {
+    const user_id = req.user_id
+    const { expo_token } = req.body;
+    try {
+        await user.postNotificationToken(user_id, expo_token);
+        return res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message)
+    }
+})
+
 router.post('/self_user/avatar2', async (req, res) => {
     const user_id = req.user_id
     const { avatarJSON, items_to_redeem, items_cost } = req.body

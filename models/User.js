@@ -138,6 +138,13 @@ async function purchaseItems(user_id, items, points) {
 
 }
 
+async function postNotificationToken(user_id, expo_token) {
+    query_text = 'UPDATE user_timeout SET expo_token = $2 WHERE user_id = $1;'
+    query_values = [user_id, expo_token]
+    await db.query(query_text, query_values);
+    return
+}
+
 async function updatePassword(user_id, newPassword) {
     query_text = 'UPDATE user_credential SET password = $1 WHERE user_id = $2;'
     query_values = [newPassword, user_id]
@@ -587,5 +594,5 @@ module.exports = {
     updatePassword, getCredentialsFromId, deleteAll, addPoints, updateLastSignin,
     getStatsFromId, getStatsFromUsername, getItemsOwnedFromId, getItemsOwnedFromUsername,
     purchaseItems, doesUsernameExist, doesEmailExist, postToken,
-    uploadFileTest
+    uploadFileTest, postNotificationToken
 }
