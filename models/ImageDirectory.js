@@ -4,7 +4,7 @@ const base1 = '16_base/BASE_1.png'
 const base2 = '16_base/BASE_2.png'
 const base3 = '16_base/BASE_3.png'
 const base4 = '16_base/BASE_4.png'
-const base5 = '16_base/BASE_5.png'
+//const base5 = '16_base/BASE_5.png'
 const base6 = '16_base/BASE_6.png'
 const base7 = '16_base/BASE_7.png'
 const base8 = '16_base/BASE_8.png'
@@ -16,14 +16,14 @@ const base13 = '16_base/BASE_13.png'
 const base14 = '16_base/BASE_14.png'
 const base15 = '16_base/BASE_15.png'
 const base16 = '16_base/BASE_16.png'
-const baseTypes = [base1, base2, base3, base4, base5, base6, base7, base8, base9, base10, base11,
+const baseTypes = [base1, base2, base3, base4, base6, base7, base8, base9, base10, base11,
     base12, base13, base14, base15, base16,]
 
 const ear1 = '3_ear/1.png'
 const ear2 = '3_ear/2.png'
 const ear3 = '3_ear/3.png'
 const ear4 = '3_ear/4.png'
-const ear5 = '3_ear/5.png'
+//const ear5 = '3_ear/5.png'
 const ear6 = '3_ear/BASE-ear_6.png'
 const ear7 = '3_ear/BASE-ear_7.png'
 const ear8 = '3_ear/BASE-ear_8.png'
@@ -35,7 +35,7 @@ const ear13 = '3_ear/BASE-ear_13.png'
 const ear14 = '3_ear/BASE-ear_14.png'
 const ear15 = '3_ear/BASE-ear_15.png'
 const ear16 = '3_ear/BASE-ear_16.png'
-const earTypes = [ear1, ear2, ear3, ear4, ear5, ear6, ear7, ear8, ear9, ear10, ear11,
+const earTypes = [ear1, ear2, ear3, ear4, ear6, ear7, ear8, ear9, ear10, ear11,
     ear12, ear13, ear14, ear15, ear16,]
 
 // ---------------------------------------- Eyes ----------------------------------------------
