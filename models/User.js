@@ -366,10 +366,10 @@ function reformatAvatarOwnedInfo(rows) {
 async function getStatsFromId(userId) {
     query_values = [userId]
     query_text = 'SELECT count(a.time_start) as num_tasks, \
-    u.username, u.time_created, u.last_signin, u.bio, \
+    u.username, u.time_created, u.last_signin, u.bio, u.first_name, u.last_name, \
     sum(a.time_end - a.time_start) as total_time from user_timeout u LEFT OUTER JOIN activity a  \
     ON a.user_id = u.user_id WHERE u.user_id = $1 \
-    GROUP BY u.username, u.time_created, u.last_signin, u.bio;'
+    GROUP BY u.username, u.time_created, u.last_signin, u.bio, u.first_name, u.last_name;'
     const { rows: statsRow } = await db.query(query_text, query_values);
     return statsRow[0]
 }
@@ -377,10 +377,10 @@ async function getStatsFromId(userId) {
 async function getStatsFromUsername(username) {
     query_value = [username]
     query_text = 'SELECT count(a.time_start) as num_tasks, sum(a.time_end - a.time_start) as total_time,\
-    u.username, u.time_created, u.last_signin, u.bio \
+    u.username, u.time_created, u.last_signin, u.bio, u.first_name, u.last_name,  \
     FROM user_timeout u LEFT OUTER JOIN activity a \
     ON a.user_id = u.user_id WHERE u.username = $1 \
-    GROUP BY u.username, u.time_created, u.last_signin, u.bio;'
+    GROUP BY u.username, u.time_created, u.last_signin, u.bio, u.first_name, u.last_name;'
     const { rows: statsRow } = await db.query(query_text, query_values);
     return statsRow[0]
 }
