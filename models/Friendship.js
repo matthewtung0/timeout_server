@@ -56,7 +56,8 @@ async function getFriends(userId) {
     // finally, get all users whose latest interaction is "friended (status id = 0)"
     currentFriendsQuery = "SELECT a.*, b.username as username_a, c.username as username_b\
      FROM latestEvents a, user_timeout b, user_timeout c where\
-     status_id = '0' AND a.friend_a = b.user_id AND a.friend_b = c.user_id;"
+     status_id = '0' AND a.friend_a = b.user_id AND a.friend_b = c.user_id\
+     ORDER BY a.time_created DESC;"
     currentFriendsValues = []
 
     const res = await db.query(currentFriendsQuery, currentFriendsValues)
