@@ -122,7 +122,7 @@ router.post('/forgot_password', async (req, res) => {
 
     var mailOptions = {
         from: 'nofuss.exe@gmail.com',
-        to: 'mtung@berkeley.edu', //email,
+        to: email,
         subject: 'Password reset link for TimeOut',
         html: `<p>Use the link <a href="${resetLink}">here</a> to reset your password. Link is valid for 24 hours after the request was first made.</p>`,
         //text: `Use the following link to reset your password. Link is valid for 24 hours after the request was made.\n${resetLink}`
