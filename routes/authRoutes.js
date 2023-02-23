@@ -116,10 +116,8 @@ router.post('/forgot_password', async (req, res) => {
             pass: process.env.NOFUSS_APP_PASSWORD// || CONSTANTS.NOFUSS_APP_PASSWORD,
         }
     });
-    var resetLink = `${process.env.PASSWORD_RESET_URL// || CONSTANTS.PASSWORD_RESET_URL
-        }
-    ?token=${reset_token}`
-
+    var resetLink = `${process.env.PASSWORD_RESET_URL}?token=${reset_token}`
+    // || CONSTANTS.PASSWORD_RESET_URL
     var mailOptions = {
         from: 'nofuss.exe@gmail.com',
         to: email,
