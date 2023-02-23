@@ -2,9 +2,8 @@ const { Pool, Client } = require('pg')
 //const CONSTANTS = require('../constants.json')
 
 const pool = new Pool({
-  user: 'nofussexe',//'matthewtung',
-  host: process.env.DB_URL_DEV, //DB_URL_PROD,
-  //host: 'timeoutapp.ctwghhzgkn52.us-east-1.rds.amazonaws.com',
+  user: 'nofussexe',
+  host: process.env.DB_URL_PROD, //DB_URL_PROD,
   database: 'postgres',//'timeout',
   password: process.env.DB_PW, //|| CONSTANTS.DB_PW,
   port: 5432,

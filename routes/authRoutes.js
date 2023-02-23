@@ -35,7 +35,7 @@ router.post('/forgot_password_test', async (req, res) => {
 
     var mailOptions = {
         from: 'nofuss.exe@gmail.com',
-        to: 'tungm@usc.edu',
+        to: 'nofuss.exe@gmail.com',
         subject: 'Sending Email using Node.js',
         text: 'That was easy!'
     };
