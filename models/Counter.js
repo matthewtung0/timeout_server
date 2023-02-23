@@ -80,11 +80,11 @@ async function addTally(user_id, counterId, updateAmount, tally_time, dateKey) {
         detailQuery = 'INSERT INTO counter_tally(user_id, update_by, time_start, counter_id, date_key) \
         VALUES ($1,$2,$3,$4, $5) RETURNING *'
         detailValues = [user_id, updateAmount, tally_time, counterId, dateKey]
-        await db.query(detailQuery, detailValues)
+        await client.query(detailQuery, detailValues)
 
         countQuery = 'UPDATE counter SET cur_count = cur_count + $1 WHERE counter_id = $2 AND user_id = $3;'
         countValues = [updateAmount, counterId, user_id]
-        await db.query(countQuery, countValues)
+        await client.query(countQuery, countValues)
 
         await client.query('COMMIT')
     } catch (e) {
