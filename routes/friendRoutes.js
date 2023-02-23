@@ -48,7 +48,7 @@ router.get('/friendsUpdate', async (req, res) => {
     const user_id = req.user_id
     try {
         let results = await friendship.getFriendUpdate(user_id)
-        var is_friend_update = results[0].friend_update
+        var is_friend_update = results[0]
         console.log("rESULT IS ", is_friend_update)
 
         if (is_friend_update) { // we need to update friend list
