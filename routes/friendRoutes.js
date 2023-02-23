@@ -48,6 +48,7 @@ router.get('/friendsUpdate', async (req, res) => {
     const user_id = req.user_id
     try {
         let results = await friendship.getFriendUpdate(user_id)
+        console.log("psql results: ", results)
         var is_friend_update = results['friend_update']
         console.log("rESULT IS ", is_friend_update)
 

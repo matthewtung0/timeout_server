@@ -46,7 +46,7 @@ async function getFriendUpdate(user_id) {
     query_values = [user_id]
 
     const res = await db.query(query_text, query_values)
-    return res.rows;
+    return res.rows[0];
 }
 
 async function getFriends(userId) {
