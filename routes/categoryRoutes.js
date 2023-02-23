@@ -65,6 +65,7 @@ router.patch('/category/:id', async (req, res) => {
     const categoryId = req.params.id
     const user_id = req.user_id
     const { archived, colorId, isPublic } = req.body
+
     try {
         await category.setAll(user_id, categoryId, archived, isPublic, colorId)
         res.status(200).send()

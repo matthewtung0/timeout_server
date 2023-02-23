@@ -4,9 +4,9 @@ const router = new Router();
 const jwt = require('jsonwebtoken');
 const uuid = require('uuid-random');
 const nodemailer = require('nodemailer');
-const { google } = require("googleapis");
-const OAuth2 = google.auth.OAuth2;
-const CONSTANTS = require('../constants.json')
+//const { google } = require("googleapis");
+//const OAuth2 = google.auth.OAuth2;
+//const CONSTANTS = require('../constants.json')
 
 
 router.post('/change_password', async (req, res) => {
@@ -29,7 +29,7 @@ router.post('/forgot_password_test', async (req, res) => {
         service: 'gmail',
         auth: {
             user: 'nofuss.exe@gmail.com',
-            pass: CONSTANTS.NOFUSS_APP_PASSWORD,
+            pass: process.env.NOFUSS_APP_PASSWORD// || CONSTANTS.NOFUSS_APP_PASSWORD,
         }
     });
 
@@ -113,14 +113,14 @@ router.post('/forgot_password', async (req, res) => {
         service: 'gmail',
         auth: {
             user: 'nofuss.exe@gmail.com',
-            pass: CONSTANTS.NOFUSS_APP_PASSWORD,
+            pass: process.env.NOFUSS_APP_PASSWORD// || CONSTANTS.NOFUSS_APP_PASSWORD,
         }
     });
-    var resetLink = `${CONSTANTS.PASSWORD_RESET_URL}?token=${reset_token}`
-
+    var resetLink = `${process.env.PASSWORD_RESET_URL}?token=${reset_token}`
+    // || CONSTANTS.PASSWORD_RESET_URL
     var mailOptions = {
         from: 'nofuss.exe@gmail.com',
-        to: 'mtung@berkeley.edu', //email,
+        to: email,
         subject: 'Password reset link for TimeOut',
         html: `<p>Use the link <a href="${resetLink}">here</a> to reset your password. Link is valid for 24 hours after the request was first made.</p>`,
         //text: `Use the following link to reset your password. Link is valid for 24 hours after the request was made.\n${resetLink}`
@@ -177,6 +177,7 @@ router.post('/signin', async (req, res) => {
     user_info = await user.get_user_info(email)
     correct_pw = user_info['password']
     user_id = user_info['user_id']
+    console.log(`user_id is ${user_id}`)
 
     if (!user) {
         return res.status(422).send({ error: 'invalid password or email' });
@@ -186,7 +187,7 @@ router.post('/signin', async (req, res) => {
 
 
         const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY')
-
+        console.log(`Sending token.. ${token}`)
         await user.updateLastSignin(user_id)
 
         res.send({ token })

@@ -96,23 +96,6 @@ router.get('/sessionFeed', async (req, res) => {
     }
 })
 
-/*
-router.get('/daySessions', async (req, res) => {
-    const startRange = req.query.startTime
-    const endRange = req.query.endTime
-    console.log("getting session for day ", startRange)
-    try {
-        let user_id = req.user_id
-
-        let result = await session.get_day_session(startRange, endRange, user_id)
-        res.send(result)
-
-    } catch (err) {
-        console.log("error getting day's session: ", err)
-        return res.status(422).send({ error: "Error getting day's session!" });
-    }
-})*/
-
 const byMonthKey = (dt, parse = false) => {
     if (parse) {
         return format(parseISO(dt), 'M/yyyy', { locale: enUS }).toString()
@@ -250,7 +233,7 @@ const groupMonthlyTasks = (monthSessions) => {
     for (var K in intermediateMap) {
         finalMap[K] = Object.keys(intermediateMap[K]).map((key) => [key, intermediateMap[K][key]])
     }
-    console.log("fINAL MAP ", finalMap)
+    //console.log("fINAL MAP ", finalMap)
     return finalMap
 }
 
@@ -283,14 +266,15 @@ router.get('/testSessionsAndCounters', async (req, res) => {
         return res.status(422).send({ error: "Error getting month's counters!" });
     }
     let combinedData = sessionData.concat(counterData)
-    let groupedData = groupMonthlyTasks(combinedData)
-    let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
+    //let groupedData = groupMonthlyTasks(combinedData)
+    //let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
 
     //console.log("Session raw data: ", sessionData)
     //console.log("Counter raw data: ", counterData)
     //console.log("Combined data: ", groupedCombinedData)
 
-    res.send({ groupedData, groupedDataForSummary })
+    //res.send({ groupedData, groupedDataForSummary })
+    res.send(combinedData)
 })
 
 router.get('/searchSessionsAndCounters', async (req, res) => {
@@ -349,36 +333,17 @@ router.get('/monthSessions', async (req, res) => {
 router.post('/save_session', async (req, res) => {
 
     // req.body is an array of len 1 or more
+    console.log(`req.body is ${JSON.stringify(req.body)}`)
     for (const element of req.body) {
 
+        console.log(`req body element: ${JSON.stringify(element)}`)
         const { activity_id, chosenCategory, cat_id, activity_name, time_start,
-            time_end, end_early, prod_rating } = element
-
-        /*try {
-            var user_id = req.user_id
-            const yesterday_task = await session.check_first_session(user_id, yesterdayStartRange, yesterdayEndRange)
-            const today_first_task = await session.check_first_session(user_id, startRange, endRange)
-            console.log("YESTERDAY TASK IS ", yesterday_task)
-            console.log("TODAY FIRST TASK IS ", today_first_task)
-            if (yesterday_task == 0 && today_first_task == 0) {
-                // this session is start of a new streak
-                console.log("this session is start of a new streak")
-            } else if (yesterday_task > 0 && today_first_task == 0) {
-                // this session extends an existing streak
-                console.log("this session extends an existing streak")
-            } else {
-                // already did a session today, nothing to update
-                console.log("already did a session today, nothing to update")
-            }
-
-        } catch (err) {
-        }*/
-        var user_stats = null;
+            time_end, end_early, prod_rating, is_private } = element
 
         try {
             var user_id = req.user_id
             var result = await session.set_user_session(activity_id, chosenCategory, cat_id, activity_name,
-                time_start, time_end, end_early, prod_rating, user_id)
+                time_start, time_end, end_early, prod_rating, is_private, user_id)
             console.log(result)
             if (!result) {
                 return res.status(422).send({ error: "Error saving session!" });
@@ -414,10 +379,9 @@ router.delete('/session/:id', async (req, res) => {
 router.patch('/session/:id', async (req, res) => {
     const sessionId = req.params.id
     const user_id = req.user_id
-    const { notes } = req.body
-    console.log("Updating sessionId with notes ", notes)
+    const { notes, isPrivate } = req.body
     try {
-        await session.updateNotes(notes, sessionId)
+        await session.updateSession(notes, isPrivate, sessionId)
         res.status(200).send()
     } catch (err) {
         console.log(err.stack)

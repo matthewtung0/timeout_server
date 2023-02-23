@@ -44,11 +44,12 @@ async function check_first_session(user_id, startTime, endTime) {
 }
 
 async function set_user_session(activity_id, chosenCategory, chosenCatId, customActivity, sessionStartTime, sessionEndTime,
-    endEarlyFlag, prodRating, user_id) {
+    endEarlyFlag, prodRating, is_private, user_id) {
     query_text = 'INSERT INTO activity(activity_id,user_id,cat_id,time_start,time_end,prod_rating,activity_name,\
-        end_early,reaction_count,is_active) \
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *'
-    query_values = [activity_id, user_id, chosenCatId, sessionStartTime, sessionEndTime, prodRating, customActivity, endEarlyFlag, 0, true]
+        end_early,reaction_count,is_active,is_private) \
+    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *'
+    query_values = [activity_id, user_id, chosenCatId, sessionStartTime,
+        sessionEndTime, prodRating, customActivity, endEarlyFlag, 0, true, is_private]
     try {
         const res = await db.query(query_text, query_values)
         return 1
@@ -64,10 +65,10 @@ async function set_user_session(activity_id, chosenCategory, chosenCatId, custom
 
 async function getSession(id) {
     /*query_text1 = format('SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c\
-    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($1::int[])',[friends])*/
     query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
-    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = $1 \
     ORDER BY time_start desc;'
     query_values = [id]
@@ -79,8 +80,8 @@ async function getSessionBatch(startIndex, batchSize, friends,) {
     /*query_text1 = format('SELECT a.*, b.username, c.category_name, c.color_id FROM activity a, user_timeout b, category c\
     WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($1::int[])',[friends])*/
-    query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
-    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    query_text = 'SELECT a.*, b.username, b.expo_token, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
+    WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and a.user_id = any($3) \
     ORDER BY time_start desc \
     OFFSET $1 ROWS \
@@ -92,7 +93,7 @@ async function getSessionBatch(startIndex, batchSize, friends,) {
 
 async function getSessionBatchByUsername(startIndex, batchSize, usernames) {
     query_text = 'SELECT a.*, b.username, c.category_name, c.color_id, c.public FROM activity a, user_timeout b, category c\
-    WHERE a.user_id = b.user_id AND a.cat_id = c.category_id \
+    WHERE a.is_active = TRUE AND a.user_id = b.user_id AND a.cat_id = c.category_id \
     and b.username = any($3) \
     ORDER BY time_start desc \
     OFFSET $1 ROWS \
@@ -144,10 +145,10 @@ async function deleteSession(user_id, sessionId) {
     }
 }
 
-async function updateNotes(notes, sessionid) {
-    query_text = 'UPDATE activity SET notes = $1 WHERE \
-    activity_id = $2;'
-    query_values = [notes, sessionid]
+async function updateSession(notes, isPrivate, sessionid) {
+    query_text = 'UPDATE activity SET notes = $1, is_private = $2 WHERE \
+    activity_id = $3;'
+    query_values = [notes, isPrivate, sessionid]
     try {
         const { rows } = await db.query(query_text, query_values)
         return rows
@@ -157,9 +158,8 @@ async function updateNotes(notes, sessionid) {
 }
 
 
-
 module.exports = {
     set_user_session, get_day_session, getAllSessions, getSession, getSessionBatch, getSelfSessionsBatch,
-    getSessionBatchByUsername, deleteSession, updateNotes, check_first_session, get_session_by_search,
+    getSessionBatchByUsername, deleteSession, updateSession, check_first_session, get_session_by_search,
 
 }

@@ -3,10 +3,6 @@ const Avatar = require('../models/Avatar')
 const Router = require('express-promise-router');
 const requireAuth = require('../middlewares/requireAuth');
 const fs = require('fs')
-const images = require('images');
-const { publicDecrypt } = require('crypto');
-const AWS = require('aws-sdk');
-const CONSTANTS = require('../constants.json')
 
 const router = new Router();
 router.use(requireAuth);
@@ -22,8 +18,6 @@ router.get('/info/self', async (req, res) => {
         console.log("Something went wrong", err)
         return res.status(422).send(err.message);
     }
-
-
 })
 
 router.get('/stats/:id', async (req, res) => {
@@ -242,9 +236,22 @@ router.patch('/points/:id', async (req, res) => {
 })
 
 router.patch('/self_user/lastsignin', async (req, res) => {
+    console.log("Got to last sign in..")
     const user_id = req.user_id
     try {
         await user.updateLastSignin(user_id)
+        return res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message)
+    }
+})
+
+router.patch('/self_user/expo_token', async (req, res) => {
+    const user_id = req.user_id
+    const { expo_token } = req.body;
+    try {
+        await user.postNotificationToken(user_id, expo_token);
         return res.status(200).send()
     } catch (err) {
         console.log(err)

@@ -126,7 +126,6 @@ router.post('/rejectFriendRequest', async (req, res) => {
     }
 })
 
-router.post('/')
 
 router.get('/blockedUsers', async (req, res) => {
     const user_id = req.user_id

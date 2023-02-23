@@ -72,19 +72,19 @@ async function updateCount(user_id, counterId, updateAmount) {
     } catch (err) { console.log('error code is ', err) }
 }
 
-async function addTally(user_id, counterId, updateAmount, tally_time) {
+async function addTally(user_id, counterId, updateAmount, tally_time, dateKey) {
 
     const client = await db.connect()
     try {
         await client.query('BEGIN')
-        detailQuery = 'INSERT INTO counter_tally(user_id, update_by, time_start, counter_id) \
-        VALUES ($1,$2,$3,$4) RETURNING *'
-        detailValues = [user_id, updateAmount, tally_time, counterId]
-        await db.query(detailQuery, detailValues)
+        detailQuery = 'INSERT INTO counter_tally(user_id, update_by, time_start, counter_id, date_key) \
+        VALUES ($1,$2,$3,$4, $5) RETURNING *'
+        detailValues = [user_id, updateAmount, tally_time, counterId, dateKey]
+        await client.query(detailQuery, detailValues)
 
         countQuery = 'UPDATE counter SET cur_count = cur_count + $1 WHERE counter_id = $2 AND user_id = $3;'
         countValues = [updateAmount, counterId, user_id]
-        await db.query(countQuery, countValues)
+        await client.query(countQuery, countValues)
 
         await client.query('COMMIT')
     } catch (e) {
@@ -129,8 +129,18 @@ async function getCounterRange(startRange, endRange, user_id) {
     WHERE a.counter_id = b.counter_id AND a.user_id = $1 AND b.time_start >= $2 AND b.time_start < $3 \
     AND b.daily_count > 0'
 
+    // group by date_key instead of getting time_start::date
+    query_text_updated = 'select a.counter_id, a.user_id, a.counter_name as activity_name, a.time_created,\
+    a.color_id, a.archived, a.public, a.cur_count, b.date_key, b.daily_count, 1 as entry_type \
+    FROM counter a, \
+    (select date_key, sum(update_by) as daily_count, counter_id from counter_tally \
+    WHERE time_start >= $2 AND time_start < $3 \
+    group by date_key, counter_id \
+    HAVING sum(update_by) > 0) b \
+    WHERE a.user_id = $1 AND a.counter_id = b.counter_id'
+
     query_values = [user_id, startRange, endRange]
-    const { rows } = await db.query(query_text, query_values);
+    const { rows } = await db.query(query_text_updated, query_values);
     return rows
 }
 
