@@ -138,7 +138,7 @@ async function generateAvatarFromData2(avatarData, user_id) {
     var glassesSrc = d + dir.glassesTypes[avatarJSON.accessories.glasses.item][0]
     var piercingsSrc = d + dir.piercingsTypes[avatarJSON.accessories.piercings.item][0]
     var accessoriesSrc = d + dir.accessoryTypes[avatarJSON.accessories.general.item][0]
-    var makeupSrc = d + dir.makeupTypes[avatarJSON.face.makeup.item][0]
+    var makeupSrc = d + dir.makeupTypes[avatarJSON.face.makeup.item][avatarJSON.face.makeup.color]
 
     var wardrobe = [bgSrc, overlaySrc]
 
