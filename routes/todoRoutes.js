@@ -44,6 +44,19 @@ router.put('/todoItem', async (req, res) => {
     }
 })
 
+router.put('/todoItem/pin', async (req, res) => {
+    const user_id = req.user_id
+    const { toDoId, is_pinned } = req.body
+    try {
+        await todoItem.editTodoItemPin(user_id, toDoId, is_pinned)
+        res.status(200).send()
+    } catch (err) {
+        console.log("Problem editing todoItem pin for user", user_id)
+        console.log(err.stack)
+        res.status(403).send({ error: "Error editing todoItem pin!" })
+    }
+})
+
 router.delete('/todoItem', async (req, res) => {
     const user_id = req.user_id;
     //const { toDoId } = req.query;
