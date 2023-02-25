@@ -191,17 +191,15 @@ router.patch('/self_user', async (req, res) => {
 
 router.delete('/self_user', async (req, res) => {
     const user_id = req.user_id
-    const givenPassword = req.params.givenPassword;
-    console.log("Req is ", req)
-    console.log("Given password: ", givenPassword);
-    try {
+    //const givenPassword = req.params.givenPassword;
+    /*try {
         user_info = await user.getCredentialsFromId(user_id)
         correct_pw = user_info['password']
         await user.comparePassword(givenPassword, correct_pw)
     } catch (err) {
         return res.status(422).send({ error: 'Current entered password is incorrect!' });
     }
-    console.log("Password correct : trying to delete account")
+    console.log("Password correct : trying to delete account")*/
     try {
         await user.delete_user_info(user_id)
     } catch (err) {
