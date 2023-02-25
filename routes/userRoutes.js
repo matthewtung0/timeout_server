@@ -199,17 +199,12 @@ router.delete('/self_user', async (req, res) => {
     } catch (err) {
         return res.status(422).send({ error: 'Current entered password is incorrect!' });
     }
+    try {
+        await user.delete_user_info(user_id)
+    } catch (err) {
+        return res.status(422).send({ error: 'Sonething went wrong deleting account' });
+    }
 
-    //password checks out, delete everything
-
-    // delete from activity (user's sessions)
-    // delete from category (user's custom categories)
-    // delete from friend_event (remove user from friends, friend reqs etc)
-    // delete from interaction (remove likes, liked)
-    // delete from password reset (if user had outstanding pw reset req)
-    // delete from todo_item (user's todo items)
-    // delete from user_credential (user's sign in info, frees up email)
-    // delete from user_timeout (user info)
 })
 
 router.get('/friends/:id', async (req, res) => {
