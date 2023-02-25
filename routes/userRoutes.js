@@ -192,6 +192,7 @@ router.patch('/self_user', async (req, res) => {
 router.delete('/self_user', async (req, res) => {
     const user_id = req.user_id
     const givenPassword = req.params.givenPassword;
+    console.log("Req is ", req)
     console.log("Given password: ", givenPassword);
     try {
         user_info = await user.getCredentialsFromId(user_id)
