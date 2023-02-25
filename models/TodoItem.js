@@ -30,7 +30,7 @@ async function editTodoItem(userId, toDoItemName, categoryId, notes, oldToDoName
 async function editTodoItemPin(userId, toDoId, is_pinned) {
     query_text = 'UPDATE todo_item\
     SET is_pinned = $1\
-    WHERE toDoId = $2;'
+    WHERE item_id = $2;'
     query_values = [is_pinned, toDoId]
     try {
         await db.query(query_text, query_values)
