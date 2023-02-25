@@ -123,7 +123,7 @@ async function delete_user_info(user_id) {
         var delete_counter_query = 'delete from counter_tally where user_id = $1;'
         var delete_counter_tally = 'delete from counter where user_id = $1;'
         var delete_interaction = 'delete from interaction where user_id = $1;'
-        var delete_friend_event = 'delete from friend_event where user_id = $1;'
+        var delete_friend_event = 'delete from friend_event where friend_a = $1 OR friend_b = $1;'
         var delete_password_reset = 'delete from password_reset where user_id = $1;'
         var delete_avatar_query = 'delete from user_avatar where user_id = $1;'
         var delete_owned_query = 'delete from user_owned where user_id = $1;'
@@ -139,7 +139,7 @@ async function delete_user_info(user_id) {
         await client.query(delete_counter_tally, query_values)
         await client.query(delete_interaction, query_values)
         await client.query(delete_friend_event, query_values)
-        await client.query(delete_password_reset, query_values)
+        //await client.query(delete_password_reset, query_values)
         await client.query(delete_avatar_query, query_values)
         await client.query(delete_owned_query, query_values)
         await client.query(delete_user_credentials, query_values)
