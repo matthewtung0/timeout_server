@@ -202,6 +202,7 @@ router.delete('/self_user', async (req, res) => {
     console.log("Password correct : trying to delete account")*/
     try {
         await user.delete_user_info(user_id)
+        return res.status(200).send();
     } catch (err) {
         return res.status(422).send({ error: 'Sonething went wrong deleting account' });
     }
