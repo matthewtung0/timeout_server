@@ -112,7 +112,7 @@ async function get_counter_by_search(searchTerm, searchCatId, user_id) {
     (select date_key, sum(update_by) as daily_count, counter_id from counter_tally \
     group by date_key, counter_id \
     HAVING sum(update_by) > 0) b \
-    WHERE a.user_id = $1 AND a.counter_id = b.counter_id AND position($2 in LOWER(a.counter_name)) > 0;'
+    WHERE a.user_id = $1 AND a.counter_id = b.counter_id AND position($2 in LOWER(a.counter_name)) > 0'
 
     query_text_final = query_text_updated
     query_values = [user_id, searchTerm]
