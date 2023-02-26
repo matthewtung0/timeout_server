@@ -302,15 +302,11 @@ router.get('/searchSessionsAndCounters', async (req, res) => {
         return res.status(422).send({ error: "Error getting counter search results!" });
     }
     let combinedData = sessionData.concat(counterData)
-    let groupedData = groupMonthlyTasksForSearch(combinedData)
-    //let groupedData = groupMonthlyTasks(combinedData)
-    let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
+    //let groupedData = groupMonthlyTasksForSearch(combinedData)
+    //let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
+    res.send({ combinedData })
 
-    //console.log("Session raw data: ", sessionData)
-    //console.log("Counter raw data: ", counterData)
-    //console.log("Combined data: ", groupedCombinedData)
-
-    res.send({ groupedData, groupedDataForSummary })
+    //res.send({ groupedData, groupedDataForSummary })
 })
 
 

@@ -111,6 +111,72 @@ async function set_user_info(email, password, username, firstName, lastName, use
     }
 }
 
+async function delete_user_info(user_id) {
+    console.log("Deleting user info with user id ", user_id)
+    const client = await db.connect()
+    try {
+        await client.query('BEGIN')
+
+        var delete_activity_query = 'delete from activity where user_id = $1;'
+        var delete_todo_item_query = 'delete from todo_item where user_id = $1;'
+        var delete_cat_query = 'delete from category where user_id = $1;'
+        var delete_counter_query = 'delete from counter_tally where user_id = $1;'
+        var delete_counter_tally = 'delete from counter where user_id = $1;'
+        var delete_interaction = 'delete from interaction where user_id = $1;'
+        var delete_friend_event = 'delete from friend_event where friend_a = $1 OR friend_b = $1;'
+        var delete_password_reset = 'delete from password_reset where user_id = $1;'
+        var delete_avatar_query = 'delete from user_avatar where user_id = $1;'
+        var delete_owned_query = 'delete from user_owned where user_id = $1;'
+
+        var delete_user_credentials = 'delete from user_credential where user_id = $1;'
+        var delete_user_query = 'delete from user_timeout where user_id = $1;'
+
+        var query_values = [user_id]
+        await client.query(delete_activity_query, query_values)
+        await client.query(delete_todo_item_query, query_values)
+        await client.query(delete_cat_query, query_values)
+        await client.query(delete_counter_query, query_values)
+        await client.query(delete_counter_tally, query_values)
+        await client.query(delete_interaction, query_values)
+        await client.query(delete_friend_event, query_values)
+        //await client.query(delete_password_reset, query_values)
+        await client.query(delete_avatar_query, query_values)
+        await client.query(delete_owned_query, query_values)
+        await client.query(delete_user_credentials, query_values)
+        await client.query(delete_user_query, query_values)
+        await client.query('COMMIT')
+    } catch (e) {
+        await client.query('ROLLBACK')
+        console.log("Error setting user info transaction!", e.stack)
+    } finally {
+        client.release()
+    }
+
+    let title = user_id
+    var params = {
+        Bucket: "timeoutavatars",
+        Key: title + '_avatar.png',
+    }
+    const s3 = new AWS.S3({
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,// || CONSTANTS.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,// || CONSTANTS.AWS_SECRET_ACCESS_KEY
+    });
+    // delete avatar
+    s3.deleteObject(params, function (err, data) {
+        if (err) console.log(err, err.stack);  // error
+        else console.log();                 // deleted
+    });
+    params = {
+        Bucket: "timeoutavatars",
+        Key: title + '_thumbnail_avatar.png',
+    }
+    // delete thumbnail
+    s3.deleteObject(params, function (err, data) {
+        if (err) console.log(err, err.stack);  // error
+        else console.log();                 // deleted
+    });
+}
+
 
 async function purchaseItems(user_id, items, points) {
     // items format: [{item_cat_lvl_1, item_cat_lvl_2, item_id}, {} , etc.]
@@ -594,5 +660,6 @@ module.exports = {
     updatePassword, getCredentialsFromId, deleteAll, addPoints, updateLastSignin,
     getStatsFromId, getStatsFromUsername, getItemsOwnedFromId, getItemsOwnedFromUsername,
     purchaseItems, doesUsernameExist, doesEmailExist, postToken,
-    uploadFileTest, postNotificationToken
+    uploadFileTest, postNotificationToken,
+    delete_user_info
 }

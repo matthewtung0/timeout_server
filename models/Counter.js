@@ -106,12 +106,20 @@ async function get_counter_by_search(searchTerm, searchCatId, user_id) {
     AND a.user_id = $1 \
     AND b.daily_count > 0 '
 
-    query_text_final = query_text
+    query_text_updated = 'select a.counter_id, a.user_id, a.counter_name as activity_name, a.time_created,\
+    a.color_id, a.archived, a.public, a.cur_count, b.date_key, b.daily_count, 1 as entry_type \
+    FROM counter a, \
+    (select date_key, sum(update_by) as daily_count, counter_id from counter_tally \
+    group by date_key, counter_id \
+    HAVING sum(update_by) > 0) b \
+    WHERE a.user_id = $1 AND a.counter_id = b.counter_id AND position($2 in LOWER(a.counter_name)) > 0'
+
+    query_text_final = query_text_updated
     query_values = [user_id, searchTerm]
 
     if (typeof (searchCatId) != 'undefined' && searchCatId != 'All categories') {
         // search by category is active, return no counters
-        query_text_final = query_text + ' AND a.counter_name = $3'
+        query_text_final = query_text_updated + ' AND a.counter_name = $3'
         query_values = [user_id, searchTerm, searchCatId]
     }
 

@@ -3,9 +3,9 @@ const uuid = require('uuid-random');
 
 async function addTodoItem(userId, toDoItemName, timeSubmitted, categoryId, notes) {
     query_text = 'INSERT INTO todo_item\
-    (item_id, user_id, category_id, item_desc,time_created,is_completed,is_active,is_public, notes)\
-     VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *'
-    query_values = [uuid(), userId, categoryId, toDoItemName, timeSubmitted, false, true, true, notes]
+    (item_id, user_id, category_id, item_desc,time_created,is_completed,is_active,is_public, notes, is_pinned)\
+     VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *'
+    query_values = [uuid(), userId, categoryId, toDoItemName, timeSubmitted, false, true, true, notes, false]
     try {
         await db.query(query_text, query_values)
         return 1
@@ -19,6 +19,19 @@ async function editTodoItem(userId, toDoItemName, categoryId, notes, oldToDoName
     SET item_desc = $1, category_id = $2,notes = $3\
     WHERE user_id = $4 AND item_desc = $5;'
     query_values = [toDoItemName, categoryId, notes, userId, oldToDoName]
+    try {
+        await db.query(query_text, query_values)
+        return 1
+    } catch (err) {
+        console.log('error code is ', err)
+    }
+}
+
+async function editTodoItemPin(userId, toDoId, is_pinned) {
+    query_text = 'UPDATE todo_item\
+    SET is_pinned = $1\
+    WHERE item_id = $2;'
+    query_values = [is_pinned, toDoId]
     try {
         await db.query(query_text, query_values)
         return 1
@@ -52,5 +65,5 @@ async function getTodoItems(userId) {
 }
 
 module.exports = {
-    addTodoItem, getTodoItems, deleteTodoItem, editTodoItem
+    addTodoItem, getTodoItems, deleteTodoItem, editTodoItem, editTodoItemPin,
 }
