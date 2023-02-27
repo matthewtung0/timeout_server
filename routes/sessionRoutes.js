@@ -13,10 +13,8 @@ router.use(requireAuth)
 
 router.get('/session/:id', async (req, res) => {
     let id = req.params.id
-    console.log("Getting /session with id", id)
     try {
         rows = await session.getSession(id);
-        console.log("Rows got", rows)
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem retrieving sessions")
@@ -34,15 +32,11 @@ router.get('/session', async (req, res) => {
 
     var start = 0
     if (typeof (startIndex) != 'undefined') { start = startIndex } else { start = 0; }
-
-    console.log("start index is", startIndex);
-    console.log("user id is", id);
     try {
         var rows = undefined
 
         if (typeof (id) != 'undefined') {
             rows = await session.getSessionBatch(start, 10, id);
-            console.log("Results:", rows);
         } else {
             rows = await session.getSessionBatchByUsername(start, 10, username);
         }
@@ -81,14 +75,10 @@ router.get('/sessionFeed', async (req, res) => {
     if (!numToRetrieve) {
         numToRetrieve = 100;
     }
-    console.log(`Friends is ${friends} and startIndex is ${start}`)
 
     try {
         var rows = undefined
-        //rows = await session.getSelfSessionsBatch(start, 10, user_id)
-        console.log(`Trying with start: ${start} and friends ${friends}`)
         rows = await session.getSessionBatch(start, numToRetrieve, friends);
-        console.log("Num rows to return ", rows.length)
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem retrieving session feed:", err)
@@ -183,7 +173,6 @@ const groupMonthlyTasksForSearch = (monthSessions) => {
         }
         return 1
     })
-    console.log("OVERALL MAP ", mapToArray)
     return mapToArray
 }
 
@@ -233,7 +222,6 @@ const groupMonthlyTasks = (monthSessions) => {
     for (var K in intermediateMap) {
         finalMap[K] = Object.keys(intermediateMap[K]).map((key) => [key, intermediateMap[K][key]])
     }
-    //console.log("fINAL MAP ", finalMap)
     return finalMap
 }
 
@@ -244,7 +232,6 @@ router.get('/testSessionsAndCounters', async (req, res) => {
     const endRange = req.query.endTime
     let sessionData = null;
     let counterData = null;
-    console.log(`getting sessions for month ${startRange} and ending at month ${endRange}`)
     try {
         let user_id = req.user_id
 
@@ -256,7 +243,6 @@ router.get('/testSessionsAndCounters', async (req, res) => {
         return res.status(422).send({ error: "Error getting month's session!" });
     }
 
-    console.log(`getting counters for month ${startRange} and ending at month ${endRange}`)
     try {
         let user_id = req.user_id
         counterData = await counter.getCounterRange(startRange, endRange, user_id)
@@ -269,10 +255,6 @@ router.get('/testSessionsAndCounters', async (req, res) => {
     //let groupedData = groupMonthlyTasks(combinedData)
     //let groupedDataForSummary = groupMonthlyTasksForSummary(combinedData);
 
-    //console.log("Session raw data: ", sessionData)
-    //console.log("Counter raw data: ", counterData)
-    //console.log("Combined data: ", groupedCombinedData)
-
     //res.send({ groupedData, groupedDataForSummary })
     res.send(combinedData)
 })
@@ -282,7 +264,6 @@ router.get('/searchSessionsAndCounters', async (req, res) => {
     const searchCatId = req.query.searchCatId
     let sessionData = null;
     let counterData = null;
-    console.log(`getting sessions with search term ${searchTerm} and category ${searchCatId}`)
     try {
         let user_id = req.user_id
 
@@ -313,7 +294,6 @@ router.get('/searchSessionsAndCounters', async (req, res) => {
 router.get('/monthSessions', async (req, res) => {
     const startRange = req.query.startTime
     const endRange = req.query.endTime
-    console.log(`getting sessions for month ${startRange} and ending at month ${endRange}`)
     try {
         let user_id = req.user_id
 
@@ -329,10 +309,8 @@ router.get('/monthSessions', async (req, res) => {
 router.post('/save_session', async (req, res) => {
 
     // req.body is an array of len 1 or more
-    console.log(`req.body is ${JSON.stringify(req.body)}`)
     for (const element of req.body) {
 
-        console.log(`req body element: ${JSON.stringify(element)}`)
         const { activity_id, chosenCategory, cat_id, activity_name, time_start,
             time_end, end_early, prod_rating, is_private } = element
 
@@ -340,7 +318,6 @@ router.post('/save_session', async (req, res) => {
             var user_id = req.user_id
             var result = await session.set_user_session(activity_id, chosenCategory, cat_id, activity_name,
                 time_start, time_end, end_early, prod_rating, is_private, user_id)
-            console.log(result)
             if (!result) {
                 return res.status(422).send({ error: "Error saving session!" });
             }

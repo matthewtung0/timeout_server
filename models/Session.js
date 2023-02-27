@@ -20,7 +20,6 @@ async function get_session_by_search(searchTerm, searchCatId, userId) {
     AND a.user_id = $1 AND position($2 in LOWER(a.activity_name)) > 0\
     AND a.is_active = true '
     query_addendum = 'AND a.cat_id = $3'
-    console.log(query_text)
 
     if (typeof (searchCatId) == 'undefined' || searchCatId == 'All categories') {
         query_text_final = query_text
@@ -132,7 +131,6 @@ async function getTotalSessionCount(userId) {
 }
 
 async function deleteSession(user_id, sessionId) {
-    console.log("Trying to delete session with sessionId ", sessionId)
     query_text = 'UPDATE activity SET is_active = false WHERE \
     activity_id = $1;'
     //query_text = 'DELETE FROM category WHERE category_id = $1;'

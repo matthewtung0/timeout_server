@@ -39,7 +39,6 @@ async function getUserCounters(id, startDate) {
     query_values = [id, startDate]
     try {
         const { rows } = await db.query(query_text2, query_values)
-        //console.log("Returning counters", rows)
         return rows
     } catch (err) {
         console.log('error code is ', err)

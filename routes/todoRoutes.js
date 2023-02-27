@@ -6,7 +6,6 @@ const router = new Router();
 router.use(requireAuth);
 
 router.get('/todoItem', async (req, res) => {
-    console.log("trying to get todo items");
     const user_id = req.user_id
     try {
         let results = await todoItem.getTodoItems(user_id)
@@ -62,7 +61,6 @@ router.delete('/todoItem', async (req, res) => {
     //const { toDoId } = req.query;
     const toDoId = req.query.toDoId
     try {
-        console.log("trying delete item with id", toDoId)
         await todoItem.deleteTodoItem(user_id, toDoId)
         res.status(200).send()
     } catch (err) {

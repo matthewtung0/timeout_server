@@ -11,7 +11,6 @@ const nodemailer = require('nodemailer');
 
 router.post('/change_password', async (req, res) => {
     const { token, password } = req.body;
-    console.log("Trying to change password with token ", token)
     try {
         result = await user.validateAndResetPassword(token, password);
         if (!result) {
@@ -131,7 +130,6 @@ router.post('/forgot_password', async (req, res) => {
             console.log(error);
             return res.status(404).send('Error sending email to reset password.');
         } else {
-            console.log('Email sent successfully');
             return res.status(200).send('Email sent successfully!');
         }
     });
@@ -167,7 +165,6 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body;
-    console.log(`email is ${email} and password is ${password}`)
 
     if (!email || !password) {
         return res.status(422).send({ error: 'must provide email and password' });
@@ -177,7 +174,6 @@ router.post('/signin', async (req, res) => {
     user_info = await user.get_user_info(email)
     correct_pw = user_info['password']
     user_id = user_info['user_id']
-    console.log(`user_id is ${user_id}`)
 
     if (!user) {
         return res.status(422).send({ error: 'invalid password or email' });
@@ -187,7 +183,6 @@ router.post('/signin', async (req, res) => {
 
 
         const token = jwt.sign({ "user_id": user_id }, 'MY_SECRET_KEY')
-        console.log(`Sending token.. ${token}`)
         await user.updateLastSignin(user_id)
 
         res.send({ token })

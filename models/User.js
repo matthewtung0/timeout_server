@@ -90,7 +90,6 @@ async function set_user_info(email, password, username, firstName, lastName, use
         (category_id, user_id, category_name, time_created, color_id, public, archived, is_active) VALUES %L', chosenCategories),
             [], (err, result) => {
                 console.log(err)
-                console.log(result)
             })
 
         await client.query('COMMIT')
@@ -164,7 +163,6 @@ async function delete_user_info(user_id) {
     // delete avatar
     s3.deleteObject(params, function (err, data) {
         if (err) console.log(err, err.stack);  // error
-        else console.log();                 // deleted
     });
     params = {
         Bucket: "timeoutavatars",
@@ -173,7 +171,6 @@ async function delete_user_info(user_id) {
     // delete thumbnail
     s3.deleteObject(params, function (err, data) {
         if (err) console.log(err, err.stack);  // error
-        else console.log();                 // deleted
     });
 }
 
@@ -233,7 +230,6 @@ function reformatBasicInfo(r) {
 }
 
 function reformatAvatarInfo(r) {
-    //console.log("Avatar info", r)
     let avatarJSON = {
         face: {
             mouth: {
@@ -455,7 +451,6 @@ async function getItemsOwnedFromId(userId) {
     query_values = [userId]
     query_text = 'SELECT * FROM user_owned WHERE user_id = $1;'
     const { rows } = await db.query(query_text, query_values)
-    console.log("AVATAR ITEMS OWNED: ", rows)
     //avatarItemsOwned = reformatAvatarOwnedInfo(rows)
     avatarItemsOwned = rows
     return avatarItemsOwned
@@ -472,14 +467,11 @@ async function getItemsOwnedFromUsername(username) {
 }
 
 async function getInfoFromId(userId) {
-    console.log("Getting user info from id")
     query_text = 'SELECT *\
      FROM user_timeout a \
      LEFT OUTER JOIN user_avatar b on a.user_id = b.user_id WHERE a.user_id = $1;'
     query_values = [userId]
     const { rows } = await db.query(query_text, query_values);
-    console.log("ROWS IS ", rows)
-    //console.log("RESULTS", rows)
     query_text2 = 'SELECT count(time_start) as num_tasks, \
     sum(time_end - time_start) as total_time from activity where user_id = $1;'
 

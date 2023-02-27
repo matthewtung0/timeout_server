@@ -117,7 +117,6 @@ async function generateAvatarFromData2(avatarData, user_id) {
 
     */
     var { avatarJSON } = avatarData
-    console.log(avatarJSON)
 
     var bgSrc = d + dir.bgTypes[avatarJSON.accessories.background.item][0]
     var mouthSrc = d + dir.mouthTypes[avatarJSON.face.mouth.item][avatarJSON.face.mouth.color]
@@ -160,9 +159,6 @@ async function generateAvatarFromData2(avatarData, user_id) {
     wardrobe.push(earsSrc)
     if (avatarJSON.accessories.piercings.active) { wardrobe.push(piercingsSrc) }
     if (avatarJSON.accessories.glasses.active) { wardrobe.push(glassesSrc) }
-
-    //let userAvatar = Images(wardrobe[0])
-    console.log("Wardrobe is ", wardrobe)
 
     var jimp20 = (await Jimp.read(bgSrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
     var jimp19 = (await Jimp.read(overlaySrc))//.resize(AVATAR_SIZE_REGULAR, AVATAR_SIZE_REGULAR)
@@ -209,7 +205,7 @@ async function generateAvatarFromData2(avatarData, user_id) {
     var finalJimp = jimp20
 
     for (var i = 1; i < jimp_wardrobe.length; i++) {
-        console.log("Compositing " + i)
+        //console.log("Compositing " + i)
         finalJimp = finalJimp.composite(jimp_wardrobe[i], 0, 0)
     }
 
@@ -223,17 +219,7 @@ async function generateAvatarFromData2(avatarData, user_id) {
     var avatarThumbnailBuffer = await finalJimpAvatar.getBufferAsync(Jimp.MIME_PNG);
     await uploadToS3(avatarThumbnailBuffer, user_id, true)
 
-    /*for (var i = 1; i < wardrobe.length; i++) {
-        console.log("Drawing " + wardrobe[i])
-        userAvatar = userAvatar.draw(Images(wardrobe[i], 0, 0))
-    }
-
-    userAvatar
-        .size(200)
-        .save('generatedAvatarsTemp/' + user_id + '_avatar.png')
-    */
-    console.log("This one is done");
-    console.timeEnd('Compositing')
+    //console.timeEnd('Compositing')
     return { avatarBuffer, avatarThumbnailBuffer };
 
 }
@@ -242,7 +228,7 @@ async function fetchFromS3(user_id, is_thumbnail = false) {
     if (is_thumbnail === 'true') { var title = user_id + "_thumbnail_" } else {
         var title = user_id
     }
-    console.log(`Is thumbnail is ${is_thumbnail} and getting title ${title}`)
+    //console.log(`Is thumbnail is ${is_thumbnail} and getting title ${title}`)
     try {
         const params = {
             Bucket: "timeoutavatars",
@@ -303,7 +289,6 @@ async function purchaseItems(user_id, items_to_redeem_formatted, points) {
 
 async function saveUserAvatar2(user_id, avatarJSON) {
     var j = avatarJSON
-    console.log("Saving ", j)
     query_values = [
         j.face.mouth.item, j.face.mouth.color, j.face.mouth.active,
         j.face.eyes.item, j.face.eyes.color, j.face.eyes.active,
@@ -557,8 +542,6 @@ async function saveUserAvatar2(user_id, avatarJSON) {
         */
 
     const { rows } = await db.query(query_text, query_values);
-    console.log(rows)
-    console.log("SAVED TO DB")
     return rows;
 }
 
@@ -570,7 +553,6 @@ async function getLastUpdate(user_id) {
 }
 
 async function getLastUpdateMultiple(user_id_list) {
-    console.log(user_id_list)
     query_text = 'SELECT user_id,last_updated FROM user_avatar where user_id = any($1);'
     query_values = [[user_id_list]]
 

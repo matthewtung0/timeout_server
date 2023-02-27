@@ -11,10 +11,8 @@ router.post('/requestFriend', async (req, res) => {
     try {
         let requestResult = await friendship.requestFriend(user_id, codeToRequest)
         if (requestResult == -1) { // no user associated with this friend code
-            console.log("INVALID FRIEND CODE")
             return res.status(200).send({ msg: 'Invalid friend code', resultCode: -1 })
         } else if (requestResult == -2) { // invalid request (already friends, blocked, etc.)
-            console.log("INVALID FRIEND REQUEST")
             return res.status(200).send({ msg: 'Invalid request', resultCode: -2 })
         } else {
             return res.status(200).send({ msg: 'All good', resultCode: 0 })
@@ -30,7 +28,6 @@ router.post('/requestFriend', async (req, res) => {
 router.get('/friendsList', async (req, res) => {
     const user_id = req.user_id
     try {
-        console.log("trying to fetch friends");
         let results = await friendship.getFriends(user_id)
 
         // set friend_update to false to show we have the latest friends list
@@ -48,10 +45,7 @@ router.get('/friendsUpdate', async (req, res) => {
     const user_id = req.user_id
     try {
         let results = await friendship.getFriendUpdate(user_id)
-        console.log("psql results: ", results)
         var is_friend_update = results['friend_update']
-        console.log("rESULT IS ", is_friend_update)
-
         if (is_friend_update) { // we need to update friend list
             let results = await friendship.getFriends(user_id)
 
@@ -71,7 +65,6 @@ router.get('/friendAvatars',)
 router.get('/friendRequestsIncoming', async (req, res) => {
     const user_id = req.user_id
     try {
-        console.log("TRYING");
         let results = await friendship.getRequestsIncoming(user_id)
         res.status(200).send(results)
     } catch (err) {
@@ -94,13 +87,10 @@ router.get('/friendRequestsOutgoing', async (req, res) => {
 })
 
 router.post('/acceptFriendRequest', async (req, res) => {
-    console.log("try accept friend request");
     const user_id = req.user_id
     const { idToAccept } = req.body
     try {
         user_info = await friendship.acceptFriendRequest(user_id, idToAccept)
-        console.log("success accepting friend");
-
         // set friend_update to true so next time they open their feed, their friend list is updated
         await friendship.setFriendUpdate(true, idToAccept);
 
@@ -113,12 +103,10 @@ router.post('/acceptFriendRequest', async (req, res) => {
 })
 
 router.post('/rejectFriendRequest', async (req, res) => {
-    console.log("try reject friend request");
     const user_id = req.user_id
     const { idToReject } = req.body
     try {
         user_info = await friendship.rejectFriendRequest(user_id, idToReject)
-        console.log("success rejecting friend");
         res.status(200).send()
     } catch (err) {
         console.log("Problem rejecting friend:", idToAccept)

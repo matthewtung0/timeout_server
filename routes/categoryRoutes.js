@@ -14,9 +14,6 @@ router.get('/category/:id', async (req, res) => {
     if (isSelf) {
         id = user_id;
     }
-
-    console.log("Trying to get category with id", id)
-
     try {
         rows = await category.getUserCategories(id, getPrivate);
         res.status(200).send(rows)

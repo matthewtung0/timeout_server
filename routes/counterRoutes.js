@@ -16,10 +16,8 @@ router.get('/counter', async (req, res) => {
     // no id passed means getting self
     if (typeof (id) == 'undefined') id = user_id
     try {
-        console.log("Getting counters")
         if (typeof (id) != 'undefined') {
             results = await counter.getUserCounters(id, startDate)
-            console.log("COunter results: ", results)
         } else {
             results = await counter.getCounterByUsername(username)
         }
@@ -72,7 +70,7 @@ router.post('/counter/tally', async (req, res) => {
 router.get('/counter/month', async (req, res) => {
     const startRange = req.query.startTime
     const endRange = req.query.endTime
-    console.log(`getting counters for month ${startRange} and ending at month ${endRange}`)
+    //console.log(`getting counters for month ${startRange} and ending at month ${endRange}`)
     try {
         let user_id = req.user_id
         let result = await counter.getCounterRange(startRange, endRange, user_id)

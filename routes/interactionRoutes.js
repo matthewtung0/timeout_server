@@ -12,7 +12,6 @@ router.post('/interaction', async (req, res) => {
     const { reaction_id, activity_id } = req.body;
     try {
         let wasUnliked = await interaction.toggleInteraction(reaction_id, activity_id, user_id);
-        console.log('toggle interaction successful', wasUnliked);
         //sends signal if this toggle resulted in an Unlike or not
         res.status(200).send({ wasUnliked })
     } catch (err) {
@@ -50,17 +49,14 @@ router.get('/notifications', async (req, res) => {
     const user_id = req.user_id
     const startIndex = req.query.startIndex
     const numToRetrieve = req.query.numToRetrieve
-    console.log("START INDEX ", startIndex)
     var start = 0
     if (typeof (startIndex) != 'undefined') { start = startIndex } else { start = 0; }
     var batchSize = 0
     if (typeof (numToRetrieve) != 'undefined') { batchSize = numToRetrieve } else { batchSize = 10; }
 
     try {
-        console.log(`Going with start ${start} and batchSize ${batchSize}`)
         //const rows = await interaction.getInteractionsForUserId(user_id);
         const rows = await interaction.getInteractionForUserIdBatch(user_id, start, batchSize);
-        //console.log("# NOTIFICATIONS SENT ", rows.length)
         res.status(200).send(rows)
     } catch (err) {
         console.log("Problem fetching notifications: ", err)

@@ -12,7 +12,6 @@ router.get('/info/self', async (req, res) => {
 
     try {
         user_info = await user.getInfoFromId(user_id)
-        console.log("SENDING USER INFO ", user_info)
         res.send(user_info);
     } catch (err) {
         console.log("Something went wrong", err)
@@ -24,7 +23,6 @@ router.get('/stats/:id', async (req, res) => {
     let username = req.query.username
     let id = req.params.id
     try {
-        console.log("Trying with username" + username + " and id " + id)
         if (typeof (id) != 'undefined') {
             user_stats = await user.getStatsFromId(id)
         } else {
@@ -81,11 +79,9 @@ router.get('/user/owned', async (req, res) => {
 
 router.get('/avatar12345/last_updated/multiple', async (req, res) => {
     let user_cache_map = JSON.parse(req.query.user_id_avatar_dt_map)
-    console.log(`12345 ${user_cache_map}`)
     var keyArr = Object.keys(user_cache_map)
     try {
         var result = await Avatar.getLastUpdateMultiple(keyArr)
-        console.log("ACTUAL UPDATE IS ", result)
         return res.status(200).send(result)
     } catch (err) {
         console.log("ERROR FETCHING MULTIPLE ", err)
@@ -97,7 +93,6 @@ router.get('/avatar12345/last_updated/:id', async (req, res) => {
     let id = req.params.id
     try {
         var result = await Avatar.getLastUpdate(id);
-        console.log("Last updated: ", result)
         res.send(result);
     } catch (err) {
         console.log(err);
@@ -107,12 +102,9 @@ router.get('/avatar12345/last_updated/:id', async (req, res) => {
 })
 
 router.get('/avatar12345/:id', async (req, res) => {
-    console.log("got here?")
     let id = req.params.id
     const isThumbnail = req.query.isThumbnail
-    console.log(`getting avatar for ${id} and isThumbnail: ${isThumbnail}`)
     var s3data = await Avatar.fetchFromS3(id, isThumbnail);
-    console.log("Sending s3 data of size ", s3data.length);
     res.end(s3data)
     /*console.log("S3 data is", s3data);
     var avatarPath = '/Users/matthewtung/timeout_server/generatedAvatarsTemp/'
@@ -233,7 +225,6 @@ router.patch('/points/:id', async (req, res) => {
 })
 
 router.patch('/self_user/lastsignin', async (req, res) => {
-    console.log("Got to last sign in..")
     const user_id = req.user_id
     try {
         await user.updateLastSignin(user_id)
@@ -268,7 +259,6 @@ router.post('/self_user/avatar2', async (req, res) => {
                 items_to_redeem_formatted.push([user_id, items_to_redeem[i], new Date(), 0, 0])
             }
             await Avatar.purchaseItems(user_id, items_to_redeem_formatted, items_cost)
-            console.log("Purchase items completed")
         } catch (err) {
             console.log(err)
             return res.status(422).send(err.message)
@@ -278,7 +268,6 @@ router.post('/self_user/avatar2', async (req, res) => {
     // save user avatar choice
     try {
         await Avatar.saveUserAvatar2(user_id, avatarJSON)
-        console.log("Avatar save completed")
     } catch (err) {
         console.log(err)
         return res.status(422).send(err.message)
@@ -295,7 +284,6 @@ router.post('/self_user/avatar2', async (req, res) => {
         //res.end({ bufferString, thumbnailBufferString })
         return res.status(200).send({ bufferString, thumbnailBufferString })
 
-        console.log("Avatar png generation completed")
         //return res.status(200).send()
     } catch (err) {
         console.log(err)
@@ -358,7 +346,6 @@ router.patch('/changePasswordApp', async (req, res) => {
     try {
         await user.comparePassword(oldPassword, correct_pw)
     } catch (err) {
-        console.log("wrong cur password given");
         return res.status(422).send({ error: 'Current entered password is incorrect!' });
     }
 
