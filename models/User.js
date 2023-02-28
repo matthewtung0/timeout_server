@@ -467,14 +467,12 @@ async function getItemsOwnedFromUsername(username) {
 }
 
 async function getInfoFromId(userId) {
-    console.log("Getting info for user id", userId)
     query_text = 'SELECT *\
      FROM user_timeout a \
      LEFT OUTER JOIN user_avatar b on a.user_id = b.user_id WHERE a.user_id = $1;'
     query_values = [userId]
 
     const { rows } = await db.query(query_text, query_values);
-    console.log("results are ", rows)
     query_text2 = 'SELECT count(time_start) as num_tasks, \
     sum(time_end - time_start) as total_time from activity where user_id = $1;'
 
