@@ -7,6 +7,9 @@ const pool = new Pool({
   database: 'postgres',//'timeout',
   password: process.env.DB_PW, //|| CONSTANTS.DB_PW,
   port: 5432,
+  statement_timeout: 3000,
+  query_timeout: 4000,
+  connectionTimeoutMillis: 4000,
 })
 
 module.exports = {
