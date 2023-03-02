@@ -111,7 +111,6 @@ async function set_user_info(email, password, username, firstName, lastName, use
 }
 
 async function delete_user_info(user_id) {
-    console.log("Deleting user info with user id ", user_id)
     const client = await db.connect()
     try {
         await client.query('BEGIN')

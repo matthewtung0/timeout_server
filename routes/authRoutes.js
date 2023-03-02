@@ -142,7 +142,7 @@ router.post('/signup', async (req, res) => {
 
     try {
         //const user = new User( {email, password} );
-        hashed_pw = await user.hash_pw(password)
+        const hashed_pw = await user.hash_pw(password)
         let user_id = uuid()
 
         //format categoryArr into user's chosen categories
@@ -171,9 +171,14 @@ router.post('/signin', async (req, res) => {
     }
 
     //finding user with the supplied email, need to clean up
-    user_info = await user.get_user_info(email)
-    correct_pw = user_info['password']
-    user_id = user_info['user_id']
+    let user_info = await user.get_user_info(email)
+
+    if (!('password' in user_info)) { // no results, must've sent invalid email
+        return res.status(422).send({ error: 'invalid password or email' });
+    }
+
+    const correct_pw = user_info['password']
+    const user_id = user_info['user_id']
 
     if (!user) {
         return res.status(422).send({ error: 'invalid password or email' });
