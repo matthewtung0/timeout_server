@@ -196,6 +196,7 @@ router.post('/signin', async (req, res) => {
     }
 })
 
+
 router.get('/email_exists', async (req, res) => {
     const email = req.query.email
     try {

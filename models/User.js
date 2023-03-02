@@ -502,6 +502,14 @@ async function updateInfo(firstName, lastName, username, bio, user_id) {
     return
 }
 
+async function removeToken(user_id) {
+    query_text = 'UPDATE user_timeout SET expo_token = null \
+    WHERE user_id = $1;'
+    query_values = [user_id]
+    const res = await db.query(query_text, query_values);
+    return
+}
+
 
 function generateFriendCode() {
     // random number from
@@ -653,5 +661,5 @@ module.exports = {
     getStatsFromId, getStatsFromUsername, getItemsOwnedFromId, getItemsOwnedFromUsername,
     purchaseItems, doesUsernameExist, doesEmailExist, postToken,
     uploadFileTest, postNotificationToken,
-    delete_user_info
+    delete_user_info, removeToken
 }

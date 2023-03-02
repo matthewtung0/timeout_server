@@ -181,6 +181,17 @@ router.patch('/self_user', async (req, res) => {
     }
 })
 
+router.patch('/self_user_token', async (req, res) => {
+    const user_id = req.user_id
+    try {
+        var r = await user.removeToken(user_id);
+        return res.status(200).send()
+    } catch (err) {
+        console.log(err)
+        return res.status(422).send(err.message);
+    }
+})
+
 router.delete('/self_user', async (req, res) => {
     const user_id = req.user_id
     //const givenPassword = req.params.givenPassword;
