@@ -173,7 +173,7 @@ router.post('/signin', async (req, res) => {
     //finding user with the supplied email, need to clean up
     let user_info = await user.get_user_info(email)
 
-    if (!('password' in user_info)) { // no results, must've sent invalid email
+    if (typeof (user_info) === "undefined" || !('password' in user_info)) { // no results, must've sent invalid email
         return res.status(422).send({ error: 'invalid password or email' });
     }
 
